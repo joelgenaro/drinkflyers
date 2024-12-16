@@ -1,0 +1,127 @@
+<ng-container *ngIf="invoiceObj > 0">
+    <div class="row no-gutters justify-content-center main-row">
+        <div class="col-md-12 product-box">
+            <div class="row no-gutters justify-content-between">
+                <div class="col-md-4 col-12">
+                    <div class="company-container">
+                        <!-- <h1 class="comp-name">[Rosenbaum Ltd]</h1> -->
+                        <img src="assets/images/logos/star-edition-logo.svg" class="logo-image">
+                        <p class="comp-city">Stanley House Masterlord Village, West Rd, Ipswich IP3 9SX</p>
+                        <!-- <p class="comp-city">[Street Address]</p>
+                        <p class="comp-address">[City, ST ZIP]</p> -->
+                        <p class="comp-phone">Phone: 01473 598020</p>
+                    </div>
+                    <div class="bill-to-container">
+                        <h1 class="bill-to">Bill To</h1>
+                        <p class="bill-name">{{invoiceData.invoiceDetail.store.full_name | titlecase}}</p>
+                        <p class="bill-phone">{{invoiceData.invoiceDetail.store.poc_contact}}</p>
+                    </div>
+                </div>
+                <div class="col-md-5 col-12">
+                    <div class="invoice-heading">
+                        <h1>INVOICE</h1>
+                    </div>
+                    <div class="inv-date-container">
+                        <table class="inv-date-content">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50%;">INVOICE #</th>
+                                    <th style="width: 50%;">DATE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{padLeadingZeros(invoiceData.invoiceDetail.id, 6)}}</td>
+                                    <td>{{invoiceData.invoiceDetail.invoice_date | date:'longDate' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="cust-term-container">
+                        <table class="cust-term-content">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50%;">CUSTOMER ID</th>
+                                    <th style="width: 50%;">TERMS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{padLeadingZeros(invoiceData.invoiceDetail.user_id, 6)}}</td>
+                                    <td>{{invoiceData.invoiceDetail.invoice_status | titlecase }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-12 col-12">
+                    <div class="inv-data-container">
+                        <table class="inv-data-content">
+                            <thead style="margin: 10px 0 0 0 !important;">
+                                <tr>
+                                    <th class="inv-data-desc" style="padding: 0 15px;">ORDER DETAILS</th>
+                                    <th class="idc-qty" style="padding: 0 10px;">QTY</th>
+                                    <th class="idc-amount" style="padding: 0 10px;">AMOUNT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="idc-desc">
+                                        <h3><span class="order-no">Total Orders: </span> {{invoiceData.total_orders}}</h3>
+                                    </td>
+                                    <td class="idc-qty">{{invoiceData.order_detail.total_items}}</td>
+                                    <td class="idc-amount">{{invoiceData.order_detail.total_items_amount}}</td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr>
+                                    <td class="idc-thanks upper-line">Thank you for your business!</td>
+                                    <td class="sub-total upper-line">SUBTOTAL</td>
+                                    <td class="idc-total-amount upper-line">{{invoiceData.order_detail.total_items_amount}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="idc-thanks"></td>
+                                    <td class="sub-total">Discount</td>
+                                    <td class="idc-total-amount">- {{invoiceData.order_detail.discount}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="idc-thanks"></td>
+                                    <td class="sub-total">Delivery Charges</td>
+                                    <td class="idc-total-amount">{{invoiceData.order_detail.delivery_charges}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="idc-thanks"></td>
+                                    <td class="sub-total">TAX</td>
+                                    <td class="idc-total-amount">{{invoiceData.order_detail.total_tax}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="idc-thanks"></td>
+                                    <td class="g-sub-total">TOTAL</td>
+                                    <td class="g-idc-total-amount">{{cs.defaultCurrency}} {{invoiceData.order_detail.total_amount | number}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-12 col-12">
+                    <div class="invoice-footer-container">
+                        <p class="if-para">In case of any query, feel free to contact us on below details:</p>
+                        <p class="if-para1">Emial: support@sepod.com</p>
+                        <p class="if-para1">Phone: +14568900</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>
+<ng-container *ngIf="dataStatus == 'fetching'">
+    <div class="img-wrapper">
+        <img src="assets/images/rolling-main.svg" alt="">
+    </div>
+</ng-container>
+
+<ng-container *ngIf="invoiceObj == 0 && dataStatus == 'done'">
+    <div class="no-data">
+        <app-no-data-found></app-no-data-found>
+    </div>
+</ng-container>

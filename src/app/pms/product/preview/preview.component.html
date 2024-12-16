@@ -1,0 +1,83 @@
+<div class="modal-body pr-0">
+    <div class="print-preview-container">
+        <div class="print-preview-left">
+            <div class="personalize-mid-centent-container print-preview-center">
+                <div class="pmc-left content-left">
+                    <div class="pmc-labels">
+                        <div [class]="activeElevation === i? 'front': 'back'" *ngFor="let img of productImages; let i = index" (click)="changeElevation(i); selectImage(img)">{{img.elevation.title}}</div>
+                    </div>
+                    <div class="pmc-content" style="overflow: auto; top: 0;">
+                        <div class="pmc-img-wrapper">
+                            <img *ngIf="canvasData.loadingCanvas" style="position: absolute;z-index: 999;" src="assets/images/rolling-gray.svg">
+                            <!-- <img style="display: none;" class="productBgImage" #productBgImage [src]="productBgImageUrl" style=" width: 400px!important; height: auto; max-width: auto; max-height: 400px;"> -->
+                            <div class="pmc-img-wrapper-inner" #canvaswrapper2>
+                                <canvas id="main-canvas2"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="print-preview-right">
+            <!-- <div class="right-content">
+                <div class="ppr-text-content">
+                    <h1 class="text-heading">Add Text</h1>
+                    <div class="add-text">
+                        <p class="m-0">Personalisation:</p>
+                        <input type="text" maxlength="15" placeholder="Enter Text" (input)="getMaxChar($event)">
+                    </div>
+                    <p class="max-char m-0">Max Characters: 15</p>
+                </div>
+                <div class="ppr-image-content">
+                    <h1 class="image-heading">Add Image</h1>
+                    <div class="add-text">
+                        <p class="m-0">Personalisation:</p>
+                        <input type="file">
+                    </div>
+                </div>
+            </div> -->
+            <div class="right-content-artwork" *ngIf="fileTypes.png">
+                <div class="preview-container">
+                    <b>Artwork Preview of {{selectedNewImgTitle}}</b>
+                    <div class="preview-content-wrapper">
+                        <div class="preview-content">
+                            <div class="preview-image-wrap" (click)="preview='jpg'; download()" *ngIf="this.fileTypes.jpg">
+                                <img src="assets/img/jpg.png" alt="">
+                            </div>
+                            <!-- <label class="radio secondary">
+                                <input type="radio" name="format" checked="checked" [value]="preview" (click)="preview='jpg'">
+                                <span class="checkmark"></span>
+                            </label> -->
+                        </div>
+                        <div class="preview-content">
+                            <div class="preview-image-wrap" (click)="preview='png'; download()" *ngIf="this.fileTypes.png">
+                                <img src="assets/img/png.png" alt="">
+                            </div>
+                            <!-- <label class="radio secondary">
+                                <input type="radio" name="format" (click)="preview='png'">
+                                <span class="checkmark"></span>
+                            </label> -->
+                        </div>
+                        <div class="preview-content">
+                            <div class="preview-image-wrap" (click)="preview='pdf'; download()" *ngIf="this.fileTypes.pdf">
+                                <img src="assets/img/pdf.png" alt="">
+                            </div>
+                            <!-- <label class="radio secondary">
+                                <input type="radio" name="format" (click)="preview='pdf'">
+                                <span class="checkmark"></span>
+                            </label> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer print-test-modal-footer">
+    <button type="button" class="primary m-0" [ngClass]="loadArtwork?'in-progress':''" (click)="getElevation(this.selectedNewImg)">
+        <div class="loading-dots"><i class="fas fa-cogs"></i> Generate Artwork
+            <span></span><span></span><span></span>
+        </div>
+    </button>
+    <!-- <button type="button" class="primary m-0" (click)="getElevation(this.selectedNewImg)"><i class="fas fa-cogs"></i> Genearte Artwork</button> -->
+</div>

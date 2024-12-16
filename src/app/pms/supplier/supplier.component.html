@@ -1,0 +1,409 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Suppliers</h2>
+            </div>
+            <div class="col-md-3 d-flex justify-content-between">
+                <h6 class="col-md-4 pt-0 m-0 sort">Sort</h6>
+                <select class="col-md-8 m-0 pl-2 sort-select" (change)="doSort($event, 'asc')">
+                    <option value="">Select Sort</option>
+                    <option value="full_name">Full Name</option>
+                    <option value="is_company">Company</option>
+                    <option value="contact_1">Contact</option>
+                    <option value="email">Email</option>
+                    <option value="address">Address</option>
+                    <!-- <option value="status">Status</option> -->
+                </select>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="row no-gutters d-flex justify-content-between align-items-start">
+            <div class="search m-0 mb-2">
+                <div class="input-group">
+                    <div class="group">
+                        <div class="pre">
+                            <button class="secondary">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="post" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Supplier Here" />
+                        <div class="post">
+                            <button class="secondary">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)" class="m-0 mb-2 w-25">
+                <option value="" [disabled]="true">Select per page</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15" [selected]="true">15</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="75">75</option>
+                <option value="100">100</option>
+            </select>
+            <button class="m-0 mb-2 primary" *ngIf="api.checkPermission('add-tag')" (click)="openModal(addForm,-1 ,-1)">Add New Supplier</button>
+        </div>
+    </div>
+
+    <div class="col-md-12 mb-1 results-section">
+        <div class="table-responsive product-box">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Sr. # </th>
+                        <th>Full Name </th>
+                        <th>Contact </th>
+                        <th>Email </th>
+                        <th>Address </th>
+                        <th>Company </th>
+                        <!-- <th>Status </th> -->
+                        <th class="text-center" style="width: 300px;">Action</th>
+                    </tr>
+                </thead>
+
+                <ng-container *ngIf="dataList.length> 0">
+                    <tbody>
+                        <tr *ngFor="let d of dataList | filter:searchKeyword; let i= index">
+                            <td>{{ getSerialNumber(i) }} </td>
+                            <!-- <td>{{ d.id }} </td> -->
+                            <td>{{ d.full_name }}</td>
+                            <td>{{ d.contact_1 }}</td>
+                            <td>{{ d.email }}</td>
+                            <td>{{ d.address }}</td>
+                            <td *ngIf="d.is_company == true"> Company</td>
+                            <td *ngIf="d.is_company == false"> Individual</td>
+                            <!-- <td *ngIf="d.status == 'active'"><i class="fas fa-dot-circle"></i> {{ d.status | titlecase }}</td>
+                            <td *ngIf="d.status == 'inactive'"><i class="fas fa-dot-circle gray"></i> {{ d.status | titlecase }}</td> -->
+                            <td class="d-flex justify-content-center align-items-center">
+                                <div class="button-group">
+                                    <button class="post secondary sm" *ngIf="api.checkPermission('send-emial-to-supplier')" (click)="openMailModal(mailForm,i,d.id)">Send Email</button>
+                                    <label>
+                                        <div class="icon secondary post">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </div>
+                                        <input type="checkbox">
+                                        <div class="button-menu secondary align-right">
+                                            <ul>
+                                                <li class="primary sm" type="button" *ngIf="api.checkPermission('supplier-account-history')" [routerLink]="['/user/supplier-account-history']" [queryParams]="{ supplier_id: d.id }" routerLinkActive="router-link-active">Account History</li>
+                                                <li class="primary sm" type="button" *ngIf="api.checkPermission('supplier-product-list')" [routerLink]="['/user/supplier-products']" [queryParams]="{ supplier_id: d.id }" routerLinkActive="router-link-active">View Products</li>
+
+                                            </ul>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="ml-1" *ngIf="api.checkPermission('update-tag')">
+                                    <button type="button" class="secondary sm" (click)="openModal(addForm,i,d.id)">
+                                        <i class="fa fa-edit" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <div class="ml-1" *ngIf="api.checkPermission('delete-tag')">
+                                    <button type="button" class="danger sm" (click)="confirmingModal(designationConfirming, d.id,i)">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </ng-container>
+
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                </ng-container>
+
+                <tbody *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                    <tr>
+                        <td colspan="7">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-12 mb-1 footer-section">
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <ul class="pagination justify-content-left  m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul>
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<ng-template #addForm>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modalTitle}}</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="dataForm" #f="ngForm">
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">Full Name <span class="mendatory">*</span></label>
+                    <input formControlName="full_name" class="form-control mt-0" placeholder="Enter Full Name" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.full_name, f)" class="errors">
+                        <p *ngIf="g.full_name.errors.required">Full Name is required</p>
+                        <p *ngIf="g.full_name.errors.maxlength">Full Name should not exceed {{ g.full_name.errors.maxlength.requiredLength }} characters</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">Email <span class="mendatory">*</span></label>
+                    <input formControlName="email" class="form-control mt-0" placeholder="Enter Email" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.email, f)" class="errors">
+                        <p *ngIf="g.email.errors.required">Email is required</p>
+                        <p *ngIf="g.email.errors.email">Please enter valid email</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">Mobile <span class="mendatory">*</span></label>
+                    <input type="text" formControlName="contact_1" class="form-control mt-0" placeholder="Enter Mobile No." [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.contact_1, f)" class="errors">
+                        <p *ngIf="g.contact_1.errors.required">Mobile no. is required</p>
+                        <p *ngIf="g.contact_1.errors.maxlength">Mobile no. should not exceed {{ g.contact_1.errors.maxlength.requiredLength }} characters</p>
+                        <p *ngIf="g.contact_1.errors.pattern">Only Number</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">Landline <span class="mendatory">*</span></label>
+                    <input type="text" formControlName="contact_2" class="form-control mt-0" placeholder="Enter Landline  No." [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.contact_2, f)" class="errors">
+                        <p *ngIf="g.contact_2.errors.required">Landline no. is required</p>
+                        <p *ngIf="g.contact_2.errors.maxlength">Landline no. should not exceed {{ g.contact_2.errors.maxlength.requiredLength }} characters</p>
+                        <p *ngIf="g.contact_2.errors.pattern">Only Number</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">Address <span class="mendatory">*</span></label>
+                    <input formControlName="address" class="form-control mt-0" placeholder="Enter Address" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.address, f)" class="errors">
+                        <p *ngIf="g.address.errors.required">Address is required</p>
+                        <p *ngIf="g.address.errors.maxlength">Address should not exceed {{ g.address.errors.maxlength.requiredLength }} characters</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label>Is it Company?</label>
+                    <div class="personalize-wrapper">
+                        <label class="switch">
+                            <input type="checkbox" formControlName="is_company" [ngClass]="{'form-submitted': f.submitted}">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- <ng-container *ngIf="dataForm.value.is_company == true">
+                <form [formGroup]="dataFormPOC" #p="ngForm">
+                    <div class="row">
+                        <div class="col-md-12 mb-2 pt-3">
+                            <h4>Contact Person Detail:</h4>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="mb-0 mt-0">Full Name <span class="mendatory">*</span></label>
+                            <input formControlName="poc_full_name" class="form-control mt-0" placeholder="Enter Full Name" [ngClass]="{'form-submitted': p.submitted}">
+                            <div *ngIf="ui.checkErrors(gp.poc_full_name, p)" class="errors">
+                                <p *ngIf="gp.poc_full_name.errors.required">Full Name is required</p>
+                                <p *ngIf="gp.poc_full_name.errors.maxlength">Full Name should not exceed {{ gp.poc_full_name.errors.maxlength.requiredLength }} characters</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="mb-0 mt-0">Email <span class="mendatory">*</span></label>
+                            <input formControlName="poc_email" class="form-control mt-0" placeholder="Enter Email" [ngClass]="{'form-submitted': p.submitted}">
+                            <div *ngIf="ui.checkErrors(gp.poc_email, p)" class="errors">
+                                <p *ngIf="gp.poc_email.errors.required">Email is required</p>
+                                <p *ngIf="gp.poc_email.errors.email">Please enter valid email</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="mb-0 mt-0">Mobile <span class="mendatory">*</span></label>
+                            <input formControlName="poc_contact_1" class="form-control mt-0" placeholder="Enter Mobile No." [ngClass]="{'form-submitted': p.submitted}">
+                            <div *ngIf="ui.checkErrors(gp.poc_contact_1, p)" class="errors">
+                                <p *ngIf="gp.poc_contact_1.errors.required">Mobile no. is required</p>
+                                <p *ngIf="gp.poc_contact_1.errors.maxlength">Mobile no. should not exceed {{ gp.contact_1.errors.maxlength.requiredLength }} characters</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="mb-0 mt-0">Landline <span class="mendatory">*</span></label>
+                            <input formControlName="poc_contact_2" class="form-control mt-0" placeholder="Enter Landline  No." [ngClass]="{'form-submitted': p.submitted}">
+                            <div *ngIf="ui.checkErrors(gp.poc_contact_2, p)" class="errors">
+                                <p *ngIf="gp.poc_contact_2.errors.required">Landline no. is required</p>
+                                <p *ngIf="gp.poc_contact_2.errors.maxlength">Landline no. should not exceed {{ gp.contact_2.errors.maxlength.requiredLength }} characters</p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </ng-container>
+            <button type="submit" (click)="save(f, p)" class="primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Save
+                <span></span><span></span><span></span>
+            </button>
+            <button type="button" class="dark ml-1" (click)="cancelButton(f)">Cancel</button>
+            <div class="create-content">
+            </div> -->
+        </form>
+
+        <form [formGroup]="dataFormPOC" #p="ngForm" [ngClass]="dataForm.value.is_company == true? 'company-active': 'company-inactive'">
+            <div class="row">
+                <div class="col-md-12 mb-2 pt-3">
+                    <h4>Contact Person Detail:</h4>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">Full Name <span class="mendatory">*</span></label>
+                    <input formControlName="poc_full_name" class="form-control mt-0" placeholder="Enter Full Name" [ngClass]="{'form-submitted': p.submitted}">
+                    <div *ngIf="ui.checkErrors(gp.poc_full_name, p)" class="errors">
+                        <p *ngIf="gp.poc_full_name.errors.required">Full Name is required</p>
+                        <p *ngIf="gp.poc_full_name.errors.maxlength">Full Name should not exceed {{ gp.poc_full_name.errors.maxlength.requiredLength }} characters</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">Email <span class="mendatory">*</span></label>
+                    <input formControlName="poc_email" class="form-control mt-0" placeholder="Enter Email" [ngClass]="{'form-submitted': p.submitted}">
+                    <div *ngIf="ui.checkErrors(gp.poc_email, p)" class="errors">
+                        <p *ngIf="gp.poc_email.errors.required">Email is required</p>
+                        <p *ngIf="gp.poc_email.errors.email">Please enter valid email</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">Mobile <span class="mendatory">*</span></label>
+                    <input type="text" formControlName="poc_contact_1" class="form-control mt-0" placeholder="Enter Mobile No." [ngClass]="{'form-submitted': p.submitted}">
+                    <div *ngIf="ui.checkErrors(gp.poc_contact_1, p)" class="errors">
+                        <p *ngIf="gp.poc_contact_1.errors.required">Mobile no. is required</p>
+                        <p *ngIf="gp.poc_contact_1.errors.maxlength">Mobile no. should not exceed {{ gp.contact_1.errors.maxlength.requiredLength }} characters</p>
+                        <p *ngIf="gp.poc_contact_1.errors.pattern">Only Number</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">Landline <span class="mendatory">*</span></label>
+                    <input type="text" formControlName="poc_contact_2" class="form-control mt-0" placeholder="Enter Landline  No." [ngClass]="{'form-submitted': p.submitted}">
+                    <div *ngIf="ui.checkErrors(gp.poc_contact_2, p)" class="errors">
+                        <p *ngIf="gp.poc_contact_2.errors.required">Landline no. is required</p>
+                        <p *ngIf="gp.poc_contact_2.errors.maxlength">Landline no. should not exceed {{ gp.contact_2.errors.maxlength.requiredLength }} characters</p>
+                        <p *ngIf="gp.poc_contact_2.errors.pattern">Only Number</p>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <button type="button" (click)="save(f, p)" class="primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Save
+            <span></span><span></span><span></span>
+        </button>
+        <button type="button" class="dark ml-1" (click)="cancelButton(f, p)">Cancel</button>
+        <div class="create-content">
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #mailForm>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Send Mail to Supplier</h4>
+        <button type="button" class="close pull-right" (click)="cancelMailModal(f)">
+            <span><i class="fas fa-times"></i></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="mailerForm" (ngSubmit)="sendMail(f)" #f="ngForm">
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">CC Emails</label>
+                    <ng-select formControlName="cc" [ngClass]="{'form-submitted': f.submitted}" [items]="[]" [addTag]="true" [multiple]="true" [selectOnTab]="true" [isOpen]="false">></ng-select>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Subject <span class="mendatory">*</span></label>
+                    <input formControlName="subject" class="form-control mt-0" placeholder="Enter Email Subject" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(gm.subject, f)" class="errors">
+                        <p *ngIf="gm.subject.errors.required">Subject is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Message <span class="mendatory">*</span></label>
+                    <div>
+                        <quill-editor formControlName="message" [ngClass]="{'form-submitted': f.submitted}"></quill-editor>
+                    </div>
+                    <div *ngIf="ui.checkErrors(gm.message, f)" class="errors">
+                        <p *ngIf="gm.message.errors.required">Message is required</p>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Send Mail
+                <span></span><span></span><span></span>
+            </button>
+            <button type="button" class="dark ml-1" (click)="cancelMailModal(f)">Cancel</button>
+        </form>
+
+        <div class="create-content">
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #designationConfirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="delete()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">
+            <div class="loading-dots">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #changeStatusActive>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Are you sure that you want change the status to active?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="changeStatusAct()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">
+            <div class="loading-dots">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>
+<ng-template #changeStatusDeactive>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Are you sure that you want change the status to inactive?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="changeStatusInact()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">
+            <div class="loading-dots">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>

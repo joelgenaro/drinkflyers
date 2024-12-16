@@ -1,0 +1,99 @@
+<app-steps-template [step]="'store-detail'"></app-steps-template>
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1">
+        <div class="modal-body">
+            <form [formGroup]="formFG" (ngSubmit)="save(formFG)" #f="ngForm" *ngIf="employeeForm">
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label class="mb-0 mt-0">Full Name <span class="mendatory">*</span></label>
+                        <input formControlName="store_name" class="form-control mt-0" placeholder="Enter Full Name" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.store_name, f)" class="errors">
+                            <p *ngIf="g.store_name.errors.required">Full Name is required</p>
+                            <p *ngIf="g.store_name.errors.maxlength">Full Name should not exceed {{ g.store_name.errors.maxlength.requiredLength }} characters</p>
+                        </div>
+                    </div>
+                    <!--
+                    <div class="col-md-6 mb-2">
+                        <label class="mb-0 mt-0">POC Name <span class="mendatory">*</span></label>
+                        <input formControlName="poc_name" class="form-control mt-0" placeholder="Enter POC Name" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.poc_name, f)" class="errors">
+                            <p *ngIf="g.poc_name.errors.required">Email is required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="mb-0 mt-0">POC Contact <span class="mendatory">*</span></label>
+                        <input formControlName="poc_contact" type="number" min="0" class="form-control mt-0" placeholder="Enter POC Contact No." [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.poc_contact, f)" class="errors">
+                            <p *ngIf="g.poc_contact.errors.required">Mobile no. is required</p>
+                        </div>
+                    </div>
+                     -->
+                    <div class="col-md-6 mb-2">
+                        <label class="mb-0 mt-0">URL</label>
+                        <input formControlName="web" class="form-control mt-0" placeholder="Enter Web" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.web, f)" class="errors">
+                            <p *ngIf="g.web.errors.required">Web is required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="mb-0 mt-0">Connection Type<span class="mendatory">*</span></label>
+                        <select class="form-control mt-0" formControlName="builtin_technology" [ngClass]="{'form-submitted': f.submitted}">
+                            <option value=null>Select Connection Type</option>
+                            <option value='api'>RestFul API</option>
+                            <!-- <option value='shopify'>Shopify</option>
+                            <option value='amazon'>Amazon Store</option> -->
+                        </select>
+                        <div *ngIf="ui.checkErrors(g.builtin_technology, f)" class="errors">
+                            <p *ngIf="g.builtin_technology.errors.required">Connection Type is required</p>
+                        </div>
+                    </div>
+                    <!-- <div class="col-md-6 mb-2">
+                            <label class="mb-0 mt-0">Built-in Technology <span class="mendatory">*</span></label>
+                            <input formControlName="builtin_technology" class="form-control mt-0" placeholder="Enter Built-in Technology " [ngClass]="{'form-submitted': f.submitted}">
+                            <div *ngIf="ui.checkErrors(g.builtin_technology, f)" class="errors">
+                                <p *ngIf="g.builtin_technology.errors.required">Built-in Technology is required</p>
+                            </div>
+                        </div> -->
+
+                </div>
+                <div class="d-flex justify-content-end mb-4">
+                    <div class="button-group mr-2">
+                        <div class="icon primary pre">
+                            <i class="fa fa-angle-left"></i>
+                        </div>
+                        <button type="submit" class="primary" [routerLink]="['/user/sepod-stores/list']" routerLinkActive="router-link-active">Back</button>
+
+                    </div>
+                    <ng-container *ngIf="api.checkPermission('sepod-store-permissions')">
+                        <div class="button-group">
+                            <button type="submit" class="post primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Save & Next
+                                <span></span><span></span><span></span>
+                            </button>
+                            <div class="icon post primary">
+                                <i class="fa fa-angle-right"></i>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="!api.checkPermission('sepod-store-permissions')">
+                        <div class="button-group">
+                            <button type="submit" class="post primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Save
+                                <span></span><span></span><span></span>
+                            </button>
+                            <div class="icon post primary">
+                                <i class="fa fa-angle-right"></i>
+                            </div>
+                        </div>
+                    </ng-container>
+
+
+                </div>
+            </form>
+            <div class="details-container" *ngIf="!employeeForm">
+                <img src="assets/images/rolling-main.svg" style="width: 70px; margin-top: 5%;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- </div>
+</div> -->

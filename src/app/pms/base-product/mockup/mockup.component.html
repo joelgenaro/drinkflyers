@@ -1,0 +1,217 @@
+<div class="main">
+    <!-- <div class="product-info" *ngIf="fetchProduct === true">
+        <div><b>Name:</b> {{productDetail.name}}</div>
+        <div><b>Sku:</b> {{productDetail.sku}}</div>
+        <div><b>Category:</b> {{productDetail?.category.name}}</div>
+    </div> -->
+    <div class="header">
+        <h1>Print Areas</h1>
+        <div class="d-flex">
+            <!-- elevationOpenModal(elevation,-1) -->
+            <button *ngIf="this.ds.elevations.length>0" type="button" class="primary" (click)="printAreaModal(printArea, this.ds.mockupId,-1);">Add New Print Area</button>
+            <!-- <button type="button" class="ml-1 primary" *ngIf="api.checkPermission('add-account')" (click)="openModal(addForm, -1)">Add New Mockup</button> -->
+        </div>
+    </div>
+    <div class="mockups-table-wrapper">
+        <table class="mt-3">
+            <thead style="display: none;">
+                <tr>
+                    <th *ngFor="let h of this.ds.mockups; let in = index">
+                        <span>{{h.title}}</span>
+                        <span class="edit-icon" *ngIf="in > 0">
+                            <i (click)="openModal(addForm,in)" class="fas fa-pencil-alt"></i>
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody *ngIf="fetching === false">
+                <tr *ngFor="let el of this.ds.elevations; let inde=index">
+                    <td class="elevation-col">
+                        <div class="title">{{el.title}}</div>
+                        <div>
+                            <!-- <span class="edit-icon">
+                                <i (click)="elevationOpenModal(elevation, inde)" class="fas fa-pencil-alt"></i>
+                            </span> -->
+                        </div>
+                    </td>
+                    <ng-container *ngFor="let moc of this.ds.mockups|slice:0:1;let i= index;">
+                        <input type="file" style="display: none;" id="{{el.id + 'image'+i}}" (change)="onThumbnailChange($event)">
+                        <td>
+                            <div class="mockup-wrapper">
+                                <div class="image-wrapper">
+                                    <img style="height: auto; max-width: 100%; cursor: pointer;" (click)="browseThumbnail($event,moc.id,i,el.id)" [defaultImage]="spinnerSVG" [lazyLoad]="api.elevationImg(moc.id,el.id)" (error)=checkImg($event) id="{{el.id+ 'img-src'+ i}}">
+                                </div>
+                                <div>
+                                    <table class="table table-borderless" border="0" style="text-align: left;">
+                                        <tr class="print-areas">
+                                            <td align="left">Names</td>
+                                            <td>Print Size <small>(W x H)</small></td>
+                                            <td>Actions</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" (change)="saveElevationOnChange(el)" [(ngModel)]="el.title" [value]="el.title">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" (change)="saveElevationOnChange(el)" [(ngModel)]="el.p_width" [value]="el.p_width" style="width:60px;">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text"><small>x</small></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" (change)="saveElevationOnChange(el)" [(ngModel)]="el.p_height" [value]="el.p_height" style="width:60px;">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text"><small>mm</small></span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="actions">
+                                                    <i class="fas fa-trash mr-2" style="color: #888;" (click)="elevationDeleteModal(confirming, inde)"></i>
+                                                    <i class="fas fa-pencil-alt mr-2" style="color: #888;" (click)="printAreaModal(printArea,moc.id,el)"></i>
+                                                    <!-- elevationOpenModal(elevation, inde) -->
+                                                    <i class="fas fa-clone mr-2" style="color: #888;" (click)="duplicatePrintArea(moc.id,el.id)"></i>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+                </tr>
+            </tbody>
+            <tbody *ngIf="fetching === true">
+                <tr>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <img src="assets/images/rolling-main.svg" alt="">
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody *ngIf="elevationFetch == true && fetching===false" [appSkeletonTabelLoader]="loaderOptions"></tbody>
+            <tbody *ngIf="(this.ds.mockups.length == 0 && fetching === false) ||(this.ds.elevations.length == 0 && elevationFetch == false)">
+                <tr border="1">
+                    <td colspan="8" style="text-align: left; border: 1px solid #ccc;padding: 10px 10px 52px 10px !important;">
+                        <b>No Print Areas Found</b> <br>
+                        <button *ngIf="this.ds.mockups.length>0" type="button" class="primary mt-2" (click)="printAreaModal(printArea, this.ds.mockupId,-1);">Add New Print Area</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="fetching === false">
+            <div class="add-new" *ngIf="this.ds.elevations.length>0" (click)="printAreaModal(printArea, this.ds.mockupId,-1);">
+                <i class="fas fa-plus add-new-icon"></i> <span>Add New Print Area</span>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #addForm>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modalTitle}}</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="dataForm" (ngSubmit)="save(f)" #f="ngForm">
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">Title<span class="mendatory">*</span></label>
+                    <input formControlName="title" class="form-control mt-0" placeholder="Enter Title" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.title, f)" class="errors">
+                        <p *ngIf="g.title.errors.required"> Title is required</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <label>Set As Default<span class="mendatory">*</span></label>
+                    <div class="personalize-wrapper">
+                        <label class="switch">
+                            <input type="checkbox" formControlName="default" [ngClass]="{'form-submitted': f.submitted}">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Description</label>
+                    <textarea formControlName="description" rows="8" class="form-control mt-0" [ngClass]="{'form-submitted': f.submitted}"></textarea>
+                    <!-- <div *ngIf="ui.checkErrors(g.account_no, f)" class="errors">
+                        <p *ngIf="g.account_no.errors.required">Account No is required</p>
+                    </div> -->
+                </div>
+            </div>
+            <!-- <button type="submit" class="main-color sm mt-2 mb-2 ml-0" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Save
+                <span></span><span></span><span></span>
+            </button> -->
+            <button type="submit" class="primary" [ngClass]="loading?'in-progress':''">
+                <div class="loading-dots">Save
+                    <span></span><span></span><span></span>
+                </div>
+            </button>
+            <button type="button" class="dark ml-1" (click)="cancelButton(f)">Cancel</button>
+        </form>
+    </div>
+</ng-template>
+<ng-template #elevation>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{elevationTitle}}</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="elevationForm" (ngSubmit)="saveElevation(e)" #e="ngForm">
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Title<span class="mendatory">*</span></label>
+                    <input formControlName="title" class="form-control mt-0" placeholder="Enter Title" [ngClass]="{'form-submitted': e.submitted}">
+                    <div *ngIf="ui.checkErrors(m.title, e)" class="errors">
+                        <p *ngIf="m.title.errors.required"> Title is required</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">Print Width <small>(mm)</small><span class="mendatory">*</span></label>
+                    <input class="form-control mt-0" formControlName="p_width" placeholder="Width" [ngClass]="{'form-submitted': e.submitted}">
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">Print Height <small>(mm)</small><span class="mendatory">*</span></label>
+                    <input class="form-control mt-0" formControlName="p_height" placeholder="Width" [ngClass]="{'form-submitted': e.submitted}">
+                </div>
+                <!-- <div class="col-md-12 mb-2" style="display: none;">
+                    <label class="mb-0 mt-0">Description<span class="mendatory">*</span></label>
+                    <textarea formControlName="description" rows="8" class="form-control mt-0" [ngClass]="{'form-submitted': e.submitted}"></textarea>
+                </div> -->
+            </div>
+            <!-- <button type="submit" class="main-color sm mt-2 mb-2 ml-0" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Save
+                <span></span><span></span><span></span>
+            </button> -->
+            <button type="submit" class="primary" [ngClass]="loading?'in-progress':''">
+                <div class="loading-dots">Save
+                    <span></span><span></span><span></span>
+                </div>
+            </button>
+            <button type="button" class="dark ml-1" (click)="cancelElevation(e)">Cancel</button>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #confirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="elevationModal.hide()">No</button>
+        <button type="button" class="danger ml-1" [disabled]="loading">
+            <div class="loading-dots" (click)="delete()" [ngClass]="loading?'in-progress':''">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #printArea>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Select Print Areas</h4>
+        <button type="button" class="close" (click)="ds.pAModal.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <app-print-areas></app-print-areas>
+    </div>
+</ng-template>

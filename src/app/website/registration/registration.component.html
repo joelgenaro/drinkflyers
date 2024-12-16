@@ -1,0 +1,73 @@
+<section>
+    <div class="logo-container">
+        <a [routerLink]="[ '/' ]">
+            <img class="logo-image" src="assets/images/logos/star-edition-logo.svg">
+        </a>
+    </div>
+    <div class="registration-container" *ngIf="!registrationSuccess">
+        <div class="modal-header">
+            <h4 class="modal-title">Signup</h4>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="registrationForm" (ngSubmit)="registration(registrationForm, f)" #f="ngForm">
+                <div class="row m-1">
+                    <div class="col-md-12 mb-3">
+                        <label class="mb-0">First Name <span class="mendatory">*</span></label>
+                        <input type="text" formControlName="first_name" class="form-control mt-0" placeholder="Enter First Name" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.first_name, f)" class="errors">
+                            <p *ngIf="g.first_name.errors.required">First Name is required</p>
+                            <p *ngIf="g.first_name.errors.maxlength">First Name should not exceed {{ g.first_name.errors.maxlength.requiredLength }} characters</p>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="mb-0">Last Name <span class="mendatory">*</span></label>
+                        <input type="text" formControlName="last_name" class="form-control mt-0" placeholder="Enter Last Name" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.last_name, f)" class="errors">
+                            <p *ngIf="g.last_name.errors.required">Last Name is required</p>
+                            <p *ngIf="g.last_name.errors.maxlength">Last Name should not exceed {{ g.last_name.errors.maxlength.requiredLength }} characters</p>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="mb-0">Email <span class="mendatory">*</span></label>
+                        <input type="email" formControlName="email" class="form-control mt-0" placeholder="Enter Email" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.email, f)" class="errors">
+                            <p *ngIf="g.email.errors.required">Email is required</p>
+                            <p *ngIf="g.email.errors.email">Please enter valid email</p>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="mb-0">Password <span class="mendatory">*</span></label>
+                        <input type="password" formControlName="password" class="form-control mt-0" placeholder="Enter Password" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.password, f)" class="errors">
+                            <p *ngIf="g.password.errors.required">Password is required</p>
+                            <p *ngIf="g.password.errors.maxlength">Password should not exceed {{ g.password.errors.maxlength.requiredLength }} characters</p>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="mb-0">Confirmation Password <span class="mendatory">*</span></label>
+                        <input type="password" formControlName="password_confirmation" class="form-control mt-0" placeholder="Enter Confirmation Password" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.password_confirmation, f)" class="errors">
+                            <p *ngIf="g.password_confirmation.errors.required">Confirmation Password is required</p>
+                            <p *ngIf="g.password_confirmation.errors.maxlength">Confirmation Password should not exceed {{ g.password_confirmation.errors.maxlength.requiredLength }} characters</p>
+                        </div>
+                    </div>
+                    <div class="col-md-12 have-account">Already have account? <span (click)="connectToChannel()">SignIn Here</span></div>
+                </div>
+                <div class="row">
+                    <div class="bottom-btn col-md-12 d-flex justify-content-center">
+                        <button type="submit" class="main-color" [disabled]="registrationFormLoading" [ngClass]="registrationFormLoading?'in-progress':''">Signup
+                            <span></span><span></span><span></span>
+                        </button>
+                        <!-- <button type="button" class="black mt-2 mb-2 ml-0 mr-5" style="background-color: #555;" [routerLink]="[ '/']">Cancel</button> -->
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="success-container" *ngIf="registrationSuccess">
+        <h3>Success!!</h3>
+        <p>Your application has been submitted successfully.</p>
+        <p>We have sent you a verification email. Please check your inbox & verify your email to login into the system</p>
+    </div>
+</section>

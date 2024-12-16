@@ -1,0 +1,63 @@
+:host {
+    width: 100%;
+    --bar-color: #efefef;
+    --selected-bar-color: rgb(250, 122, 122);
+    --dots-color: #dc3545;
+    --initial-min: 30px;
+    --initial-max: 70px;
+}
+
+.range-slider-container {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    text-align: center;
+    background-color: transparent;
+}
+
+.range-slider-container .bar,
+.range-slider-container .selected-bar {
+    height: 6px;
+    border-radius: 3px;
+    position: absolute;
+    left: 0px;
+    top: 18px;
+}
+
+.range-slider-container .bar {
+    width: 100%;
+    background-color: var(--bar-color);
+    z-index: 1;
+}
+.range-slider-container .selected-bar {
+    width: 0%;
+    background-color: var(--selected-bar-color);
+    z-index: 2;
+}
+
+.range-slider-container .slider {
+    display: block;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--dots-color);
+    position: absolute;
+    top: 10px;
+    z-index: 3;
+}
+
+.range-slider-container .slider p {
+    font-weight: bold;
+    display: inline-block;
+    position: absolute;
+    transform: translate(-50%, -20px)
+}
+
+.range-slider-container .slider.s1 {
+    left: var(--initial-min);
+}
+
+.range-slider-container .slider.s2 {
+    left: var(--initial-max);
+}

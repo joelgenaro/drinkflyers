@@ -1,0 +1,181 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Supplier Account History</h2>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 d-flex justify-content-between">
+                        <h6 class="col-md-4 pt-0 m-0 sort">Sort</h6>
+                        <select class="col-md-8 m-0 pl-2 sort-select" (change)="doSort($event, 'asc')">
+                            <option value="">Select Sort</option>
+                            <option value="trans_date">Date</option>
+                            <option value="po_no">PO No</option>
+                            <option value="amount">Amount</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 d-flex">
+                        <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)" class="m-0 mb-2">
+                            <option value="" [disabled]="true">Select per page</option>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15" [selected]="true">15</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="75">75</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="m-0 mb-2 w-25">
+                <div class="input-group">
+                    <div class="group">
+                        <div class="pre">
+                            <button class="primary">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <input type="search" placeholder="Select Date Here" bsDaterangepicker [(ngModel)]="bsRangeValue" (ngModelChange)="rangeDate()" [bsConfig]="{ rangeInputFormat : 'DD-MM-YYYY', dateInputFormat: 'DD-MM-YYYY', adaptivePosition: true }">
+                    </div>
+                </div>
+            </div>
+            <div class="m-0 mb-2 w-25 text-right">
+                <button class="m-0 mb-2 secondary" (click)="exportCsv()" *ngIf="api.checkPermission('export-supplier-wallet-history')">
+                    Export to CSV
+                </button>
+                <button class="secondary ml-2" (click)="exportPdf()" *ngIf="api.checkPermission('export-supplier-wallet-pdf')">
+                    Export to PDF
+                </button>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-12 mb-1 results-section">
+        <div class="col-md-12 mb-1 p-0">
+            <div class="product-wrapper">
+                <div class="innerBox">
+                    <div class="product-box">
+                        <!-- <div class="product-box" *ngFor="let s of supplierDataList"> -->
+                        <div class="product-upper-content">
+                            <div class="product-info">
+                                <div class="items">
+                                    <label>Supplier Name </label>
+                                    <p>{{ supplierDataList.full_name }}</p>
+                                </div>
+                                <div class="items">
+                                    <label>E-mail </label>
+                                    <p>{{ supplierDataList.email }}</p>
+                                </div>
+                                <div class="items">
+                                    <label>Contact No. </label>
+                                    <p>{{ supplierDataList.contact_1 }}</p>
+                                </div>
+                                <div class="items">
+                                    <label>Address </label>
+                                    <p>{{ supplierDataList.address }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive product-box">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Sr. # </th>
+                        <th>Date </th>
+                        <th>PO No </th>
+                        <th style="width: 100px;">Dr </th>
+                        <th style="width: 100px;">Cr </th>
+                        <th class="text-center">Action </th>
+                    </tr>
+                </thead>
+
+                <ng-container *ngIf="dataList.length> 0">
+                    <tbody>
+                        <tr *ngFor="let d of dataList | filter:searchKeyword; let i= index">
+                            <td>{{ getSerialNumber(i) }} </td>
+                            <!-- <td>{{ d.id }} </td> -->
+                            <td>{{ d.trans_date | date:'dd-MM-yyyy' }}</td>
+                            <td>{{ d.po_no}}</td>
+                            <td>
+                                <ng-container *ngIf="d.amount < 0">{{convertValue(d.amount)}}</ng-container>
+                                <!-- <ng-container *ngIf="d.amount > 0">--</ng-container> -->
+                            </td>
+                            <td>
+                                <ng-container *ngIf="d.amount > 0">{{convertValue(d.amount)}}</ng-container>
+                                <!-- <ng-container *ngIf="d.amount < 0">--</ng-container> -->
+                            </td>
+                            <td class="d-flex justify-content-center align-items-center" *ngIf="api.checkPermission('')">
+                                <button class="primary sm" (click)=downloadProveFiles(d.id)>Download Proof Document</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </ng-container>
+
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                </ng-container>
+
+                <tbody *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                    <tr>
+                        <td colspan="6">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-12 footer-section">
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul>
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>

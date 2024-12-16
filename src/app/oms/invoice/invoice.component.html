@@ -1,0 +1,464 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-2 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Invoices</h2>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 d-flex justify-content-between">
+                        <h6 class="col-md-4 pt-0 m-0 sort">Sort</h6>
+                        <select class="col-md-8 m-0 pl-2 sort-select" (change)="doSort($event, 'asc')">
+                            <option value="">Select Sort</option>
+                            <option value="total_amount">Total Amount</option>
+                            <option value="invoice_date">Invoice Date</option>
+                            <option value="invoice_status">Invoice Status</option>
+                            <!-- <option value="paid">Paid</option>
+                            <option value="outstanding">Outstanding</option> -->
+                        </select>
+                    </div>
+                    <div class="col-md-6 d-flex">
+                        <select class="col-md-12 m-0 pl-2 sort-select" [(ngModel)]="filters.perPage" (change)="selectPerPage($event)">
+                            <option value="" [disabled]="true">Select per page</option>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15" [selected]="true">15</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="75">75</option>
+                            <option value="100">100</option>
+                        </select>
+                        <!-- <select class="col-md-12 m-0 pl-2 sort-select" (change)="doSort($event, 'asc')">
+                    <option value="">Select Sort</option>
+                    <option value="total_amount">Total Amount</option>
+                    <option value="invoice_date">Invoice Date</option>
+                    <option value="invoice_status">Invoice Status</option>
+                    <option value="paid">Paid</option>
+                    <option value="outstanding">Outstanding</option>
+                </select> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="row  d-flex justify-content-between align-items-center">
+            <div class="col-md-3 col-12">
+                <div class="input-group m-0">
+                    <div class="group">
+                        <div class="pre">
+                            <button class="primary">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <input type="search" placeholder="Select Date Here" bsDaterangepicker [(ngModel)]="bsRangeValue" (ngModelChange)="rangeDate()" [bsConfig]="{ rangeInputFormat : 'DD-MM-YYYY', dateInputFormat: 'DD-MM-YYYY', adaptivePosition: true }">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-12">
+                <select class="sort-select" (change)="doClientSort($event, 'asc')" [(ngModel)]="clientId">
+                    <option value=null>All Client</option>
+                    <option *ngFor="let client of clientList" value="{{client.id}}">{{client.user.first_name}} {{client.user.last_name}}</option>
+                </select>
+            </div>
+            <div class="col-md-3 col-12 ">
+                <select class="sort-select" (change)="doStoreSort($event, 'asc')">
+                    <option value=null>All Store</option>
+                    <option *ngFor="let store of storeList" value="{{store.id}}">{{store.store_name}}</option>
+                </select>
+            </div>
+            <div class="col-md-3 col-12">
+                <select class="sort-select" (change)="doStatusSort($event, 'asc')">
+                    <option value=null>Select Invoice Status</option>
+                    <option value="outstanding">Outstanding</option>
+                    <option value="paid">Paid</option>
+                </select>
+            </div>
+            <!-- <button type="button" class="m-0 mb-2 primary" *ngIf="api.checkPermission('add-unit')" (click)="openModal(addForm, -1)">Add New Unit</button> -->
+        </div>
+    </div>
+    <div class="col-md-12 mt-2 mb-1 pt-1 results-section">
+        <div class="table-responsive product-box">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Sr. # </th>
+                        <th>User Detail</th>
+                        <th>Store Detail</th>
+                        <th>Invoice Date </th>
+                        <th>Total Amount </th>
+                        <th>Invoice Status </th>
+                        <th>Action</th>
+                        <!-- <th class="text-center" style="width: 485px;">Action</th> -->
+                    </tr>
+                </thead>
+
+                <ng-container *ngIf="dataList.length> 0">
+                    <tbody>
+                        <tr *ngFor="let d of dataList | filter:searchKeyword; let i= index">
+                            <td>{{ getSerialNumber(i) }} </td>
+                            <td>{{ d.user.first_name }} {{ d.user.last_name }}, {{d.user.email}} </td>
+                            <td>{{ d.store.full_name }}, {{d.store.poc_contact}} </td>
+                            <td>{{ d.invoice_date | date:'dd-MM-yyyy' }}</td>
+                            <td>{{cs.defaultCurrency}} {{ d?.total_amount | number }}</td>
+                            <td *ngIf="d.invoice_status == 'paid'"><i class="fas fa-dot-circle green"></i> {{ d.invoice_status | titlecase }}</td>
+                            <td *ngIf="d.invoice_status == 'outstanding'"><i class="fas fa-dot-circle"></i> {{ d.invoice_status | titlecase }}</td>
+                            <!-- <td class="d-flex justify-content-center align-items-center" *ngIf="api.checkPermissions(['update-unit','delete-unit'])"> -->
+
+                            <td class="d-flex justify-content-start align-items-center">
+                                <div class="button-group">
+                                    <button class="post secondary sm" *ngIf="api.checkPermission('view-invoice')" (click)="openViewModal(viewModalTemplete,d.id,i)" (click)="invoiceItem(d.id)">View</button>
+                                    <label>
+                                        <div class="icon secondary post">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </div>
+                                        <input type="checkbox">
+                                        <div class="button-menu secondary align-right">
+                                            <ul>
+                                                <li class="primary sm" type="button" *ngIf="api.checkPermission('view-invoice')" [routerLink]="[ '/user/invoice-preview' ]" [queryParams]="{id: d.id}" routerLinkActive="router-link-active">Invoice</li>
+                                                <li class="primary sm" type="button" *ngIf="api.checkPermission('detail-invoice')" [routerLink]="[ '/user/invoice-detail' ]" [queryParams]="{id: d.id}" routerLinkActive="router-link-active">Invoice Detail</li>
+                                                <li class="primary sm" type="button" *ngIf="api.checkPermission('download-invoice-pdf')" (click)="downloadInvoice(d.id)">Download PDF</li>
+                                                <ng-container *ngIf="api.checkPermission('invoice-mark-as-paid')">
+                                                    <li class="primary sm" type="button" *ngIf="d.invoice_status == 'outstanding'" (click)="markAsPaidModal(markAsPaidTemplete,d.id,i)">
+                                                        Mark as Paid
+                                                    </li>
+                                                </ng-container>
+                                                <ng-container *ngIf="api.checkPermission('invoice-reminder-email')">
+                                                    <li class="primary sm" type="button" *ngIf="d.invoice_status == 'outstanding'" (click)="sendReminderEmailModal(reminderEmailTemplete, d.user.email, d.id)">
+                                                        Send Reminder Email
+                                                    </li>
+                                                </ng-container>
+                                            </ul>
+                                        </div>
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </ng-container>
+
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                </ng-container>
+
+                <tbody *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                    <tr>
+                        <td colspan="7">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-12 footer-section">
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul>
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<ng-template #viewModalTemplete>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Invoice</h4>
+        <button type="button" class="close pull-right" (click)="modalRef.hide()">
+            <span><i class="fas fa-times"></i></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <ng-container *ngIf="invoiceObj > 0">
+            <div class="row no-gutters justify-content-center main-row">
+                <div class="col-md-12 product-box">
+                    <div class="row no-gutters justify-content-between">
+                        <div class="col-md-4 col-12">
+                            <div class="company-container">
+                                <img src="assets/images/logos/star-edition-logo.svg" class="logo-image">
+                                <p class="comp-city">Stanley House Masterlord Village, West Rd, Ipswich IP3 9SX</p>
+                                <p class="comp-phone">Phone: 01473 598020</p>
+                            </div>
+                            <div class="bill-to-container">
+                                <h1 class="bill-to">Bill To</h1>
+                                <p class="bill-name">{{invoiceData.invoiceDetail.store.full_name | titlecase}}</p>
+                                <p class="bill-phone">{{invoiceData.invoiceDetail.store.poc_contact}}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-5 col-12">
+                            <div class="invoice-heading">
+                                <h1>INVOICE</h1>
+                            </div>
+                            <div class="inv-date-container">
+                                <table class="inv-date-content">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50%;">INVOICE #</th>
+                                            <th style="width: 50%;">DATE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{{padLeadingZeros(invoiceData.invoiceDetail.id, 6)}}</td>
+                                            <td>{{invoiceData.invoiceDetail.invoice_date | date:'longDate' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="cust-term-container">
+                                <table class="cust-term-content">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50%;">CUSTOMER ID</th>
+                                            <th style="width: 50%;">TERMS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{{padLeadingZeros(invoiceData.invoiceDetail.user_id, 6)}}</td>
+                                            <td>{{invoiceData.invoiceDetail.invoice_status | titlecase }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-12">
+                            <div class="inv-data-container">
+                                <table class="inv-data-content">
+                                    <thead style="margin: 10px 0 0 0 !important;">
+                                        <tr>
+                                            <th class="inv-data-desc" style="padding: 0 15px;">ORDER DETAILS</th>
+                                            <th class="idc-qty" style="padding: 0 10px;">QTY</th>
+                                            <th class="idc-amount" style="padding: 0 10px;">AMOUNT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="idc-desc">
+                                                <h3><span class="order-no">Total Orders: </span> {{invoiceData.total_orders}}</h3>
+                                            </td>
+                                            <td class="idc-qty">{{invoiceData.order_detail.total_items}}</td>
+                                            <td class="idc-amount">{{invoiceData.order_detail.total_items_amount}}</td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody>
+                                        <tr>
+                                            <td class="idc-thanks upper-line">Thank you for your business!</td>
+                                            <td class="sub-total upper-line">SUBTOTAL</td>
+                                            <td class="idc-total-amount upper-line">{{invoiceData.order_detail.total_items_amount}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="idc-thanks"></td>
+                                            <td class="sub-total">Discount</td>
+                                            <td class="idc-total-amount">- {{invoiceData.order_detail.discount}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="idc-thanks"></td>
+                                            <td class="sub-total">Delivery Charges</td>
+                                            <td class="idc-total-amount">{{invoiceData.order_detail.delivery_charges}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="idc-thanks"></td>
+                                            <td class="sub-total">TAX</td>
+                                            <td class="idc-total-amount">{{invoiceData.order_detail.total_tax}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="idc-thanks"></td>
+                                            <td class="g-sub-total">TOTAL</td>
+                                            <td class="g-idc-total-amount">{{cs.defaultCurrency}} {{ invoiceData.order_detail.total_amount | number }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-12">
+                            <div class="invoice-footer-container">
+                                <p class="if-para">In case of any query, feel free to contact us on below details:</p>
+                                <p class="if-para1">Emial: support@sepod.com</p>
+                                <p class="if-para1">Phone: +14568900</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="dataStatusInvoice == 'fetching'">
+            <div class="img-wrapper">
+                <img src="assets/images/rolling-main.svg" alt="">
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="invoiceObj == 0 && dataStatusInvoice == 'done'">
+            <div class="no-data">
+                <app-no-data-found></app-no-data-found>
+            </div>
+        </ng-container>
+    </div>
+</ng-template>
+
+<ng-template #reminderEmailTemplete>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Send Reminder Email</h4>
+        <button type="button" class="close pull-right" (click)="modalRef.hide()">
+            <span><i class="fas fa-times"></i></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="reminderEmailForm" (ngSubmit)="sendReminderEmail(d)" #d="ngForm">
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">CC Email</label>
+                    <input type="email" formControlName="cc_email" class="form-control" [ngClass]="{'form-submitted': d.submitted}">
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Note <span class="mendatory">*</span></label>
+                    <div>
+                        <quill-editor formControlName="note" [ngClass]="{'form-submitted': d.submitted}"></quill-editor>
+                    </div>
+                    <div *ngIf="ui.checkErrors(e.note, d)" class="errors">
+                        <p *ngIf="e.note.errors.required">Note is required</p>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Send Mail
+                <span></span><span></span><span></span>
+            </button>
+            <button type="button" class="dark ml-1" (click)="closeModal(d)">Cancel</button>
+        </form>
+
+        <div class="create-content">
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #markAsPaidTemplete>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modalTitle}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="dataForm" (ngSubmit)="markAsPaid(f)" #f="ngForm">
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Deposit Date <span class="mendatory">*</span></label>
+                    <input class="form-control mt-0" type="text" formControlName="pay_date" bsDatepicker [bsConfig]="{dateInputFormat: 'MMMM Do YYYY', adaptivePosition: true }" placeholder="Deposit Pay Date" [ngClass]="{ 'form-submitted': f.submitted }" />
+                    <div *ngIf="ui.checkErrors(g.pay_date, f)" class="errors">
+                        <p *ngIf="g.pay_date.errors.required">Deposit date is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Account <span class="mendatory">*</span></label>
+                    <select class="form-control mt-0" formControlName="account_id" [ngClass]="{ 'form-submitted': f.submitted }">
+                        <option value=null>Select Account</option>
+                        <option *ngFor="let account of accountList" value="{{account.id}}">{{account.account_title}}</option>
+                    </select>
+                    <div *ngIf="ui.checkErrors(g.account_id, f)" class="errors">
+                        <p *ngIf="g.account_id.errors.required">Account is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Description <span class="mendatory">*</span></label>
+                    <textarea formControlName="pay_description" cols="20" rows="5" class="form-control mt-0" placeholder="Enter Description" [ngClass]="{'form-submitted': f.submitted}"></textarea>
+                    <div *ngIf="ui.checkErrors(g.pay_description, f)" class="errors">
+                        <p *ngIf="g.pay_description.errors.required">description is required</p>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="primary" [ngClass]="loginLoading?'in-progress':''">
+                <div class="loading-dots">Save
+                    <span></span><span></span><span></span>
+                </div>
+            </button>
+            <button type="button" class="dark ml-1" (click)="modalRef.hide()">Cancel</button>
+        </form>
+        <div class="row">
+            <div class="col-md-12 mb-2 mt-2">
+                <label class="mb-0 mt-0">Upload Proof Documents</label>
+                <input class="d-none" type="file" #f (change)="onFileChange($event)" id="csv-file">
+                <div class="input-group m-0">
+                    <div class="group">
+                        <input style="width: 270px;" type="text" class="post" placeholder="Upload Proof Document" [(ngModel)]="filename" readonly />
+                        <div class="ml-1">
+                            <button class="secondary" type="button" (click)="browseFile($event)">Browse File</button>
+                        </div>
+                        <div class="ml-4">
+                            <button class="primary" type="button" (click)="uploadProofDoc()">Upload</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 mb-2 mt-2">
+                <ng-container *ngIf="documentsList.length == 0">
+                    <h5>No Documents Found</h5>
+                </ng-container>
+                <div *ngIf="documentsList.length > 0">
+                    <h4 class="doc-heading mb-2">Proof Documents</h4>
+                    <!-- <table class="w-100">
+                        <tr class="mb-1" *ngFor="let doc of documentsList" style="border: 1px solid black;">
+                            <td class="w-80" style="border-right: 1px solid black;">{{doc.file_name}}</td>
+                            <td class="d-flex justify-content-center align-items-center w-20">
+                                <div class="ml-1" (click)="downloadProofDoc(doc.id, doc.file_name)">
+                                    <button type="button" class="sm secondary"><i class="fa fa-download"></i></button>
+                                </div>
+                                <div class="ml-1" (click)="deleteProofDoc(doc.id)">
+                                    <button type="button" class="sm danger"><i class="fa fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </table> -->
+                    <div class="row mb-2 ml-2 mr-2 border-style" *ngFor="let doc of documentsList">
+                        <div class="col-md-8 d-flex line">
+                            <p class="pt-2 mb-0 pb-2">{{doc.file_name}}</p>
+                        </div>
+                        <div class="col-md-4 d-flex justify-content-center align-items-center">
+                            <div class="ml-1" (click)="downloadProofDoc(doc.id, doc.file_name)">
+                                <button type="button" class="sm secondary"><i class="fa fa-download"></i></button>
+                            </div>
+                            <div class="ml-1" (click)="deleteProofDoc(doc.id)">
+                                <button type="button" class="sm danger"><i class="fa fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</ng-template>

@@ -1,0 +1,228 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Currencies</h2>
+            </div>
+            <div class="col-md-3 d-flex justify-content-between">
+                <h6 class="col-md-4 pt-0 m-0 sort">Sort</h6>
+                <select class="col-md-8 m-0 pl-2 sort-select" (change)="doSort($event, 'asc')">
+                    <option value="">Select Sort</option>
+                    <option value="name">Name</option>
+                    <option value="short_name">Short Name</option>
+                    <option value="status">Status</option>
+                </select>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="row no-gutters d-flex justify-content-between align-items-start">
+            <div class="search m-0 mb-2">
+                <div class="input-group">
+                    <div class="group">
+                        <div class="pre">
+                            <button class="secondary">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="post" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Currency Here" />
+                        <div class="post">
+                            <button class="secondary">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)" class="m-0 mb-2 w-25">
+                <option value="" [disabled]="true">Select per page</option>
+                <option value="2">2</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15" [selected]="true">15</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="75">75</option>
+                <option value="100">100</option>
+            </select>
+            <button type="button" class="m-0 mb-2 primary" *ngIf="api.checkPermission('add-currency')" (click)="openModal(addForm, -1)">Add New Currency</button>
+        </div>
+    </div>
+
+    <div class="col-md-12 mb-1 results-section">
+        <div class="table-responsive product-box">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Sr. # </th>
+                        <th>Name </th>
+                        <th>Short Name </th>
+                        <th>Symbol</th>
+                        <th>Status </th>
+                        <th class="text-center" style="width: 200px;">Action</th>
+                    </tr>
+                </thead>
+
+                <ng-container *ngIf="dataList.length> 0">
+                    <tbody>
+                        <tr *ngFor="let d of dataList | filter:searchKeyword; let i= index">
+                            <td>{{ getSerialNumber(i) }} </td>
+                            <!-- <td>{{ d.id }} </td> -->
+                            <td>{{ d.name }}</td>
+                            <td>{{ d.short_name }}</td>
+                            <td>{{ d.symbol }}</td>
+                            <td *ngIf="d.status == 'active'"><i class="fas fa-dot-circle"></i> {{ d.status | titlecase }}</td>
+                            <td *ngIf="d.status == 'inactive'"><i class="fas fa-dot-circle gray"></i> {{ d.status | titlecase }}</td>
+                            <td class="d-flex justify-content-center align-items-center">
+                                <div *ngIf="api.checkPermissions(['activate-currency', 'deactivate-currency'])">
+                                    <button *ngIf="d.status == 'inactive'" type="button" class="sm success" (click)="statusConfirmingModal(changeStatusActive,d.id,i,'active')" style="width: 110px;">Activate</button>
+                                    <button *ngIf="d.status == 'active'" type="button" class="sm danger" (click)="statusConfirmingModal(changeStatusDeactive,d.id,i,'inactive')" style="width: 110px;">Deactivate</button>
+                                </div>
+                                <button class="ml-1 secondary sm" type="button" *ngIf="api.checkPermission('update-currency')" (click)="openModal(addForm,i)">
+                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                </button>
+                                <button class="ml-1 danger sm" type="button" *ngIf="api.checkPermission('delete-currency')" (click)="confirmingModal(designationConfirming, d.id,i)">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </ng-container>
+
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                </ng-container>
+
+                <tbody *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                    <tr>
+                        <td colspan="6">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-12 mb-1 footer-section">
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <ul class="pagination justify-content-left  m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul>
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<ng-template #addForm>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modalTitle}}</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="dataForm" (ngSubmit)="save(f)" #f="ngForm">
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Name <span class="mendatory">*</span></label>
+                    <input formControlName="name" class="form-control mt-0" placeholder="Enter Name" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.name, f)" class="errors">
+                        <p *ngIf="g.name.errors.required">Name is required</p>
+                        <p *ngIf="g.name.errors.maxlength">Name should not exceed {{ g.name.errors.maxlength.requiredLength }} characters</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Short Name <span class="mendatory">*</span></label>
+                    <input formControlName="short_name" class="form-control mt-0" placeholder="Enter Short Name" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.short_name, f)" class="errors">
+                        <p *ngIf="g.short_name.errors.required">Short Name is required</p>
+                        <p *ngIf="g.short_name.errors.maxlength">Short Name should not exceed {{ g.short_name.errors.maxlength.requiredLength }} characters</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Symbol <span class="mendatory">*</span></label>
+                    <input formControlName="symbol" class="form-control mt-0" placeholder="Enter Symbol" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.symbol, f)" class="errors">
+                        <p *ngIf="g.symbol.errors.required">Symbol is required</p>
+                        <p *ngIf="g.symbol.errors.maxlength">Symbol should not exceed {{ g.symbol.errors.maxlength.requiredLength }} characters</p>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Save
+                <span></span><span></span><span></span>
+            </button>
+            <button type="button" class="dark ml-1" (click)="cancelButton(f)">Cancel</button>
+            <div class="create-content">
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #designationConfirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="delete()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">
+            <div class="loading-dots">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #changeStatusActive>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Are you sure that you want change the status to active?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="changeStatusAct()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">
+            <div class="loading-dots">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>
+<ng-template #changeStatusDeactive>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Are you sure that you want change the status to inactive?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="changeStatusInact()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">
+            <div class="loading-dots">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>

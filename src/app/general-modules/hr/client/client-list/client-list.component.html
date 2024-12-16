@@ -1,0 +1,216 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Clients</h2>
+            </div>
+            <div class="col-md-3 d-flex justify-content-between">
+                <h6 class="col-md-4 pt-0 m-0 sort">Sort</h6>
+                <select class="col-md-8 m-0 pl-2 sort-select" (change)="doSort($event, 'asc')">
+                    <option value="">Select Sort</option>
+                    <option value="contact_1">Mobile</option>
+                </select>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="search m-0 mb-2">
+                <div class="input-group">
+                    <div class="group">
+                        <div class="pre">
+                            <button class="secondary">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="post" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Clients">
+                        <div class="post">
+                            <button class="secondary">Search</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)" class="m-0 mb-2 w-25">
+                <option value="" [disabled]="true">Select per page</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15" [selected]="true">15</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="75">75</option>
+                <option value="100">100</option>
+            </select>
+            <button type="button" class="m-0 mb-2 primary" *ngIf="api.checkPermission('add-client')" [routerLink]="['/user/client/personal-info']" routerLinkActive="router-link-active">Add Client</button>
+        </div>
+    </div>
+    <div class="col-md-12 mb-1 results-section">
+        <div class="table-responsive product-box">
+            <table class="table table-striped w-100">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">Sr. # </th>
+                        <th style="width: 200px">Name </th>
+                        <th>Email </th>
+                        <th>Mobile </th>
+                        <th class="text-center" style="width: 355px;" *ngIf="api.checkPermissions(['update-client','delete-client'])">Actions</th>
+                    </tr>
+                </thead>
+                <ng-container *ngIf="empList.length> 0">
+                    <tbody>
+                        <tr *ngFor="let d of empList | filter:searchKeyword; let i = index">
+                            <td>{{ getSerialNumber(i) }} </td>
+                            <td>{{d.title+'. '+d.user.first_name+' '+d.user.last_name}} </td>
+                            <td>{{d.user.email}} </td>
+                            <td>{{d.contact_1}}</td>
+                            <td>
+                                <div class=" d-flex justify-content-center align-items-center">
+                                    <div class="button-group">
+                                        <button class="post secondary sm" *ngIf="api.checkPermission('send-email-to-client')" (click)="sendEmailModal(sendEmailTemp, d.id, i)">
+                                            Send Email
+                                        </button>
+                                        <label style="margin-top: 0;">
+                                            <div class="icon secondary post">
+                                                <i class="fas fa-chevron-down"></i>
+                                            </div>
+                                            <input type="checkbox">
+                                            <div class="button-menu secondary align-right">
+                                                <ul>
+                                                    <li class="secondary sm" *ngIf="api.checkPermission('')" type="button" [routerLink]="['/user/client-financial-summary']" [queryParams]="{clientId: d.id}">Financial Summary</li>
+                                                    <li class="secondary sm" *ngIf="api.checkPermission('')" type="button" [routerLink]="['/user/invoice']" [queryParams]="{clientId: d.id}">Invoices</li>
+                                                    <!-- <li *ngIf="api.checkPermission('update-product')" [routerLink]="['/user/product/product-detail']" [queryParams]="{ id: d.id }">Edit</li> -->
+                                                    <!-- <li>Other Actions</li> -->
+                                                </ul>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <!-- <div class="ml-1" *ngIf="api.checkPermission('send-email-to-client')">
+                                        <button type="button" class="primary sm m-0" (click)="sendEmailModal(sendEmailTemp, d.id, i)">Send Email</button>
+                                    </div>
+                                    <div class="ml-1" *ngIf="api.checkPermission('')">
+                                        <button type="button" class="primary sm m-0" [routerLink]="['/user/client-financial-summary']" [queryParams]="{clientId: d.id}">Financial Summary</button>
+                                    </div>
+                                    <div class="ml-1" *ngIf="api.checkPermissions(['update-client', 'employee-detail'])">
+                                        <button type="button" class="primary sm m-0" [routerLink]="['/user/invoice']" [queryParams]="{clientId: d.id}">Invoices</button>
+                                    </div> -->
+                                    <div class="ml-1" *ngIf="api.checkPermissions(['update-client', 'employee-detail'])">
+                                        <button type="button" class="secondary sm m-0" [routerLink]="['/user/client/personal-info']" [queryParams]="{id: d.id}"><i class="fa fa-edit"></i></button>
+                                    </div>
+                                    <div class="ml-1" *ngIf="api.checkPermission('delete-client')">
+                                        <button type="button" class="danger m-0 sm"><i class="fa fa-trash" (click)="confirmingModal(confirming, d.id,i)"></i></button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </ng-container>
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                </ng-container>
+                <tbody *ngIf="empList.length == 0 && dataStatus == 'done'">
+                    <tr>
+                        <td colspan="5">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-12 footer-section">
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul>
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<ng-template #confirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="delete()">
+            <div class="loading-dots" [ngClass]="loginLoading?'in-progress':''">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #sendEmailTemp>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Send Email To Client</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="sendEmailForm" (ngSubmit)="sendEmail(f)" #f="ngForm">
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">CC</label>
+                    <ng-select formControlName="cc" [ngClass]="{'form-submitted': f.submitted}" [items]="[]" [addTag]="true" [multiple]="true" [selectOnTab]="true" [isOpen]="false">></ng-select>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Subject <span class="mendatory">*</span></label>
+                    <input formControlName="subject" class="form-control mt-0" placeholder="Enter Subject" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.subject, f)" class="errors">
+                        <p *ngIf="g.subject.errors.required">Subject is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Message <span class="mendatory">*</span></label>
+                    <div>
+                        <quill-editor formControlName="message"></quill-editor>
+                    </div>
+                    <!-- <textarea formControlName="message" cols="20" rows="5" class="form-control mt-0" placeholder="Enter Message" [ngClass]="{'form-submitted': f.submitted}"></textarea>
+                    <div *ngIf="ui.checkErrors(g.message, f)" class="errors">
+                        <p *ngIf="g.message.errors.required">Message is required</p>
+                    </div> -->
+                </div>
+            </div>
+            <button type="submit" class="primary" [ngClass]="loginLoading?'in-progress':''">
+                <div class="loading-dots">Send
+                    <span></span><span></span><span></span>
+                </div>
+            </button>
+            <button type="button" class="dark ml-1" (click)="modalRef.hide()">Cancel</button>
+        </form>
+    </div>
+</ng-template>

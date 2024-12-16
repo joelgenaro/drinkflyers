@@ -1,0 +1,162 @@
+<div class="search">
+    <div class="search-left">
+        <div class="search-left-inner w-100">
+            <div class="mb-3"><a [routerLink]="[ api.checkUser()+'/products-list']"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back to all products</a></div>
+            <div>
+                <select>
+                    <option>Most Popular</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="w-100 mb-3 mt-3">
+            <p>Filter by:</p>
+        </div>
+        <div style="width: 100%;">
+            <p>Category</p>
+        </div>
+        <div class="search-left-sep"></div>
+        <div class="filters" *ngIf="catList.length > 0">
+            <div class="checkbox-container text-right w-100" *ngFor="let d of catList">
+                <label class="checkbox danger">
+                    <input type="checkbox" (click)="setCategories(d.id)" [checked]=isChecked(d.id)>
+                    <span class="checkmark"></span>
+                </label>
+                <span class="text">{{d?.name}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="search-right">
+        <div class="search-container-heading">
+            <span>Select a product type below</span>
+            <div class="search-container">
+                <i class="fa fa-search searchIcon"></i>
+                <input class="searchBox" type="search" name="search" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search">
+            </div>
+        </div>
+        <div class="search-right-msg" style="display: none;">
+            <i class="fas fa-times msg-cross"></i>
+            <div class="search-right-msg-img">
+                <div>
+                    <img src="assets/images/globe.png">
+                </div>
+            </div>
+            <div>
+                <span class="search-right-msg-img-span">Default selling region settings have been applied!</span><br>
+                <span class="search-right-msg-img-span" style="font-weight: 300;">Products varients and categories may been adjusted based on your setting preferences.</span>
+            </div>
+        </div>
+        <div class="settings" style="display: none;" *ngIf="dataStatus=='done'">Showing {{pagination.total}} results that deliver to <img src="assets/images/uk.svg"> UK and match your current selling preferences <i class="fas fa-info-circle"></i></div>
+
+
+        <ng-container *ngIf="dataStatus == 'fetching'">
+            <div class="no-data">
+                <img src="assets/images/rolling-main.svg" alt="">
+            </div>
+
+        </ng-container>
+        <ng-container *ngIf="dataList.length == 0 && dataStatus == 'done'">
+            <div class="no-data">
+                <app-no-data-found></app-no-data-found>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="dataStatus=='done' && dataList.length > 0">
+            <div class="items">
+                <div class="item" *ngFor="let d of dataList | filter:searchKeyword; let i= index">
+                    <div class="image-wrapper" (click)="addProduct(d)">
+                        <ng-container *ngIf="d.base_product_images.length > 0">
+                            <img [defaultImage]="spinnerSVG" [lazyLoad]="api.elevationImg(d.base_product_images[0].mockup_id, d.base_product_images[0].elevation_id)">
+                            <!-- [routerLink]="[ api.checkUser()+'/product/product-detail']" [queryParams]="{ id: '-1', baseProductId: d.id}" -->
+                        </ng-container>
+                        <ng-container *ngIf="d.base_product_images.length == 0">
+                            <img [defaultImage]="spinnerSVG" [lazyLoad]="api.elevationImg(0, 0)">
+                            <!-- [routerLink]="[ api.checkUser()+'/product/product-detail']" [queryParams]="{ id: '-1', baseProductId: d.id}" -->
+                        </ng-container>
+                        <div class="heart"><i class="fas fa-heart heart-active"></i></div>
+                        <!-- <div class="suggested">Star suggests</div> -->
+                        <!-- <div class="new">New</div> -->
+                        <!-- <div class="best-seller">Bestseller</div> -->
+                    </div>
+                    <p (click)="addProduct(d)">{{d.name}}</p>
+                    <!-- [routerLink]="[ api.checkUser()+'/product/product-detail']" [queryParams]="{ id: '-1', baseProductId: d.id}" style="cursor: pointer;" -->
+                    <div class="rating" *ngIf="d.rating >= 0">
+                        <div class="rating-item">
+                            <irating [value]="d.rating" size="14" [name]="'s-'+i" [readonly]="true"></irating>
+                        </div>
+                        <div class="rating-item"><i class="arrow down"></i></div>
+                        <div class="rating-item"> reviews {{d.total_reviews}}</div>
+                    </div>
+                    <ng-container *ngIf="d?.variants.length > 0">
+                        <div class="price">
+                            <div *ngIf="totalTradePrice(d.variants) > 1">Starting From</div>
+                            <div>{{cs.defaultCurrency}}{{tradePrice(d.variants)}}
+                                <span>excl. VAT</span>
+                            </div>
+                        </div>
+
+                        <div class="colors">
+                            <ng-container *ngFor="let color of variantColors[i]">
+                                <div class="color-item" title="{{color.colorName}}" *ngIf="color.colorCode!=null" [ngStyle]="{'background-color': color.colorCode}"></div>
+                            </ng-container>
+                            <ng-container *ngFor="let item of variantImages[i]">
+                                    <img [src]="api.blankImageUrl(item.id)" title="{{item.colorName}}" class="color-item-img">
+                            </ng-container>
+
+                        </div>
+                        <div class="size">
+                            {{getVariantSizes(d.variants)}}
+                        </div>
+                    </ng-container>
+                    <div class="delivery">
+                        <img src="assets/images/uk.svg"> {{d.average_delivery_in }}
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <div class="col-md-12 mb-1 footer-section">
+            <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'" style="display: flex; justify-content: center;">
+                <ul class="pagination justify-content-left  m-0" style="display: none;">
+                    <li class="page-item">
+                        <small *ngIf="page<10">Current page: 0{{page}}</small>
+                        <small *ngIf="page>=10">Current page: {{page}}</small>
+                    </li>
+                </ul>
+                <ul class="pagination justify-content-left m-0">
+                    <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                    </li>
+                    <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                    </li>
+                    <ng-container *ngIf="pagination.last_page <= 6">
+                        <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                            <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                            </li>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="pagination.last_page >= 7">
+                        <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                            <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                            </li>
+                            <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link">...</a>
+                            </li>
+                            <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                            </li>
+                        </ng-container>
+                    </ng-container>
+                    <li class="page-item" *ngIf="pagination.next_page_url != null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                    </li>
+                    <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

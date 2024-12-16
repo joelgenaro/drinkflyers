@@ -1,0 +1,56 @@
+<nav id="sidebar" class="sidebar" [ngClass]="{'sidebar-bg' : hasBackgroundImage()}">
+    <div class="sidebar-content">
+        <div class="sidebar-header">
+            <a [routerLink]="[ '/' ]">
+                <img class="logo-image" src="assets/images/logos/star-edition-logo.svg">
+            </a>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li *ngFor="let menu of menus" [ngClass]="{'active': menu.active , 'sidebar-dropdown':menu.type === 'dropdown' , 'header-menu':menu.type === 'header', 'simple-menu':menu.type === 'simple'}">
+                    <!-- {{menu.active}} {{menu.type}} -->
+                    <span *ngIf="menu.type === 'header'">{{menu.title}}</span>
+                    <a [class.active]="menu.link === menuState" *ngIf="menu.type === 'simple' && menu?.visibility !== 'none'" href="javascript: void(0);" [routerLink]="[menu.link]" [queryParams]="menu.queryParams" (click)="setStateAsActive(menu.link)">
+                        <i [class.active]="menu.link === menuState" class="{{menu.icon}}"></i>
+                        <span>{{menu.title}}</span>
+                        <span *ngIf="menu.badge" class="badge badge-pill" [ngClass]="menu.badge.class">{{menu.badge.text}}</span>
+                    </a>
+
+                    <a *ngIf="menu.type === 'dropdown'" href="javascript: void(0);" (click)='toggle(menu)'>
+                        <i class="{{menu.icon}}"></i>
+                        <span>{{menu.title}}</span>
+                        <span *ngIf="menu.badge" class="badge badge-pill" [ngClass]="menu.badge.class">{{menu.badge.text}}</span>
+                    </a>
+
+                    <div *ngIf="menu.type === 'dropdown'" class="sidebar-submenu" [@slide]="getState(menu)">
+                        <ul>
+                            <ng-container *ngFor="let submenu of menu.submenus">
+                                <li [ngClass]="{'active': submenu.active , 'sidebar-dropdown':submenu.type === 'dropdown' , 'header-menu':submenu.type === 'header' , 'simple-menu':submenu.type === 'simple'}">
+                                    <a *ngIf="submenu.type === 'simple'" (click)="setStateAsActiveSubmenu(submenu.link)" [class.active]="submenu.link === subMenuState" href="javascript: void(0);" [routerLink]="[submenu.link]" [queryParams]="submenu.queryParams" routerLinkActive="active"> {{submenu.title}}
+                                        <span *ngIf="submenu.badge" class="badge badge-pill" [ngClass]="submenu.badge.class">{{submenu.badge.text}}</span>
+                                    </a>
+
+                                    <a *ngIf="submenu.type === 'dropdown'" href="javascript: void(0);" (click)='toggleSubMenu(menu, submenu)'>
+                                        <i class="{{submenu.icon}}"></i>
+                                        <span>{{submenu.title}}</span>
+                                        <span *ngIf="submenu.badge" class="badge badge-pill" [ngClass]="submenu.badge.class">{{submenu.badge.text}}</span>
+                                    </a>
+
+                                    <div *ngIf="submenu.type === 'dropdown'" class="sidebar-submenu" [@slide]="getState(submenu)">
+                                        <ul>
+                                            <li *ngFor="let innerSubmenu of submenu.submenus" class="simple-menu">
+                                                <a *ngIf="innerSubmenu.type === 'simple'" (click)="setStateAsActiveSubmenu(innerSubmenu.link)" [class.active]="innerSubmenu.link === subMenuState" href="javascript: void(0);" [routerLink]="[innerSubmenu.link]" [queryParams]="innerSubmenu.queryParams" routerLinkActive="active"> {{innerSubmenu.title}}
+                                                    <span *ngIf="innerSubmenu.badge" class="badge badge-pill" [ngClass]="innerSubmenu.badge.class">{{innerSubmenu.badge.text}}</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ng-container>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

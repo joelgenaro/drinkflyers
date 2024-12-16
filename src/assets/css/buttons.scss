@@ -1,0 +1,555 @@
+.admin-panel {
+    $colors: "primary", "secondary", "success", "info", "danger", "warning";
+    button {
+        outline: none !important;
+        border: none;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 300;
+        border-radius: 4px;
+        padding: 5px 10px;
+    }
+
+    button.lg {
+        padding: 8px 15px;
+        font-size: 16px;
+    }
+
+    button.sm {
+        padding: 3px 6px;
+        font-size: 12px;
+    }
+
+    button.xs {
+        padding: 2px 5px;
+        font-size: 10px;
+    }
+
+    button.primary,
+    .button-group .icon.primary {
+        background: var(--ap-primary);
+    }
+
+    button.secondary,
+    .button-group .icon.secondary {
+        background: var(--ap-secondary);
+    }
+
+    button.success,
+    .button-group .icon.success {
+        background: var(--ap-success);
+    }
+
+    button.danger,
+    .button-group .icon.danger {
+        background: var(--ap-danger);
+    }
+
+    button.warning,
+    .button-group .icon.warning {
+        background: var(--ap-warning);
+    }
+
+    button.info,
+    .button-group .icon.info {
+        background: var(--ap-info);
+    }
+
+    button.light,
+    .button-group .icon.light {
+        background: var(--ap-light);
+    }
+
+    button.dark,
+    .button-group .icon.dark {
+        background: var(--ap-dark);
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+
+    /* * * * * * * * * * * * * * * * * *
+     * Button Groups
+     * * * * * * * * * * * * * * * * * */
+    .button-group .icon {
+        display: flex;
+        align-items: center;
+        width: 27px;
+        border-radius: 4px;
+        justify-content: center;
+        color: #fff;
+        opacity: 0.8;
+    }
+
+    .button-group {
+        display: flex;
+        position: relative;
+    }
+
+    .button-group .pre + button {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-left: none;
+        margin-left: 0 !important;
+    }
+
+    .button-group button.post {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-right: none;
+        margin-right: 0 !important;
+    }
+
+    .button-group .icon.pre {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .button-group .icon.post {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    /* * * * * * * * * * * * * * * * * *
+     * Button Dropdown
+     * * * * * * * * * * * * * * * * * */
+    .button-group label {
+        display: flex;
+        margin-bottom: 0;
+    }
+
+    .button-group label input[type="checkbox"] {
+        display: none;
+    }
+
+    .button-group input[type="checkbox"]:hover ~ .button-menu {
+        display: block;
+    }
+
+    .button-menu {
+        position: absolute;
+        width: max-content;
+        display: none;
+        left: 0;
+        z-index: 100;
+    }
+
+    .button-group button.lg ~ label .button-menu {
+        top: 39px;
+        padding-top: 10px;
+    }
+
+    .button-group button ~ label .button-menu {
+        top: 30px;
+        padding-top: 10px;
+    }
+
+    .button-group button.sm ~ label .button-menu {
+        top: 24px;
+        padding-top: 9px;
+    }
+
+    .button-group button.xs ~ label .button-menu {
+        top: 20px;
+        padding-top: 8px;
+    }
+
+    .button-menu ul {
+        background-color: #fff;
+        border-radius: 4px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .button-menu ul li {
+        padding: 5px 20px;
+        color: #fff;
+        border-bottom: 1px solid #fff;
+    }
+
+    /* Menu top arrow */
+    .button-menu::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        display: block;
+        transform: rotate(-45deg);
+        position: absolute;
+        top: 4px;
+        left: 10px;
+        z-index: -1;
+    }
+
+    .button-menu.align-right {
+        right: 0;
+        left: unset;
+    }
+
+    .button-menu.align-right::before {
+        left: calc(100% - 22px);
+    }
+
+    /* Set Colors */
+    @each $color in $colors {
+        .button-menu.#{$color} ul {
+            border: 1px solid var(--ap-#{$color});
+            border-bottom: none;
+        }
+
+        .button-menu.#{$color} ul li {
+            border-bottom: 1px solid var(--ap-#{$color});
+            color: black;
+        }
+        .button-menu.#{$color} ul li:hover {
+            background: var(--ap-#{$color});
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .button-menu.#{$color}::before {
+            background: var(--ap-#{$color});
+        }
+    }
+
+    /* * * * * * * * * * * * * * * * * *
+     * Loading Buttons
+     * * * * * * * * * * * * * * * * * */
+    .in-progress {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    button.in-progress .loading-dots span {
+        animation-name: blink;
+        animation-duration: 1.4s;
+        animation-iteration-count: infinite;
+        animation-fill-mode: both;
+        border-radius: 50%;
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: #fff;
+        margin: 0 3px;
+    }
+
+    button.lg.in-progress .loading-dots span {
+        width: 9px;
+        height: 9px;
+    }
+
+    button.sm.in-progress .loading-dots span {
+        width: 6px;
+        height: 6px;
+    }
+
+    button.xs.in-progress .loading-dots span {
+        width: 5px;
+        height: 5px;
+    }
+
+    button .icon {
+        padding: 10px 15px 10px 15px;
+        border-left: 1.5px solid #fff !important;
+    }
+
+    .in-progress .loading-dots span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .in-progress span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    @keyframes blink {
+        0% {
+            opacity: 0.2;
+        }
+
+        20% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 0.2;
+        }
+    }
+}
+
+.website {
+    $colors: "primary", "secondary", "success", "info", "danger", "warning";
+    button {
+        outline: none !important;
+        border: none;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 300;
+        border-radius: 4px;
+        padding: 5px 10px;
+    }
+
+    button.lg {
+        padding: 8px 15px;
+        font-size: 16px;
+    }
+
+    button.sm {
+        padding: 3px 6px;
+        font-size: 12px;
+    }
+
+    button.xs {
+        padding: 2px 5px;
+        font-size: 10px;
+    }
+
+    button.primary,
+    .button-group .icon.primary {
+        background: var(--ap-primary);
+    }
+
+    button.secondary,
+    .button-group .icon.secondary {
+        background: var(--ap-secondary);
+    }
+
+    button.success,
+    .button-group .icon.success {
+        background: var(--ap-success);
+    }
+
+    button.danger,
+    .button-group .icon.danger {
+        background: var(--ap-danger);
+    }
+
+    button.warning,
+    .button-group .icon.warning {
+        background: var(--ap-warning);
+    }
+
+    button.info,
+    .button-group .icon.info {
+        background: var(--ap-info);
+    }
+
+    button.light,
+    .button-group .icon.light {
+        background: var(--ap-light);
+    }
+
+    button.dark,
+    .button-group .icon.dark {
+        background: var(--ap-dark);
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+
+    /* * * * * * * * * * * * * * * * * *
+     * Button Groups
+     * * * * * * * * * * * * * * * * * */
+    .button-group .icon {
+        display: flex;
+        align-items: center;
+        width: 27px;
+        border-radius: 4px;
+        justify-content: center;
+        color: #fff;
+        opacity: 0.8;
+    }
+
+    .button-group {
+        display: flex;
+        position: relative;
+    }
+
+    .button-group .pre + button {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-left: none;
+        margin-left: 0 !important;
+    }
+
+    .button-group button.post {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-right: none;
+        margin-right: 0 !important;
+    }
+
+    .button-group .icon.pre {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .button-group .icon.post {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    /* * * * * * * * * * * * * * * * * *
+     * Button Dropdown
+     * * * * * * * * * * * * * * * * * */
+    .button-group label {
+        display: flex;
+        margin-bottom: 0;
+    }
+
+    .button-group label input[type="checkbox"] {
+        display: none;
+    }
+
+    .button-group input[type="checkbox"]:hover ~ .button-menu {
+        display: block;
+    }
+
+    .button-menu {
+        position: absolute;
+        width: max-content;
+        display: none;
+        left: 0;
+        z-index: 100;
+    }
+
+    .button-group button.lg ~ label .button-menu {
+        top: 39px;
+        padding-top: 10px;
+    }
+
+    .button-group button ~ label .button-menu {
+        top: 30px;
+        padding-top: 10px;
+    }
+
+    .button-group button.sm ~ label .button-menu {
+        top: 24px;
+        padding-top: 9px;
+    }
+
+    .button-group button.xs ~ label .button-menu {
+        top: 20px;
+        padding-top: 8px;
+    }
+
+    .button-menu ul {
+        background-color: #fff;
+        border-radius: 4px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .button-menu ul li {
+        padding: 5px 20px;
+        color: #fff;
+        border-bottom: 1px solid #fff;
+    }
+
+    /* Menu top arrow */
+    .button-menu::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        display: block;
+        transform: rotate(-45deg);
+        position: absolute;
+        top: 4px;
+        left: 10px;
+        z-index: -1;
+    }
+
+    .button-menu.align-right {
+        right: 0;
+        left: unset;
+    }
+
+    .button-menu.align-right::before {
+        left: calc(100% - 22px);
+    }
+
+    /* Set Colors */
+    @each $color in $colors {
+        .button-menu.#{$color} ul {
+            border: 1px solid var(--ap-#{$color});
+            border-bottom: none;
+        }
+
+        .button-menu.#{$color} ul li {
+            border-bottom: 1px solid var(--ap-#{$color});
+            color: black;
+        }
+        .button-menu.#{$color} ul li:hover {
+            background: var(--ap-#{$color});
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .button-menu.#{$color}::before {
+            background: var(--ap-#{$color});
+        }
+    }
+
+    /* * * * * * * * * * * * * * * * * *
+     * Loading Buttons
+     * * * * * * * * * * * * * * * * * */
+    .in-progress {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    button.in-progress .loading-dots span {
+        animation-name: blink;
+        animation-duration: 1.4s;
+        animation-iteration-count: infinite;
+        animation-fill-mode: both;
+        border-radius: 50%;
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: #fff;
+        margin: 0 3px;
+    }
+
+    button.lg.in-progress .loading-dots span {
+        width: 9px;
+        height: 9px;
+    }
+
+    button.sm.in-progress .loading-dots span {
+        width: 6px;
+        height: 6px;
+    }
+
+    button.xs.in-progress .loading-dots span {
+        width: 5px;
+        height: 5px;
+    }
+
+    button .icon {
+        padding: 10px 15px 10px 15px;
+        border-left: 1.5px solid #fff !important;
+    }
+
+    .in-progress .loading-dots span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .in-progress span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    @keyframes blink {
+        0% {
+            opacity: 0.2;
+        }
+
+        20% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 0.2;
+        }
+    }
+}

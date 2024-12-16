@@ -1,0 +1,461 @@
+<ng-container *ngIf="dataStatus== 'fetching'">
+    <div class="loading">
+        <img [src]="spinnerSVG" alt="">
+    </div>
+</ng-container>
+<ng-container *ngIf="dataStatus== 'done'">
+    <div class="row no-gutters main-row">
+        <div class="col-md-12 header-section">
+            <div class="header-content">
+                <div class="tile">
+                    <h1>{{orderData.order_no}}</h1>
+                    <p>{{ orderData.order_date | date:'dd MMMM yyyy' }} at {{ orderData.order_date | date:'h:mm a' }}</p>
+                </div>
+                <div class="price">
+                    <h1>{{cs.defaultCurrency}}{{orderData.total_items_amount | number : '1.2-2'}}</h1>
+                    <p>{{orderData.total_items}} items</p>
+                </div>
+                <div class="order-btn">
+                    <button>Order again</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 tabs-section">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <div class="nav-link" (click)="activeTab = 'order-summary'" [ngClass]="activeTab === 'order-summary' ? 'active' : ''">
+                        <h5 class="modal-title">Order Summary</h5>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" (click)="activeTab = 'order-history'" [ngClass]="activeTab === 'order-history' ? 'active' : ''">
+                        <h5 class="modal-title">Order History</h5>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-12 mb-1 results-section">
+            <ng-container *ngIf="activeTab === 'order-summary'">
+                <div class="fulfilled-container">
+                    <div class="fulfilled-heading">
+                        <div class="img-wrapper"><img src="/assets/img/check-circle.png" alt=""></div>
+                        <h1>{{orderData.order_status}} ({{orderData.total_items}})</h1>
+                    </div>
+                    <div class="fulfilled-content">
+                        <div class="fulfilled-content-left">
+                            <div class="location">
+                                <p class="head">Location</p>
+                                <p class="text">{{orderData.order_items[0].product_variant.base_product_variants.base_product.fulfillment_center.client_friendly_name}}</p>
+                            </div>
+                            <div class="tracking-code">
+                                <p class="head">Royal Mail</p>
+                                <p class="text"><span>QT683386630GB</span> <i class="fas fa-external-link-alt"></i></p>
+                            </div>
+                            <div class="line-items-container">
+                                <ng-container *ngIf="orderData.order_items.length > 0">
+                                    <div class="line-items-content" *ngFor="let oi of orderData.order_items">
+                                        <div class="image">
+                                            <div class="img-wrapper">
+                                                <img [defaultImage]="spinnerSVG" [lazyLoad]="api.virtualProductImageUrl(oi.products.product_images[0]? oi.products.product_images[0].id: '0')">
+                                            </div>
+                                        </div>
+                                        <div class="product-area">
+                                            <div class="title">{{oi.products.name}}</div>
+                                            <div class="type">Non Personalised</div>
+                                            <div class="sku">SKU: {{oi.products.sku}}</div>
+                                            <div class="artwork">Artwork:
+                                                <span class="artwork-content"><span>Front</span> <i class="fas fa-external-link-alt"></i></span>
+                                                <span class="artwork-content"><span>Back</span> <i class="fas fa-external-link-alt"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="multipler">{{cs.defaultCurrency}}{{oi.tp | number : '1.2-2'}} x {{oi.quantity}}</div>
+                                        <div class="t-price">{{cs.defaultCurrency}}{{oi.total_amount | number : '1.2-2'}}</div>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngIf="orderData.order_items.length == 0">
+                                    <div class="line-items-content">
+                                        <div class="no-data">
+                                            <app-no-data-found></app-no-data-found>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                            <div class="price-container">
+                                <div class="price-heading">
+                                    <div class="img-wrapper"><img src="/assets/img/check-circle.png" alt=""></div>
+                                    <h1>{{orderData.payment_status | titlecase }}</h1>
+                                </div>
+                                <div class="price-content">
+                                    <div class="price-summary">
+                                        <div class="summary-content">
+                                            <p class="text">Subtotal</p>
+                                            <p class="description">{{orderData.total_items}} items</p>
+                                            <p class="price">{{cs.defaultCurrency}}{{orderData.total_items_amount | number : '1.2-2'}}</p>
+                                        </div>
+                                        <div class="summary-content">
+                                            <p class="text">Shipping</p>
+                                            <p class="description">First Class Tracked (3-5 days) (0.3kg)</p>
+                                            <p class="price">{{cs.defaultCurrency}}{{orderData.delivery_charges | number : '1.2-2'}}</p>
+                                        </div>
+                                        <div class="summary-content">
+                                            <p class="text">Tax</p>
+                                            <p class="description">GB VAT 20% (Included)</p>
+                                            <p class="price">{{cs.defaultCurrency}}{{orderData.tax_amount | number : '1.2-2'}}</p>
+                                        </div>
+                                        <div class="summary-content">
+                                            <p class="text">Total</p>
+                                            <p class="description"></p>
+                                            <p class="price">{{cs.defaultCurrency}}{{totalAmount | number : '1.2-2'}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="price-breakdown">
+                                        <div class="breakdown-container">
+                                            <p class="heading">Pricing Breakdown</p>
+                                            <div class="breakdown-content">
+                                                <p class="text">Star Dropship Price</p>
+                                                <p class="price">{{cs.defaultCurrency}}{{orderData.order_items[0].product_variant.tp | number : '1.2-2'}}</p>
+                                            </div>
+                                            <div class="breakdown-content">
+                                                <p class="text">Paid by customer</p>
+                                                <p class="price">{{cs.defaultCurrency}}{{totalAmount | number : '1.2-2'}}</p>
+                                            </div>
+                                            <div class="breakdown-content">
+                                                <p class="text">Your Profit</p>
+                                                <p class="price">{{cs.defaultCurrency}} {{ totalAmount - (+orderData.order_items[0].product_variant.tp) | number : '1.2-2' }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fulfilled-content-right">
+                            <div class="customer-info-container">
+                                <div class="name">
+                                    <div class="head">
+                                        <p>Customer</p>
+                                    </div>
+                                    <div class="content">
+                                        <p class="c-name">{{orderData.shipment? orderData.shipment.full_name +' '+ (orderData.shipment.last_name? orderData.shipment.last_name: ''): 'No customer'}}</p>
+                                        <p class="t-order">{{totalOrder}} order</p>
+                                    </div>
+                                </div>
+                                <div class="contact">
+                                    <div class="content">
+                                        <p class="head">Contact Information</p>
+                                        <p class="content color">{{orderData.shipment? orderData.shipment.email: 'No email'}}</p>
+                                    </div>
+                                    <div class="action">
+                                        <p class="edit" (click)="openContactModal(contactFormTemplate)">Edit</p>
+                                        <i class="fas fa-clipboard" (click)="copyToClipboard('email')"></i>
+                                    </div>
+                                </div>
+                                <div class="shipping">
+                                    <div class="content">
+                                        <p class="head">Shipping Address</p>
+                                        <p class="content">{{orderData.shipment? orderData.shipment.shipping_address: 'No shipping address'}}</p>
+                                    </div>
+                                    <div class="action">
+                                        <p class="edit" (click)="openAddressModal(addressFormTemplate)">Edit</p>
+                                        <i class="fas fa-clipboard" (click)="copyToClipboard('shippingAddress')"></i>
+                                    </div>
+                                </div>
+                                <div class="billing">
+                                    <div class="content">
+                                        <p class="head">Billing Address</p>
+                                        <p class="content">{{orderData.billing_address? orderData.billing_address.address1: 'No billing address'}}</p>
+                                    </div>
+                                </div>
+                                <div class="tag">
+                                    <div class="content">
+                                        <p class="head">tag</p>
+                                        <p class="content" (click)="openTagModal(tagTemplate)">Manage</p>
+                                    </div>
+                                    <div class="input-group m-0 p-0">
+                                        <input type="text" list="tags" placeholder="Find or create tags" (keyup.enter)="saveTag($event)" />
+                                        <datalist id="tags">
+                                            <option *ngFor="let t of tagList" [value]="t.title">{{ t.title }}</option>
+                                        </datalist>
+                                    </div>
+                                    <ng-container *ngIf="tagLoading == true || tagStatus == 'fetching'">
+                                        <div class="img-wrapper">
+                                            <img src="assets/images/rolling-main.svg" alt="">
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="tagList.length > 0">
+                                        <div class="tags">
+                                            <ng-container *ngFor="let tag of tagList">
+                                                <ng-container *ngIf="tag.selected == 1">
+                                                    <div class="tag-content">
+                                                        <div class="tag-text">{{tag.title}}</div>
+                                                        <i class="fa fa-times" aria-hidden="true" (click)="deleteTag(tag.id)"></i>
+                                                    </div>
+                                                </ng-container>
+                                            </ng-container>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="tagList.length == 0 && tagStatus == 'done'">
+                                        <div class="no-data-wrapper">
+                                            <h3>No tags available!!</h3>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="activeTab === 'order-history'">
+                <div class="order-history-container">
+                    <div class="timeline-content">
+                        <div class="timeline-text">Timeline</div>
+                        <div class="show-comments">
+                            <div class="checkbox-container text-right">
+                                <label class="checkbox primary">
+                                    <input type="checkbox">
+                                    <!-- <input type="checkbox" checked="checked"> -->
+                                    <span class="checkmark"></span>
+                                </label>
+                                <span class="text">Show comments only</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <input type="text" placeholder="Leave a comment...">
+                        <button>Post</button>
+                    </div>
+                    <div class="steps-content">
+                        <div class="date">25 Junuary</div>
+                        <div class="steps-items">
+                            <div class="fas fa-circle"></div>
+                            <div class="items-content">
+                                <p class="step-text">Order Dispatched - Tracking ID - <span class="inner-text">QT683386630GB <i class="fas fa-external-link-alt"></i></span></p>
+                                <p class="step-time">4:25</p>
+                            </div>
+                        </div>
+                        <div class="side-line"></div>
+                        <div class="steps-items">
+                            <div class="fas fa-circle"></div>
+                            <div class="items-content">
+                                <p class="step-text">Order sent to dispatch</p>
+                                <p class="step-time">5:25</p>
+                            </div>
+                        </div>
+                        <div class="side-line"></div>
+                        <div class="steps-items">
+                            <div class="fas fa-circle"></div>
+                            <div class="items-content">
+                                <p class="step-text">Packing 3 items - preparing for dispatch</p>
+                                <p class="step-time">4:25</p>
+                            </div>
+                        </div>
+                        <div class="side-line"></div>
+                        <div class="date">24 Junuary</div>
+                        <div class="steps-items">
+                            <div class="fas fa-circle active"></div>
+                            <div class="items-content">
+                                <p class="step-text">Production started on 3 items</p>
+                                <p class="step-time">16:36</p>
+                            </div>
+                        </div>
+                        <div class="side-line"></div>
+                        <div class="steps-items">
+                            <div class="fas fa-circle"></div>
+                            <div class="items-content">
+                                <p class="step-text">A {{cs.defaultCurrency}}12.95 GBP payment was processed using your PayPal account.</p>
+                                <p class="step-time">11:12</p>
+                            </div>
+                        </div>
+                        <div class="side-line"></div>
+                        <div class="steps-items">
+                            <div class="fas fa-circle"></div>
+                            <div class="items-content">
+                                <p class="step-text">Mathew Abbott placed this order on Online Store.</p>
+                                <p class="step-time">11:12</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</ng-container>
+
+<ng-template #contactFormTemplate>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Edit contact information</h4>
+        <button type="button" class="close pull-right" (click)="contactModalRef.hide()"><span><i class="fas fa-times"></i></span></button>
+    </div>
+    <form [formGroup]="contactDataForm" (ngSubmit)="saveContactInformation(f)" #f="ngForm">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Email <span class="mendatory">*</span></label>
+                    <input formControlName="email" class="form-control mt-0" placeholder="Enter Email" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.email, f)" class="errors">
+                        <p *ngIf="g.email.errors.required">Email is required</p>
+                        <p *ngIf="g.email.errors.email">Email is not valid</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Phone number</label>
+                    <input formControlName="phone" class="form-control mt-0" placeholder="Enter Phone Number" [ngClass]="{'form-submitted': f.submitted}">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="dark ml-1" (click)="cancelButtonContact(f)">Cancel</button>
+            <button type="submit" class="primary" [ngClass]="emailLoading?'in-progress':''">
+                <div class="loading-dots">Save
+                    <span></span><span></span><span></span>
+                </div>
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #addressFormTemplate>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Edit shipping address</h4>
+        <button type="button" class="close pull-right" (click)="addressModalRef.hide()"><span><i class="fas fa-times"></i></span></button>
+    </div>
+    <form [formGroup]="addressDataForm" (ngSubmit)="saveShippingAddress(fa)" #fa="ngForm">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Country</label>
+                    <ng-select formControlName="country" placeholder="Enter Country" [ngClass]="{'form-submitted': fa.submitted}">
+                        <ng-option *ngFor="let ct of countriesList" [value]="ct.iso2"><img [src]="api.getFlagImage(ct.iso2)" width="16" height="12"> {{ct.name}}</ng-option>
+                    </ng-select>
+                    <!-- <input formControlName="country" class="form-control mt-0" placeholder="Enter Country/region" [ngClass]="{'form-submitted': fa.submitted}"> -->
+                    <!-- <div *ngIf="ui.checkErrors(h.country, fa)" class="errors">
+                        <p *ngIf="h.country.errors.required">Country is required</p>
+                    </div> -->
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">Full name</label>
+                    <input formControlName="full_name" class="form-control mt-0" placeholder="Enter Full Name" [ngClass]="{'form-submitted': fa.submitted}">
+                    <!-- <div *ngIf="ui.checkErrors(h.full_name, fa)" class="errors">
+                        <p *ngIf="h.full_name.errors.required">Full name is required</p>
+                    </div> -->
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">Last name</label>
+                    <input formControlName="last_name" class="form-control mt-0" placeholder="Enter Last Name" [ngClass]="{'form-submitted': fa.submitted}">
+                    <!-- <div *ngIf="ui.checkErrors(h.last_name, fa)" class="errors">
+                        <p *ngIf="h.last_name.errors.required">Last name is required</p>
+                    </div> -->
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Company</label>
+                    <input formControlName="company" class="form-control mt-0" placeholder="Enter Company" [ngClass]="{'form-submitted': fa.submitted}">
+                    <!-- <div *ngIf="ui.checkErrors(h.company, fa)" class="errors">
+                        <p *ngIf="h.company.errors.required">Company is required</p>
+                    </div> -->
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Address <span class="mendatory">*</span></label>
+                    <input formControlName="shipping_address" class="form-control mt-0" placeholder="Enter Email" [ngClass]="{'form-submitted': fa.submitted}">
+                    <div *ngIf="ui.checkErrors(h.shipping_address, fa)" class="errors">
+                        <p *ngIf="h.shipping_address.errors.required">Address is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Apartment, suite, etc.</label>
+                    <input formControlName="address2" class="form-control mt-0" placeholder="Enter Apartment, Suite" [ngClass]="{'form-submitted': fa.submitted}">
+                    <!-- <div *ngIf="ui.checkErrors(h.address2, fa)" class="errors">
+                        <p *ngIf="h.address2.errors.required">Apartment is required</p>
+                    </div> -->
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">City</label>
+                    <input formControlName="city_name" class="form-control mt-0" placeholder="Enter City" [ngClass]="{'form-submitted': fa.submitted}">
+                    <!-- <div *ngIf="ui.checkErrors(h.city_name, fa)" class="errors">
+                        <p *ngIf="h.city_name.errors.required">City is required</p>
+                    </div> -->
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0 mt-0">Postcode</label>
+                    <input formControlName="postal_code" class="form-control mt-0" placeholder="Enter Postcode" [ngClass]="{'form-submitted': fa.submitted}">
+                    <!-- <div *ngIf="ui.checkErrors(h.postal_code, fa)" class="errors">
+                        <p *ngIf="h.postal_code.errors.required">Postcode is required</p>
+                    </div> -->
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Phone</label>
+                    <input formControlName="phone" class="form-control mt-0" placeholder="Enter Phone Number" [ngClass]="{'form-submitted': fa.submitted}">
+                    <!-- <div *ngIf="ui.checkErrors(h.phone, fa)" class="errors">
+                        <p *ngIf="h.phone.errors.required">Phone is required</p>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="dark ml-1" (click)="cancelButtonAddress(fa)">Cancel</button>
+            <button type="submit" class="primary" [ngClass]="shippingLoading?'in-progress':''">
+                <div class="loading-dots">Save
+                    <span></span><span></span><span></span>
+                </div>
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #tagTemplate>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Manage tags</h4>
+        <button type="button" class="close pull-right" (click)="cancelTagButton()"><span><i class="fas fa-times"></i></span></button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12 mb-2">
+                <div class="search-tag">
+                    <div class="input-group">
+                        <input type="text" class="post search-input" [(ngModel)]="searchTagString" [ngModelOptions]="{standalone: true}" placeholder="Search to find tags">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 mb-2">
+                <div class="tag-list">
+                    <ng-container *ngIf="this.modalTagList.length > 0">
+                        <div class="selected-tags">
+                            <p>Selected</p>
+                            <ng-container *ngFor="let st of modalTagList | filter:searchTagString">
+                                <ng-container *ngIf="st.selected == 1">
+                                    <div class="selected-tag-content">
+                                        <label class="checkbox primary">
+                                            <input type="checkbox" (change)="selectTags(st.id)" [checked]="checkTags(st.id)">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <div class="tag-text">{{st.title}}</div>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                        </div>
+                        <div class="available-tags">
+                            <p>Available</p>
+                            <ng-container *ngFor="let at of modalTagList | filter:searchTagString">
+                                <ng-container *ngIf="at.selected == 0">
+                                    <div class="available-tag-content">
+                                        <label class="checkbox primary">
+                                            <input type="checkbox" (change)="selectTags(at.id)" [checked]="checkTags(at.id)">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <div class="tag-text">{{at.title}}</div>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="dark ml-1" (click)="cancelTagButton()">Cancel</button>
+        <button type="submit" class="primary" (click)="saveSelectedTag()" [ngClass]="selectedTagLoading?'in-progress':''">
+            <div class="loading-dots">Done
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>

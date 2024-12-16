@@ -1,0 +1,76 @@
+h3 {
+    color: #009800;
+}
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+}
+a {
+    display: flex;
+    justify-content: center;
+}
+img.logo-image {
+    width: 150px;
+}
+.registration-container {
+    width: 30%;
+    margin: 0 auto 40px;
+    box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 20%);
+    border-radius: 5px;
+}
+.success-container {
+    width: 30%;
+    margin: 0 auto 40px;
+    margin-top: 30px;
+}
+.modal-header {
+    justify-content: center;
+}
+h4.modal-title {
+    font-size: 30px;
+}
+.bottom-btn {
+    border-top: 2px solid #d6d6d6 !important;
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px 0 0 0;
+    margin: 25px 0 0 0;
+}
+input[type="checkbox"] {
+    margin-right: 10px;
+    margin-top: -5px;
+}
+input[type="text"],
+input[type="date"],
+input[type="number"],
+textarea,
+input[type="email"],
+input[type="file"],
+input[type="password"],
+select,
+option {
+    width: 100%;
+    border: 1px solid #e0e0db;
+    border-radius: 7px;
+    padding: 6px 10px;
+    font-size: 14px;
+    margin: 0 0 5px 0;
+    outline: none;
+    box-shadow: none;
+}
+label {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    color: #000;
+}
+.form-control:focus {
+    border-color: #e0e0db;
+    outline: 0;
+    box-shadow: none;
+}
+.have-account span {
+    cursor: pointer;
+    color: var(--ap-primary);
+    text-decoration: underline;
+}

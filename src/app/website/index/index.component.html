@@ -1,0 +1,16 @@
+<section class="home-content">
+    <div>
+        <img src="assets/images/logos/star-edition-logo.svg" alt="Logo">
+    </div>
+    <div class="btn">
+        <div class="portal-btn" *ngIf="isUser || isAdmin">
+            <a [routerLink]="['/user/dashboard']">My Portal</a>
+        </div>
+        <div class="portal-btn" *ngIf="isClient ">
+            <a [routerLink]="['/client/dashboard']">My Portal</a>
+        </div>
+        <div class="login-btn" *ngIf="!isAuthenticated">
+            <a [routerLink]="['/login']">Login</a>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,70 @@
+.dasboard-main {
+    display: flex; 
+    flex-wrap: wrap; 
+    padding: 20px;
+}
+.width-100 {
+    width: 100%;
+}
+.cal-btn {
+    width: 250px; 
+    margin-top: 10px; 
+    /* padding: 5px;  */
+    background-color: #fff;
+}
+input.post.search-input {
+    height: 40px;
+}
+.top-card {
+    display: flex; 
+    padding: 22px; 
+    justify-content: space-around; 
+    width: 100%; 
+    text-align: center;
+    margin-bottom: 10px;
+}
+.top-card-item {
+    width: 22%; 
+    padding: 25px; 
+    background: #fff; 
+    border: solid 1px #CCC; 
+    border-radius: 5px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+p {
+    border-bottom:dotted 2px #0485A2;
+}
+.no-dot {
+    border: none !important;
+}
+.graph-card {
+    display: flex; 
+    justify-content: space-around; 
+    width: 100%; 
+    margin-bottom: 10px;
+}
+.graph-card-item {
+    width: 31%; 
+    padding: 15px; 
+    background: #fff; 
+    border: solid 1px #CCC; 
+    border-radius: 5px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+.bottom-card {
+    display: flex; 
+    padding: 22px; 
+    justify-content: space-around; 
+    width: 100%; 
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+.bottom-card-item {
+    width: 48%; 
+    padding: 25px; 
+    background: #fff; 
+    border: solid 1px #CCC; 
+    border-radius: 5px;
+    margin-bottom: 2%;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}

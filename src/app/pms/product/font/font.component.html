@@ -1,0 +1,152 @@
+<div class="row mt-5 no-gutters justify-content-center">
+    <div class="col-md-10">
+        <div class="font-container">
+            <div class="font-heading-sec">
+                <div class="font-heading">Fonts</div>
+                <div class="font-btn" *ngIf="api.checkPermission('add-product-font')">
+                    <div class="button-group" (click)="openModal(fontForm)">
+                        <button type="button" class="post primary lg">Add Font</button>
+                        <div class="icon post primary">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                    </div>
+                    <div class="button-group ml-1" (click)="openBaseProductModal(fontFormBaseProduct)">
+                        <button type="button" class="post primary lg">Import Base Product Font</button>
+                        <div class="icon post primary">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="font-content-sec row">
+            <ng-container *ngIf="dataStatus== 'fetching'">
+                <div class="loading">
+                    <img [src]="spinnerSVG" alt="">
+                </div>
+            </ng-container>
+            <ng-container *ngIf="productFontList.length == 0 && dataStatus === 'done'">
+                <div class="col-md-6">
+                    <div class="artwork-content-item">
+                        <h1>No Font Available</h1>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="productFontList.length > 0 && dataStatus === 'done'">
+                <div class="col-md-6" *ngFor="let f of productFontList; let i = index">
+                    <div class="font-content-item">
+                        <div class="font-head">
+                            <p>{{f.font.name}}</p>
+                            <img class="cross-icon" src="assets/img/cross-icon-trans.png" (click)="confirmingModal(fontConfirming, f.id,i)">
+                        </div>
+                        <div class="font-desc">
+                            <p>This is sample of the {{f.font.name}} font</p>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+
+        <div class="bottom-btn">
+            <div class="button-group">
+                <button type="submit" class="post primary lg" [routerLink]="['/user/product/personalized-region']" [queryParams]="{id: ds.productId, base_id: this.ds.baseProductId}" [disabled]="LoadingNext" [ngClass]="LoadingNext?'in-progress':''">
+                    <div class="loading-dots">Next
+                        <span></span><span></span><span></span>
+                    </div>
+                </button>
+                <div class="icon post primary">
+                    <i class="fa fa-angle-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #fontForm>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modalTitle}}</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12 mt-3 mb-2">
+                <div class="artwork-content-sec-modal">
+                    <ng-container *ngIf="fontList.length == 0">
+                        <div class="artwork-content-item">
+                            <h1>No Data Available</h1>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="fontList.length > 0">
+                        <div class="font-content-sec-modal row ">
+                            <div class="col-md-6" *ngFor="let font of fontList; let i = index">
+                                <div class="font-content-item" [class.font-prop]="this.selectedFontIds.indexOf( font.id ) >= 0" (click)="selectedProductFont(font.id, i)">
+                                    <div class="font-head">
+                                        <p>{{font.name}}</p>
+                                        <img *ngIf="this.selectedFontIds.indexOf( font.id ) >= 0 && api.checkPermission('delete-product-font')" class="tick-icon" src="assets/img/tick-icon.png">
+                                    </div>
+                                    <div class="font-desc">
+                                        <p>This is sample of the {{font.name}} font</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+        <button *ngIf="api.checkPermission('add-product-font')" class="primary mt-2 mb-2" [disabled]="Loading" [ngClass]="Loading?'in-progress':''" (click)="save()">Save
+            <span></span><span></span><span></span>
+        </button>
+        <button type="button" class="dark ml-1" (click)="cancelButton()">Cancel</button>
+    </div>
+</ng-template>
+
+<ng-template #fontFormBaseProduct>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Base Product Fonts</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12 mt-3 mb-2">
+                <div class="artwork-content-sec-modal">
+                    <ng-container *ngIf="baseProductFontList.length == 0">
+                        <div class="artwork-content-item">
+                            <h1>No Data Available</h1>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="baseProductFontList.length > 0">
+                        <div class="font-content-sec-modal row ">
+                            <div class="col-md-6" *ngFor="let bFont of baseProductFontList; let i = index">
+                                <div class="font-content-item" [class.font-prop]="this.selectedBaseProductFontIds.indexOf( bFont.font_id ) >= 0" (click)="selectedBaseProductFont(bFont.font_id, i)">
+                                    <div class="font-head">
+                                        <p>{{bFont.font.name}}</p>
+                                        <img *ngIf="this.selectedBaseProductFontIds.indexOf( bFont.font_id ) >= 0 && api.checkPermission('delete-product-font')" class="tick-icon" src="assets/img/tick-icon.png">
+                                    </div>
+                                    <div class="font-desc">
+                                        <p>This is sample of the {{bFont.font.name}} font</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+        <button *ngIf="api.checkPermission('add-product-font')" class="primary mt-2 mb-2" [disabled]="Loading" [ngClass]="Loading?'in-progress':''" (click)="saveBaseProductFont()">Save
+            <span></span><span></span><span></span>
+        </button>
+        <button type="button" class="dark ml-1" (click)="cancelButton()">Cancel</button>
+    </div>
+</ng-template>
+
+
+
+<ng-template #fontConfirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="primary ml-1" (click)="delete()" *ngIf="api.checkPermission('delete-product-font')" [disabled]="Loading" [ngClass]="Loading?'in-progress':''">Yes
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</ng-template>

@@ -1,0 +1,247 @@
+<div class="row m-3 no-gutters">
+    <div class="col-md-12 mb-2">
+        <div class="d-flex justify-content-between" *ngIf="this.user.id==1">
+            <h4>Clients</h4>
+            <button class="green sm mb-2" (click)="openModal(plan, -1)">Add</button>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <label>Name</label>
+                <input type="text" class="form-control" [(ngModel)]="name" placeholder="Enter Name">
+            </div>
+
+            <div class="col col d-flex align-items-end">
+                <label>&nbsp;</label>
+                <div class="btn-group" dropdown>
+                    <button [disabled]="waiting.search" [ngClass]="waiting.search? 'in-progress' : ''" type="button" class="lg green" (click)="page = 1;search()">Search
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>User Type</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th width="200">Address</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                </ng-container>
+                <ng-container *ngIf="dataStatus == 'done'">
+                    <tbody *ngIf="planList.length > 0; else noDataFound">
+                        <tr *ngFor="let d of planList; let i = index">
+                            <td>
+                                {{d[d.user_type].first_name+' '+d[d.user_type].last_name}}
+                            </td>
+                            <td>
+                                <div class="i-badge btnOrange" *ngIf="d.user_type=='qto'" type="button">QTO Officer</div>
+                                <div class="i-badge btnGreen" *ngIf="d.user_type=='admin'" type="button">Admin</div>
+                                <div class="i-badge btnRed" *ngIf="d.user_type=='deo'" type="button">DEO</div>
+                            </td>
+                            <td>{{d.email}} </td>
+                            <td>
+                                <span *ngIf="d[d.user_type].contact_1"><b>Primary:</b> {{d[d.user_type].contact_1}}</span>
+                                <span *ngIf="d[d.user_type].contact_2"><br><b>Secondary:</b> {{d[d.user_type].contact_2}}</span>
+                            </td>
+                            <td>{{d[d.user_type].address}}</td>
+                            <td class=" d-flex justify-content-center align-items-center">
+                                <div class="image-upload">
+                                    <button [disabled]="waiting.userStatus[i]" [ngClass]="{'in-progress': waiting.userStatus[i]}" *ngIf="d.status == 'active'" button class="sm red" (click)="inactiveUser(d.id, i)">Inactive
+                                        <span></span><span></span><span></span>
+                                    </button>
+                                    <button [disabled]="waiting.userStatus[i]" [ngClass]="{'in-progress': waiting.userStatus[i]}" *ngIf="d.status == 'inactive'" button class="sm green" (click)="activeUser(d.id,i)">Active
+                                        <span></span><span></span><span></span>
+                                    </button>
+                                </div>
+                                <div class="image-upload">
+                                    <label class="m-0" *ngIf="this.user.id==1" for="file-input" (click)="openModal(plan,i)">
+                                        <span class="themeCol2"><i class="fa fa-edit"></i></span>
+                                    </label>
+                                </div>
+
+                                <div class="px-2 danger">
+                                    <i class="fa fa-trash" *ngIf="this.user.id==1" (click)="confirmingModal(confirming, d.id,i)"></i>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </ng-container>
+                <ng-template #noDataFound>
+                    <tbody>
+                        <tr>
+                            <td colspan="6">
+                                <app-no-data-found></app-no-data-found>
+                            </td>
+                        </tr>
+                    </tbody>
+                </ng-template>
+            </table>
+            <nav aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+                <ul class="pagination justify-content-left  mt-3">
+                    <li class="page-item">
+                        <small *ngIf="page<10">Current Page: 0{{page}}</small>
+                        <small *ngIf="page>=10">Current Page: {{page}}</small>
+                    </li>
+                </ul>
+                <ul class="pagination justify-content-left">
+                    <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                    </li>
+                    <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                    </li>
+                    <ng-container *ngIf="pagination.last_page <= 6">
+                        <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                            <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                            </li>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="pagination.last_page >= 7">
+                        <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                            <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                            </li>
+                            <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link">...</a>
+                            </li>
+                            <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                            </li>
+                        </ng-container>
+                    </ng-container>
+                    <li class="page-item" *ngIf="pagination.next_page_url != null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                    </li>
+                    <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<ng-template #plan>
+    <div class="modal-header">
+        <h4 class="modal-first_name pull-left">Manage User</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="planForm" (ngSubmit)="save(planForm, f)" #f="ngForm">
+            <div class="row">
+                <ng-container *ngIf="selectedIndex > 0">
+                    <div class="col-md-6 mb-2">
+                        <label class="mb-0">User Type <span class="mendatory">*</span></label>
+                        <select formControlName="user_type" disabled class="form-control mt-0" [ngClass]="{'form-submitted': f.submitted}">
+                            <option value="null">Select User</option>
+                            <option value="admin">Admin</option>
+                            <option value="qto">Quantity takeoff</option>
+                            <option value="deo">Data entry operator</option>
+                        </select>
+                        <div *ngIf="ui.checkErrors(g.user_type, f)" class="errors">
+                            <p *ngIf="g.user_type.errors.required">User Type is required</p>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedIndex == -1">
+                    <div class="col-md-6 mb-2">
+                        <label class="mb-0">User Type <span class="mendatory">*</span></label>
+                        <select formControlName="user_type" class="form-control mt-0" [ngClass]="{'form-submitted': f.submitted}">
+                            <option value="null">Select User</option>
+                            <option *ngIf="user.id == sAdminId " value="admin">Admin</option>
+                            <option value="qto">Quantity take of</option>
+                            <option value="deo">Data entry operator</option>
+                        </select>
+                        <div *ngIf="ui.checkErrors(g.user_type, f)" class="errors">
+                            <p *ngIf="g.user_type.errors.required">User Type is required</p>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0">First Name <span class="mendatory">*</span></label>
+                    <input formControlName="first_name" class="form-control mt-0" placeholder="Enter First Name" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.first_name, f)" class="errors">
+                        <p *ngIf="g.first_name.errors.required">First Name is required</p>
+                        <p *ngIf="g.first_name.errors.maxlength">Maximum {{ g.first_name.maxlength.requiredLength }} charaters</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0">Last Name <span class="mendatory">*</span></label>
+                    <input formControlName="last_name" class="form-control mt-0" placeholder="Enter Last Name" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.last_name, f)" class="errors">
+                        <p *ngIf="g.last_name.errors.required">Last Name is required</p>
+                        <p *ngIf="g.last_name.errors.maxlength">Maximum {{ g.last_name.maxlength.requiredLength }} charaters</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0">Email <span class="mendatory">*</span></label>
+                    <input formControlName="email" [readonly]="selectedIndex > 0" class="form-control mt-0" placeholder="Enter Email" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.email, f)" class="errors">
+                        <p *ngIf="g.email.errors.required">Email is required</p>
+                        <p *ngIf="g.email.errors.email">Please enter valid email</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0">Primary Contact <span class="mendatory">*</span></label>
+                    <input formControlName="contact_1" class="form-control mt-0" placeholder="Enter Primary Contact" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.contact_1, f)" class="errors">
+                        <p *ngIf="g.contact_1.errors.required">Primary Contact is required</p>
+                        <p *ngIf="g.contact_1.errors.maxlength">Maximum {{ g.contact_1.maxlength.requiredLength }} charaters</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0">Secondary Contact</label>
+                    <input formControlName="contact_2" class="form-control mt-0" placeholder="Enter Secondary Contact" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.contact_2, f)" class="errors">
+                        <p *ngIf="g.contact_2.errors.required">Secondary Contact is required</p>
+                        <p *ngIf="g.contact_2.errors.maxlength">Maximum {{ g.contact_2.maxlength.requiredLength }} charaters</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <label class="mb-0">Address</label>
+                    <input formControlName="address" class="form-control mt-0" placeholder="Enter Address" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.address, f)" class="errors">
+                        <p *ngIf="g.address.errors.required">Address is required</p>
+                        <p *ngIf="g.address.errors.maxlength">Maximum {{ g.address.maxlength.requiredLength }} charaters</p>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <button type="submit" class="red sm m-1" [disabled]="waiting.save" [ngClass]="{'in-progress': waiting.save}">save
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <button type="button" class="black sm ml-1" (click)="cancelRegionButton(f)">Cancel</button>
+
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #confirming>
+    <div class="modal-body text-center">
+        <p>Do you want to Delete?</p>
+        <button type="button" class="green sm" (click)="modalRef.hide()">No</button>
+        <button [disabled]="waiting.save" [ngClass]="{'in-progress': waiting.save}" type="button" class="red sm mr-1" (click)="delete()">Yes
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+</ng-template>

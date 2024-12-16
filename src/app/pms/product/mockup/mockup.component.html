@@ -1,0 +1,43 @@
+<div class="main">
+    <div class="tabs-container">
+        <div *ngFor="let el of elevations; let i= index" [class.active]="el.id == activeBtnId" class="tab" (click)="mockList(el.id)">
+            {{el.title}}
+        </div>
+    </div>
+
+    <div class="tab-content">
+        <app-no-data-found *ngIf="elevationImages.length == 0 && fetching == false"></app-no-data-found>
+        <div class="mockup-image" *ngFor="let img of elevationImages; let ind= index">
+            <!-- <h1 class="title">{{img.mockup.title}}</h1> -->
+            <!-- <div class="canvas-placeholder" *ngIf="img.canvasLoading">
+                <img  src="assets/images/rolling-main.svg" alt="">
+            </div> -->
+            <img style="width: 100px;" [defaultImage]="spinnerSVG" [lazyLoad]="api.downloadProductImage(img.id)">
+            <!-- <canvas class="mt-2" id="{{img.id+ 'img-src'+ ind}}" width="80" height="80" ></canvas> -->
+        </div>
+    </div>
+</div>
+
+<ng-template #confirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1">
+            <div class="loading-dots" [ngClass]="loading?'in-progress':''">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>
+
+
+<ng-template #printArea>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Select Print Area</h4>
+        <button type="button" class="close" (click)="pAModal.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+</ng-template>

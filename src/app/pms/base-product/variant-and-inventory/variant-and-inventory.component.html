@@ -1,0 +1,771 @@
+<!-- <div class="product-info" *ngIf="fetchProduct === true">
+    <div><b>Name:</b> {{productDetail.name}}</div>
+    <div><b>Sku:</b> {{productDetail.sku}}</div>
+    <div><b>Category:</b> {{productDetail?.category.name}}</div>
+</div> -->
+<div class="row no-gutters justify-content-center outer-section">
+    <div class="col-md-11">
+        <div class="variant-container">
+            <div class="variant-heading-sec">
+                <div class="variant-heading">Product Data</div>
+                <ng-container *ngIf="productDetail.variable==1">
+                    <div style="display: none;">
+                        <div class="row no-gutters d-flex justify-content-between">
+                            <div class="form-group has-search col-md-8 m-0">
+                                <span class="fa fa-search form-control-feedback"></span>
+                                <input type="text" style="height: 40px !important; border-radius:0 7px 7px 0 !important;" class="form-control form-control-search" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Here" />
+                                <span class="form-control-feedback1">
+                                    <p>Search</p>
+                                </span>
+                            </div>
+                            <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)" class="col-md-3 m-0 pl-2" style="height: 40px !important">
+                                <option value="" [disabled]="true">
+                                    Select per page
+                                </option>
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="15" [selected]="true">15</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="75">75</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                        <div class="variant-btn m-0" *ngIf="api.checkPermission('add-base-product-variant')">
+                            <!-- (click)="openModal(addForm, -1)" -->
+                            <div class="button-group" [routerLink]="['/user/base-product/product-data']" [queryParams]="{id: this.ds.productId,prod_id: -1}" routerLinkActive="router-link-active">
+                                <div class="icon primary pre">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                                <button type="button" class="primary lg">Add New Product Data</button>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+        <ng-container>
+
+            <div class="row no-gutters justify-content-center">
+                <div class="col-md-12">
+                    <form [formGroup]="dataForm" #f="ngForm">
+                        <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <div class="row">
+                                    <div class="col-md-6"></div>
+                                    <div class="col-md-12"><label>Shipping Data <span class="mendatory">*</span></label></div>
+                                    <div class="col-md-6">
+                                        <div class="option-name mb-3">
+                                            <input formControlName="weight" type="number" min="0" placeholder="Weight (g)" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                            <div *ngIf="ui.checkErrors(g.weight, f)" class="errors">
+                                                <p *ngIf="g.weight.errors.required">Weight is required</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="option-name mb-3">
+                                            <input formControlName="hs_code" placeholder="HS code" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                            <div *ngIf="ui.checkErrors(g.hs_code, f)" class="errors">
+                                                <p *ngIf="g.hs_code.errors.required">HS code is required</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12"><label>Dimensions <span class="mendatory">*</span></label></div>
+                                    <div class="col-md-4">
+                                        <div class="option-name mb-3">
+                                            <input formControlName="width" type="number" min="0" placeholder="Width (mm)" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                            <div *ngIf="ui.checkErrors(g.width, f)" class="errors">
+                                                <p *ngIf="g.width.errors.required">Width is required</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="option-name mb-3">
+                                            <input formControlName="height" type="number" min="0" placeholder="Height (mm)" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                            <div *ngIf="ui.checkErrors(g.height, f)" class="errors">
+                                                <p *ngIf="g.height.errors.required">Height is required</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="option-name mb-3">
+                                            <input formControlName="depth" type="number" min="0" placeholder="Depth (mm)" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                            <div *ngIf="ui.checkErrors(g.depth, f)" class="errors">
+                                                <p *ngIf="g.depth.errors.required">Depth is required</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="option-name mb-3">
+                                            <label>Trade Price <span class="mendatory">*</span></label>
+                                            <input formControlName="tp" type="number" min="0" placeholder="Trade Price" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                            <div *ngIf="ui.checkErrors(g.tp, f)" class="errors">
+                                                <p *ngIf="g.tp.errors.required">Trade Price is required</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="option-name mb-3">
+                                            <label>RRP <span class="mendatory">*</span></label>
+                                            <input formControlName="rrp" type="number" min="0" placeholder="RRP" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                            <div *ngIf="ui.checkErrors(g.rrp, f)" class="errors">
+                                                <p *ngIf="g.rrp.errors.required">RRP is required</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="option-name mb-3">
+                                            <label>Tax(%)<span class="mendatory">*</span></label>
+                                            <input formControlName="taxable_info" type="number" min="0" placeholder="Tax(%)" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                            <div *ngIf="ui.checkErrors(g.taxable_info, f)" class="errors">
+                                                <p *ngIf="g.taxable_info.errors.required">Tax(%) is required</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8" *ngIf="productDetail.variable==1">
+                                        <div class="varients-main">
+                                            <div class="varients-heading">
+                                                Varient Options
+                                            </div>
+                                            <ng-container *ngFor="let variantOption of variantOptions; let i = index">
+                                                <div class="varients-options-main">
+                                                    <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom:10px;" *ngIf="variantOption.show">
+                                                        <div style="display: flex; width: 100%; flex-wrap: wrap;">
+                                                            <div style="width: 100%;">{{ variantOption.title }}</div>
+                                                            <div style="width: 100%; display: flex; flex-wrap: wrap;">
+                                                                <ng-container *ngFor="let variantOptionValue of variantOption.values">
+                                                                    <button class="sm varient-values mr-1 mb-1">{{ variantOptionValue.name }}</button>
+                                                                </ng-container>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <button type="button" class="sm edit-btn mr-1 mb-1" (click)="showVarientDetail(i)">Edit</button>
+                                                        </div>
+                                                    </div>
+                                                    <ng-container *ngIf="variantOption.show==false">
+                                                        <div class="varients-main-inner">
+                                                            <div class="varient-main-inner-left">
+                                                                <select class="form-control" [(ngModel)]="variantOption.id" [ngModelOptions]="{standalone: true}" (change)="variantOptionChanged($event, i)">
+                                                                    <option [value]="-1">Select Variant</option>
+                                                                    <option *ngFor="let item of varientsOptions" [value]="item.id">{{item.name}}</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="varient-main-inner-right"><i class='fas fa-trash-alt' (click)="deleteVariantOption(i)"></i></div>
+                                                        </div>
+
+                                                        <div class="varients-main-inner" *ngFor="let variantOptionValue of variantOption.values;  let j = index">
+                                                            <div class="varient-main-inner-left">
+                                                                <input type="text" placeholder="{{variantOptions[i].values[j].placeHolder}}" id="option-{{i}}-{{j}}" class="form-control" [(ngModel)]="variantOptions[i].values[j].name" (input)="variantOptionValueChanged($event, variantOptions[i].values[j], i, j)" style="margin-top: 5px;" [ngModelOptions]="{standalone: true}">
+                                                            </div>
+                                                            <div class="varient-main-inner-right" (click)="deleteVariantOptionValue(i,j)">
+                                                                <i class='fas fa-trash-alt'></i></div>
+                                                        </div>
+
+                                                        <div style="display: flex; width:100%">
+                                                            <button class="done mr-2" type="button" (click)="addVariantOptionValue(i, 'Add another value')">Add another value</button>
+                                                            <button class="done" type="button" (click)="showVarientDetail(i)">Done</button>
+                                                        </div>
+                                                    </ng-container>
+                                                </div>
+                                            </ng-container>
+                                            <div class="varients-footer" *ngIf="variantOptions.length < varientsOptions.length" (click)="addVariantOption()">
+                                                <i class="fas fa-plus"></i> Variable Options
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <ng-container *ngFor="let variantOption of variantOptions; let i = index">
+
+
+
+                                                <!-- <ng-container *ngIf="variantOption.id==2">
+                                                    <div style="display: flex;">
+                                                        <ng-container *ngFor="let variantOptionValue of variantOption.values;  let j = index">
+                                                            <div [style.backgroundColor]="variantOptions[i].values[j].name" style="width: 30px; height: 30px;"></div>
+                                                        </ng-container>
+                                                    </div>
+                                                </ng-container> -->
+
+
+                                            </ng-container>
+                                        </div>
+                                        <div class="varients-main mt-2">
+                                            <div class="varients-heading">
+                                                Varients
+                                            </div>
+                                            <div class="table-responsive">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr style="border-bottom: solid 2px #999999;">
+                                                            <th class="td-font" style="text-align: left !important;">Varient name</th>
+                                                            <th class="td-font" style="text-align: left !important;">Trade Price</th>
+                                                            <th class="td-font" style="text-align: left !important;">SKU </th>
+                                                            <th class="td-font" style="text-align: left !important;">Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        <ng-container *ngFor="let variant of variants | keyvalue">
+                                                            <tr *ngIf="variant.value.deleted === false">
+                                                                <td class="td-varient" style="text-align:left !important;">{{ variant.value.name }}</td>
+                                                                <td class="td-varient">
+                                                                    <input *ngIf="variant.value.id == -1" type="number" min="0" disabled placeholder="" class="form-control">
+                                                                    <input *ngIf="variant.value.id > -1" type="number" min="0" required placeholder="" class="form-control" [(ngModel)]="variant.value.tradePrice" [ngModelOptions]="{standalone: true}" value="{{ variant.value.tradePrice }}">
+                                                                </td>
+                                                                <td class="td-varient">
+                                                                    <input *ngIf="variant.value.id == -1" type="text" placeholder="" disabled class="form-control">
+                                                                    <input *ngIf="variant.value.id > -1" type="text" placeholder="" required class="form-control" [(ngModel)]="variant.value.sku" [ngModelOptions]="{standalone: true}" value="{{ variant.value.sku }}">
+                                                                </td>
+                                                                <td class="td-varient">
+                                                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                                        <img *ngIf="variant.value.save" src="assets/images/rolling-gray.svg" style="width: 24px;">
+                                                                        <i class="fa fa-save save mr-2" *ngIf="variant.value.id > -1 && !variant.value.save" (click)="editVarient(variant)"></i>
+                                                                        <i class="fa fa-edit save" *ngIf="variant.value.id > -1" (click)="openModal(viewModalTemplete,variant)"></i>
+                                                                        <i class="fa fa-edit save" style="color: #ccc;" *ngIf="variant.value.id == -1"></i>
+                                                                        <i class="fa fa-trash-o trash" (click)="deleteVariant(variant.key)"></i>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </ng-container>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mb-3 mt-3" style="display: flex; align-self: center;">
+                                        <div *ngIf="api.checkPermissions(['add-base-product-variant','update-base-product-variant'])">
+                                            <button type="button" (click)="save(dataForm, f, 'draft')" class="primary" [disabled]="Loading" [ngClass]="Loading ? 'in-progress' : ''">
+                                                Save Draft<span></span><span></span><span></span>
+                                            </button>
+                                            <button type="button" (click)="save(dataForm, f, 'active')" class="ml-2 secondary" [disabled]="Loading" [ngClass]="Loading ? 'in-progress' : ''">
+                                                Save & Activate<span></span><span></span><span></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="no-gutters justify-content-center outer-section" *ngIf="prodId > 0 && productDetail.variable==0">
+                <div class="col-md-12">
+                    <div class="pmc-design-library-content">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <div class="nav-link" (click)="activeTab = 'trade'" [ngClass]="activeTab === 'trade' ? 'active' : ''">
+                                    <h5 class="modal-title">Trade Price</h5>
+                                </div>
+                            </li>
+                            <li class="nav-item" style="display: none;">
+                                <div class="nav-link" (click)="activeTab = 'print'" [ngClass]="activeTab === 'print' ? 'active' : ''">
+                                    <h5 class="modal-title">Print Area</h5>
+                                </div>
+                            </li>
+                        </ul>
+                        <ng-container *ngIf="activeTab === 'trade'">
+                            <div class="product-box ng-star-inserted">
+                                <div class="product-variants">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr style="border-bottom: solid 2px #999999;">
+                                                <th class="td-font" style="text-align: left !important;">Quantity</th>
+                                                <th class="td-font" style="text-align: left !important;">Price</th>
+                                                <th class="td-font" style="text-align: left !important;">RRP </th>
+                                                <th class="td-font" style="text-align: left !important;">Company</th>
+                                                <th style="text-align: right;"><button type="button" class="primary sm" (click)="setTradePrice()">Add</button></th>
+                                            </tr>
+                                            <ng-container *ngIf="tradePrice.length > 0">
+                                                <tr *ngFor="let d of tradePrice; let tp = index">
+                                                    <td><input type="number" min="0" required placeholder="" class="form-control" [(ngModel)]="d.quantity" [value]="d.quantity"></td>
+                                                    <td><input type="number" min="0" required placeholder="" class="form-control" [(ngModel)]="d.tp" [value]="d.tp"></td>
+                                                    <td><input type="number" min="0" placeholder="" class="form-control" [(ngModel)]="d.rrp" [value]="d.rrp"></td>
+                                                    <td>
+                                                        <select class="form-control" [(ngModel)]="d.client_id">
+                                                            <option [value]="null">Select Company</option>
+                                                            <ng-container *ngIf="clientsList.length > 0">
+                                                                <option *ngFor="let i of clientsList" [value]="i.id">{{i.title}}. {{i.user.first_name}} {{i.user.last_name}}</option>
+                                                            </ng-container>
+                                                        </select>
+                                                    </td>
+
+                                                    <td>
+                                                        <i class="fa fa-save save" (click)="saveTradePrice(d,tp)"></i>
+                                                        <i class="fa fa-trash-o trash" (click)="confirmingModal(tradePriceConfirming, d.id,tp)"></i>
+                                                    </td>
+                                                </tr>
+                                            </ng-container>
+                                            <tr *ngIf="tradePrice.length == 0">
+                                                <td colspan="10" class="text-center">
+                                                    <h2 class="nodata">No Trade Price Found</h2>
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="activeTab === 'print'">
+                            <div class="product-box ng-star-inserted">
+                                <div class="product-variants">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr style="border-bottom: solid 2px #999999;">
+                                                <th style="width: 200px;"></th>
+                                                <th style="width: 200px;"></th>
+                                                <th class="td-font" style="width: 200px; text-align: left !important;">Multiplier </th>
+                                                <th class="td-font" style="text-align: left !important;">Target</th>
+                                                <th></th>
+                                            </tr>
+                                            <ng-container *ngIf="variantFactors.length > 0">
+                                                <tr *ngFor="let d of variantFactors;  let tp = index">
+                                                    <td style="text-align: left !important; font-weight: normal !important; font-size: 12px; color: #000;">
+                                                        {{d.print_area.title}}
+                                                    </td>
+                                                    <td style="text-align: left !important; font-weight: normal !important; font-size: 12px; color: #000;">
+                                                        {{d.print_area.p_width | number}}x{{d.print_area.p_height | number}}
+                                                    </td>
+                                                    <td style="text-align: left !important; font-weight: normal !important; font-size: 12px; color: #000;">
+                                                        <input type="number" min="0.01" step="0.01" required placeholder="" [(ngModel)]="d.multiplier" [value]="d.multiplier" class="form-control"></td>
+                                                    <td style="text-align: left !important; font-weight: normal !important; font-size: 12px; color: #000;">
+                                                        <div class="input-group">
+                                                            <input type="number" class="form-control" min="1" step="1" [value]="d.multiplier * d.print_area.p_width" (change)="changeMultiplier($event, d, tp, 'w')">
+                                                            <div class="input-group-append">
+                                                                <span class="input-group-text" style="padding:0 5px 0 5px !important;"><small>x</small></span>
+                                                            </div>
+                                                            <input type="number" class="form-control" min="1" step="1" [value]="d.multiplier * d.print_area.p_height" (change)="changeMultiplier($event, d, tp, 'h')">
+                                                            <div class="input-group-append">
+                                                                <span class="input-group-text" style="padding:0 5px 0 5px !important;"><small>mm</small></span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td style="text-align: left !important; font-weight: normal !important; font-size: 12px; color: #000;">
+                                                        <i class="fa fa-save save" (click)="savePrintArea(d, tp)"></i>
+                                                    </td>
+                                                </tr>
+                                            </ng-container>
+                                            <tr *ngIf="variantFactors.length == 0">
+                                                <td colspan="10" class="text-center">
+                                                    <h2 class="nodata">No Print Areas Found</h2>
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+
+        </ng-container>
+
+        <div class="variant-content-sec" *ngIf="productDetail.variable==1" style="display: none;">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            Serial#
+                            <!-- <span class="arrows">
+                                <span (click)="doSort('id', 'asc')" [class]="getArrowClass('id', 'asc')"></span>
+                                <span (click)="doSort('id', 'desc')" [class]="getArrowClass('id', 'desc')"></span>
+                            </span> -->
+                        </th>
+                        <th>Title</th>
+                        <th>
+                            Width
+                            <span class="arrows">
+                                <span (click)="doSort('width', 'asc')" [class]="getArrowClass('width', 'asc')"></span>
+                                <span (click)="doSort('width', 'desc')" [class]="getArrowClass('width', 'desc')"></span>
+                            </span>
+                        </th>
+                        <th>
+                            Height
+                            <span class="arrows">
+                                <span (click)="doSort('height', 'asc')" [class]="getArrowClass('height', 'asc')"></span>
+                                <span (click)="doSort('height', 'desc')" [class]="getArrowClass('height', 'desc')"></span>
+                            </span>
+                        </th>
+                        <th>
+                            Depth
+                            <span class="arrows">
+                                <span (click)="doSort('depth', 'asc')" [class]="getArrowClass('depth', 'asc')"></span>
+                                <span (click)="doSort('depth', 'desc')" [class]="getArrowClass('depth', 'desc')"></span>
+                            </span>
+                        </th>
+                        <th>
+                            RRP
+                            <span tooltip="Recomended retail price" class="info-wrapper"><img src="assets/images/info.svg" /></span>
+                            <span class="arrows">
+                                <span (click)="doSort('rrp', 'asc')" [class]="getArrowClass('rrp', 'asc')"></span>
+                                <span (click)="doSort('rrp', 'desc')" [class]="getArrowClass('rrp', 'desc')"></span>
+                            </span>
+                        </th>
+                        <th class="text-center" style="width: 100px" *ngIf="
+                                api.checkPermissions([
+                                    'add-base-product-variant',
+                                    'update-base-product-variant',
+                                    'delete-base-product-variant'
+                                ])
+                            ">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <ng-container *ngIf="dataList.length > 0 && dataStatus == 'done'">
+                    <tbody>
+                        <tr style="border-radius: 10px" *ngFor="let d of dataList | filter: searchKeyword; let i = index">
+                            <!-- <td class="serial">1</td> -->
+                            <td class="serial">{{ getSerialNumber(i) }}</td>
+                            <td class="size">{{ d.title? d.title: 'Null' }}</td>
+                            <td class="size">{{ d.width? d.width: 'Null' }}</td>
+                            <td class="size">{{ d.height? d.height: 'Null' }}</td>
+                            <td class="size">{{ d.depth? d.depth: 'Null' }}</td>
+
+                            <td class="price" #price>&pound; {{ d.rrp }}</td>
+                            <td class="d-flex justify-content-end align-items-center action-btn">
+                                <div (click)="copyRecord(addForm, i)" style="display: none;">
+                                    <img src="assets/img/copy-icon.png" alt="" />
+                                </div>
+                                <div class="px-3 edit-btn" *ngIf="api.checkPermission('update-base-product-variant')" [routerLink]="['/user/base-product/product-data']" [queryParams]="{id: this.ds.productId,prod_id: d.id}">
+                                    <img src="assets/img/edit-icon.png" alt="" />
+                                </div>
+                                <!-- <div class="pr-3 delete-btn" (click)="confirmingModal(designationConfirming, d.id,i)" *ngIf="api.checkPermission('delete-base-product-variant')">
+                                    <img src="assets/img/delete-icon.png" alt="">
+                                </div> -->
+                            </td>
+                        </tr>
+                    </tbody>
+                </ng-container>
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                </ng-container>
+
+                <tbody *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                    <tr>
+                        <td colspan="7">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+                <ul class="pagination justify-content-left mt-3">
+                    <li class="page-item">
+                        <small *ngIf="page < 10">Current page: 0{{ page }}</small>
+                        <small *ngIf="page >= 10">Current page: {{ page }}</small>
+                    </li>
+                </ul>
+                <ul class="pagination justify-content-left">
+                    <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page - 1)">Previous</a>
+                    </li>
+                    <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                    </li>
+                    <ng-container *ngIf="pagination.last_page <= 6">
+                        <ng-container *ngFor="
+                                let p of [].constructor(pagination.last_page);
+                                let i = index
+                            ">
+                            <li [class]="
+                                    page == i + 1
+                                        ? 'page-item active'
+                                        : 'page-item'
+                                ">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i + 1)">{{ i + 1 }}</a>
+                            </li>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="pagination.last_page >= 7">
+                        <ng-container *ngFor="
+                                let p of [].constructor(pagination.last_page);
+                                let i = index
+                            ">
+                            <li *ngIf="i < 4" [class]="
+                                    page == i + 1
+                                        ? 'page-item active'
+                                        : 'page-item'
+                                ">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i + 1)">{{ i + 1 }}</a>
+                            </li>
+                            <li *ngIf="pagination.last_page - i == 3" [class]="
+                                    page == i + 1
+                                        ? 'page-item active'
+                                        : 'page-item'
+                                ">
+                                <a class="page-link">...</a>
+                            </li>
+                            <li *ngIf="
+                                    pagination.last_page - i == 1 ||
+                                    pagination.last_page - i == 2
+                                " [class]="
+                                    page == i + 1
+                                        ? 'page-item active'
+                                        : 'page-item'
+                                ">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i + 1)">{{ i + 1 }}</a>
+                            </li>
+                        </ng-container>
+                    </ng-container>
+                    <li class="page-item" *ngIf="pagination.next_page_url != null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page + 1)">Next</a>
+                    </li>
+                    <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #designationConfirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="primary ml-1" (click)="delete()" [disabled]="Loading" [ngClass]="Loading ? 'in-progress' : ''">
+            Yes <span></span><span></span><span></span>
+        </button>
+    </div>
+</ng-template>
+<ng-template #tradePriceConfirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="primary ml-1" (click)="deleteTradePrice()" [disabled]="Loading" [ngClass]="Loading ? 'in-progress' : ''">
+            Yes <span></span><span></span><span></span>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #viewModalTemplete>
+    <div class="modal-header">
+        <div class="add-money-heading">
+            <h2 class="modal-title pull-left">Edit {{variantName}}</h2>
+        </div>
+    </div>
+    <div class="modal-body" style="max-height: 500px; overflow: auto; text-align: center;" *ngIf="loadVariant==false">
+        <img src="assets/images/rolling-main.svg" width="30px" />
+    </div>
+    <form [formGroup]="dataFormVariant" (ngSubmit)="saveVariant(dataFormVariant)" #vf="ngForm">
+        <div class="modal-body" style="max-height: 500px; overflow: auto;" *ngIf="loadVariant">
+            <div style="display: flex; justify-content: space-between; flex-wrap: wrap; width: 100%;">
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; width: 77%; margin-right: 2%;">
+
+                    <ng-container *ngFor="let item of this.variantData.base_product_variant_values">
+
+                        <div style="width: 100%; margin-top: 10px;">
+                            <label>{{item.variant_option_value.variant_option.name}}</label>
+                            <input type="text" class="form-control" value={{item.variant_option_value.name}} disabled>
+                        </div>
+                    </ng-container>
+                </div>
+                <div style="display: flex; justify-content: center; flex-wrap: wrap; padding: 2%; width: 21%; border: solid 1px #CCC; align-items: center; border-radius: 5px;">
+
+                    <!-- <input formControlName="color_code" type="color" class="form-control" style="border: solid 1px #CCC;" [ngClass]="{'form-submitted': vf.submitted }" /> -->
+                    <button class="primary" style="margin-bottom: 10px;" *ngIf="thumbnail!=''" (click)="thumbnail=''" type="button">Remove Image</button>
+                    <ngx-colors *ngIf="thumbnail==''" ngx-colors-trigger [(ngModel)]="color" [ngModelOptions]="{standalone: true}"></ngx-colors>
+                    <img id="color-img" *ngIf="thumbnail!=''" [src]="thumbnail" style="width: 70px; height: 70px; margin-bottom: 10px;">
+                    <input type="file" style="display: none;" id="thumbnail-image" (change)="onThumbnailChange($event, cropperModal)">
+                    <button class="secondary" (click)="browseThumbnail($event)" type="button">Browse Image</button>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; width: 100%; margin-top: 10px;">
+                    <div style="width: 32%; margin-right: 1%; margin-bottom: 10px; margin-top: 10px;">
+                        <label>Trade Price</label>
+                        <input formControlName="tp" type="number" min="0" placeholder="&pound; 0.0" class="form-control" [ngClass]="{ 'form-submitted': vf.submitted }" />
+                        <div *ngIf="ui.checkErrors(v.tp, vf)" class="errors">
+                            <p *ngIf="v.tp.errors.required">Trade Price is required</p>
+                        </div>
+                    </div>
+                    <div style="width: 32%; margin-right: 1%; margin-bottom: 10px; margin-top: 10px;">
+                        <label>RRP</label>
+                        <input formControlName="rrp" type="number" min="0" placeholder="&pound; 0.0" class="form-control" [ngClass]="{ 'form-submitted': vf.submitted }" />
+                        <div *ngIf="ui.checkErrors(v.rrp, vf)" class="errors">
+                            <p *ngIf="v.rrp.errors.required">RRP is required</p>
+                        </div>
+                    </div>
+                    <div style="width: 32%; margin-right: 1%; margin-bottom: 10px; margin-top: 10px;">
+                        <label>Tax (%)</label>
+                        <input formControlName="taxable_info" type="number" min="0" placeholder="Tax(%)" class="form-control mt-0" [ngClass]="{ 'form-submitted': vf.submitted }" />
+                        <div *ngIf="ui.checkErrors(v.taxable_info, vf)" class="errors">
+                            <p *ngIf="v.taxable_info.errors.required">Tax(%) is required</p>
+                        </div>
+                    </div>
+                    <div style="width: 32%; margin-right: 1%; margin-bottom: 10px; margin-top: 10px;">
+                        <label>Dimensions Width (mm)</label>
+                        <input formControlName="width" type="number" min="0" placeholder="0" class="form-control mt-0" [ngClass]="{ 'form-submitted': vf.submitted }" />
+                        <div *ngIf="ui.checkErrors(v.width, vf)" class="errors">
+                            <p *ngIf="v.width.errors.required">Width is required</p>
+                        </div>
+
+                    </div>
+                    <div style="width: 32%; margin-right: 1%; margin-bottom: 10px; margin-top: 10px;">
+                        <label>Dimensions Height (mm)</label>
+                        <input formControlName="height" type="number" min="0" placeholder="0" class="form-control mt-0" [ngClass]="{ 'form-submitted': vf.submitted }" />
+                        <div *ngIf="ui.checkErrors(v.height, vf)" class="errors">
+                            <p *ngIf="v.width.errors.required">Height is required</p>
+                        </div>
+                    </div>
+                    <div style="width: 32%; margin-right: 1%; margin-bottom: 10px; margin-top: 10px;">
+                        <label>Dimensions Depth (mm)</label>
+                        <input formControlName="depth" type="number" min="0" placeholder="0" class="form-control mt-0" [ngClass]="{ 'form-submitted': vf.submitted }" />
+                        <div *ngIf="ui.checkErrors(v.depth, vf)" class="errors">
+                            <p *ngIf="v.depth.errors.required">Depth is required</p>
+                        </div>
+                    </div>
+                    <div style="width: 32%; margin-right: 1%; margin-bottom: 10px; margin-top: 10px;">
+                        <label>SKU (Stock Keeping Unit)</label>
+                        <input formControlName="sku" class="form-control mt-0" [ngClass]="{ 'form-submitted': vf.submitted }" />
+                        <div *ngIf="ui.checkErrors(v.sku, vf)" class="errors">
+                            <p *ngIf="v.sku.errors.required">SKU is required</p>
+                        </div>
+                    </div>
+                    <div style="width: 32%; margin-right: 1%; margin-bottom: 10px; margin-top: 10px;">
+                        <label>HS Code</label>
+                        <input formControlName="hs_code" class="form-control mt-0" [ngClass]="{ 'form-submitted': vf.submitted }" />
+                        <div *ngIf="ui.checkErrors(v.hs_code, vf)" class="errors">
+                            <p *ngIf="v.hs_code.errors.required">HS code is required</p>
+                        </div>
+                    </div>
+                    <div style="width: 32%; margin-right: 1%; margin-bottom: 10px; margin-top: 10px;">
+                        <label>Weight (g)</label>
+                        <input formControlName="weight" type="number" min="0" placeholder="Weight (g)" class="form-control mt-0" [ngClass]="{ 'form-submitted': vf.submitted }" />
+                        <div *ngIf="ui.checkErrors(v.weight, vf)" class="errors">
+                            <p *ngIf="v.weight.errors.required">Weight is required</p>
+                        </div>
+                    </div>
+                </div>
+                <ng-container>
+                    <div class="product-box">
+                        <div class="product-variants">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr style="border-bottom: solid 2px #999999;">
+                                        <th style="text-align: left !important;" class="td-font">Print Area</th>
+                                        <th></th>
+                                        <th class="td-font" style=" text-align: left !important; width: 100px;">Multiplier </th>
+                                        <th class="td-font" style="text-align: left !important; width: 300px;">Target</th>
+                                        <th></th>
+                                    </tr>
+                                    <ng-container *ngIf="variantFactors.length > 0">
+                                        <tr *ngFor="let d of variantFactors;  let tp = index">
+                                            <td style="text-align: left !important; font-weight: normal !important; font-size: 12px; color: #000;">{{d.print_area.title}}</td>
+                                            <td style="text-align: left !important; font-weight: normal !important; font-size: 12px; color: #000;">{{d.print_area.p_width | number}}x{{d.print_area.p_height | number}}</td>
+                                            <td style="text-align: left !important; font-weight: normal !important; font-size: 12px; color: #000;">
+                                                <input type="number" min="0" step="0.01" required placeholder="" [(ngModel)]="d.multiplier" [value]="d.multiplier" class="form-control" [ngModelOptions]="{standalone: true}">
+                                            </td>
+                                            <td style="text-align: left !important; font-weight: normal !important; font-size: 12px; color: #000;">
+                                                <div class="input-group">
+                                                    <input type="number" class="form-control" min="1" step="1" [value]="d.multiplier * d.print_area.p_width" (keyup)="changeVariantMultiplier($event, d, tp, 'w')" [ngModelOptions]="{standalone: true}">
+
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text" style="padding:0 5px 0 5px !important;"><small>x</small></span>
+                                                    </div>
+
+                                                    <input type="number" class="form-control" min="1" step="1" [value]="d.multiplier * d.print_area.p_height" (keyup)="changeVariantMultiplier($event, d, tp, 'h')" [ngModelOptions]="{standalone: true}">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text" style="padding:0 5px 0 5px !important;"><small>mm</small></span>
+                                                    </div>
+
+                                                </div>
+                                            </td>
+                                            <td style="text-align: left !important; font-weight: normal !important; font-size: 12px; color: #000;">
+                                                <i class="fa fa-save save" (click)="savePrintArea(d, tp)"></i>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <tr *ngIf="variantFactors.length == 0">
+                                        <td colspan="10" class="text-center">
+                                            <h2 class="nodata">No Print Areas Found</h2>
+                                        </td>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container>
+                    <div class="product-box">
+                        <div class="product-variants">
+                            <div class="mb-3" style="font-weight: 600;">Custom Client Pricing</div>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr style="border-bottom: solid 2px #999999;">
+                                        <th class="td-font" style="text-align: left !important;">Quantity</th>
+                                        <th class="td-font" style="text-align: left !important;">Price</th>
+                                        <th class="td-font" style="text-align: left !important;">RRP </th>
+                                        <th class="td-font" style="text-align: left !important;">Company</th>
+
+                                        <th style="text-align: right;"><button type="button" class="primary sm" (click)="setVariantTradePrice()">Add</button></th>
+                                    </tr>
+                                    <ng-container *ngIf="tradePrice.length > 0">
+                                        <tr *ngFor="let d of tradePrice; let tp = index">
+                                            <td><input type="number" min="0" required placeholder="" class="form-control" [(ngModel)]="d.quantity" [value]="d.quantity" [ngModelOptions]="{standalone: true}"></td>
+                                            <td><input type="number" min="0" required placeholder="" class="form-control" [(ngModel)]="d.tp" [value]="d.tp" [ngModelOptions]="{standalone: true}"></td>
+                                            <td><input type="number" min="0" placeholder="" class="form-control" [(ngModel)]="d.rrp" [value]="d.rrp" [ngModelOptions]="{standalone: true}"></td>
+                                            <td>
+                                                <select class="form-control" [(ngModel)]="d.client_id" [ngModelOptions]="{standalone: true}">
+                                                    <option [value]="null">Select Company</option>
+                                                    <ng-container *ngIf="clientsList.length > 0">
+                                                        <option *ngFor="let i of clientsList" [value]="i.id">{{i.title}}. {{i.user.first_name}} {{i.user.last_name}}</option>
+                                                    </ng-container>
+                                                </select>
+                                            </td>
+
+                                            <td>
+                                                <i class="fa fa-save save" (click)="saveVariantTradePrice(d,tp)"></i>
+                                                <i class="fa fa-trash-o trash" (click)="confirmingModal(tradePriceConfirming, d.id,tp)"></i>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <tr *ngIf="tradePrice.length == 0">
+                                        <td colspan="10" class="text-center">
+                                            <h2 class="nodata">No Trade Price Found</h2>
+                                        </td>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </ng-container>
+
+            </div>
+        </div>
+        <div style="padding:1rem !important;">
+            <div class="add-money-footer">
+                <button type="submit" class="primary mr-1" [disabled]="Loading" [ngClass]="Loading ? 'in-progress' : ''">
+                    Save <span></span><span></span><span></span>
+                </button>
+                <button type="button" class="secondary" (click)="modalVariantRef.hide(); loadVariant=true">Cancel</button>
+            </div>
+        </div>
+    </form>
+</ng-template>
+<ng-template #cropperModal>
+    <div class="modal-body">
+        <ng-scrollbar class="modal-scrollbar">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="title-wrapper">
+                        <h2 class="title" style="font-size: 20px;">Adjust Image Size</h2>
+                        <div>
+                            <button type="button" (click)="doneCroppingThumbnail()">Done</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="270/225" [onlyScaleDown]="true" [roundCropper]="false" format="png" outputType="base64" (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()" (cropperReady)="cropperReady()" (loadImageFailed)="loadImageFailed()" [alignImage]="'center'">
+                    </image-cropper>
+                </div>
+            </div>
+        </ng-scrollbar>
+    </div>
+</ng-template>

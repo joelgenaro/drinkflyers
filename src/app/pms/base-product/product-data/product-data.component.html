@@ -1,0 +1,291 @@
+<div class="product-info" *ngIf="fetchProduct === true">
+    <div><b>Name:</b> {{productDetail.name}}</div>
+    <div><b>Sku:</b> {{productDetail.sku}}</div>
+    <div><b>Category:</b> {{productDetail?.category.name}}</div>
+    <div><button class="sm secondary" [routerLink]="['/user/base-product/variants']" [queryParams]="{id: this.ds.productId}">Back to List</button></div>
+</div>
+<div class="row no-gutters justify-content-center outer-section">
+    <div class="col-md-11">
+        <div class="row no-gutters justify-content-center">
+            <div class="col-md-10">
+                <form [formGroup]="dataForm" (ngSubmit)="save(dataForm, f)" #f="ngForm">
+                    <div class="row">
+                        <div class="col-md-12 mb-2">
+                            <div class="row">
+                                <div class="col-md-12"><label>Title <span class="mendatory">*</span></label></div>
+                                <div class="col-md-6">
+                                    <div class="option-name mb-3">
+                                        <input formControlName="title" type="text" class="form-control mt-0" placeholder="Title" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                        <div *ngIf="ui.checkErrors(g.title, f)" class="errors">
+                                            <p *ngIf="g.title.errors.required">Title is required</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6"></div>
+                                <div class="col-md-12"><label>SKU <span class="mendatory">*</span></label></div>
+                                <div class="col-md-6 sku mb-3">
+                                    <div class="input-group">
+                                        <div class="group">
+                                            <div class="pre">
+                                                <button type="button" class="secondary" style="height: 40px;">
+                                                    <p class="product-variant-sku">{{ productSKU }}_</p>
+                                                </button>
+                                            </div>
+                                            <input formControlName="sku" type="text" placeholder="Enter SKU" style="height: 40px; border-radius: 0;" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                        </div>
+                                        <div *ngIf="ui.checkErrors(g.sku, f)" class="errors">
+                                            <p *ngIf="g.sku.errors.required">
+                                                SKU is required
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6"></div>
+                                <div class="col-md-12"><label>Shipping Data <span class="mendatory">*</span></label></div>
+                                <div class="col-md-6">
+                                    <div class="option-name mb-3">
+                                        <input formControlName="weight" type="number" min="0" placeholder="Weight (g)" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                        <div *ngIf="ui.checkErrors(g.weight, f)" class="errors">
+                                            <p *ngIf="g.weight.errors.required">Weight is required</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="option-name mb-3">
+                                        <input formControlName="hs_code" placeholder="HS code" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                        <div *ngIf="ui.checkErrors(g.hs_code, f)" class="errors">
+                                            <p *ngIf="g.hs_code.errors.required">HS code is required</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12"><label>Dimensions <span class="mendatory">*</span></label></div>
+                                <div class="col-md-4">
+                                    <div class="option-name mb-3">
+                                        <input formControlName="width" type="number" min="0" placeholder="Width (mm)" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                        <div *ngIf="ui.checkErrors(g.width, f)" class="errors">
+                                            <p *ngIf="g.width.errors.required">Width is required</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="option-name mb-3">
+                                        <input formControlName="height" type="number" min="0" placeholder="Height (mm)" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                        <div *ngIf="ui.checkErrors(g.height, f)" class="errors">
+                                            <p *ngIf="g.height.errors.required">Height is required</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="option-name mb-3">
+                                        <input formControlName="depth" type="number" min="0" placeholder="Depth (mm)" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                        <div *ngIf="ui.checkErrors(g.depth, f)" class="errors">
+                                            <p *ngIf="g.depth.errors.required">Depth is required</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="option-name mb-3">
+                                        <label>Trade Price <span class="mendatory">*</span></label>
+                                        <input formControlName="tp" type="number" min="0" placeholder="Trade Price" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                        <div *ngIf="ui.checkErrors(g.tp, f)" class="errors">
+                                            <p *ngIf="g.tp.errors.required">Trade Price is required</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="option-name mb-3">
+                                        <label>RRP <span class="mendatory">*</span></label>
+                                        <input formControlName="rrp" type="number" min="0" placeholder="RRP" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                        <div *ngIf="ui.checkErrors(g.rrp, f)" class="errors">
+                                            <p *ngIf="g.rrp.errors.required">RRP is required</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="option-name mb-3">
+                                        <label>Tax(%)<span class="mendatory">*</span></label>
+                                        <input formControlName="taxable_info" type="number" min="0" placeholder="Tax(%)" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                        <div *ngIf="ui.checkErrors(g.taxable_info, f)" class="errors">
+                                            <p *ngIf="g.taxable_info.errors.required">Tax(%) is required</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="option-value">
+                                                <label>Color Name</label>
+                                                <div class="mb-3">
+                                                    <input formControlName="color_name" type="text" class="form-control mt-0" placeholder="Color Name" [ngClass]="{'form-submitted': f.submitted }" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12"></div>
+                                        <div class="col-md-12 mb-3">
+                                            <div class="option-value">
+                                                <label>Size</label>
+                                                <input formControlName="size" type="text" class="form-control mt-0" placeholder="Size" [ngClass]="{ 'form-submitted': f.submitted }" />
+                                                <div *ngIf="ui.checkErrors(g.size, f)" class="errors">
+                                                    <p *ngIf="g.size.errors.required">
+                                                        Size is required
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="option-value">
+                                        <label>Color</label>
+                                        <div class="mb-3">
+                                            <input formControlName="color_code" type="color" style="width: 60px;" class="form-control mt-0" [ngClass]="{'form-submitted': f.submitted }" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="col-md-6">
+                                    <div style="display: flex; align-items: center;">
+                                        <div id="picker" class="mb-3"></div>
+                                        <div class="color-hex ml-2">
+                                            <div class="mb-3">
+                                                <input formControlName="color_code" type="text" style="width: 60px;" class="form-control mt-0" placeholder="Enter Color #hexa" [ngClass]="{'form-submitted': f.submitted }" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> -->
+                                <div class="col-md-12 mb-3" style="display: flex; align-self: center;">
+                                    <div *ngIf="api.checkPermissions(['add-base-product-variant','update-base-product-variant'])">
+                                        <button type="submit" class="primary" [disabled]="Loading" [ngClass]="Loading ? 'in-progress' : ''">
+                                            Save <span></span><span></span><span></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="no-gutters justify-content-center outer-section" *ngIf="prodId > 0">
+            <div class="col-md-12">
+                <div class="pmc-design-library-content">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <div class="nav-link" (click)="activeTab = 'trade'" [ngClass]="activeTab === 'trade' ? 'active' : ''">
+                                <h5 class="modal-title">Trade Price</h5>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="nav-link" (click)="activeTab = 'print'" [ngClass]="activeTab === 'print' ? 'active' : ''">
+                                <h5 class="modal-title">Print Area</h5>
+                            </div>
+                        </li>
+                    </ul>
+                    <ng-container *ngIf="activeTab === 'trade'">
+                        <div class="product-box ng-star-inserted">
+                            <div class="product-variants">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
+                                            <th>RRP </th>
+                                            <th>Company</th>
+                                            <th>Currency</th>
+                                            <th style="text-align: right;"><button type="button" class="primary sm" (click)="setTradePrice()">Add</button></th>
+                                        </tr>
+                                        <ng-container *ngIf="tradePrice.length > 0">
+                                            <tr *ngFor="let d of tradePrice; let tp = index">
+                                                <td><input type="number" min="0" required placeholder="" class="form-control" [(ngModel)]="d.quantity" [value]="d.quantity"></td>
+                                                <td><input type="number" min="0" required placeholder="" class="form-control" [(ngModel)]="d.tp" [value]="d.tp"></td>
+                                                <td><input type="number" min="0" placeholder="" class="form-control" [(ngModel)]="d.rrp" [value]="d.rrp"></td>
+                                                <td>
+                                                    <select class="form-control" [(ngModel)]="d.client_id">
+                                                        <option [value]="null">Select Company</option>
+                                                        <ng-container *ngIf="clientsList.length > 0">
+                                                            <option *ngFor="let i of clientsList" [value]="i.id">{{i.title}}. {{i.user.first_name}} {{i.user.last_name}}</option>
+                                                        </ng-container>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" [(ngModel)]="d.currency_id">
+                                                        <option [value]="null">Select Currency</option>
+                                                        <ng-container *ngIf="currencyList.length > 0">
+                                                            <option *ngFor="let l of currencyList" [value]="l.id">{{l.name}} ({{l.short_name}})</option>
+                                                        </ng-container>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <i class="fa fa-save save" (click)="saveTradePrice(d,tp)"></i>
+                                                    <i class="fa fa-trash-o trash" (click)="confirmingModal(tradePriceConfirming, d.id,tp)"></i>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                        <tr *ngIf="tradePrice.length == 0">
+                                            <td colspan="10" class="text-center">
+                                                <h2 class="nodata">No Trade Price Found</h2>
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="activeTab === 'print'">
+                        <div class="product-box ng-star-inserted">
+                            <div class="product-variants">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th>Multiplier </th>
+                                            <th>Target</th>
+                                            <th></th>
+                                        </tr>
+                                        <ng-container *ngIf="variantFactors.length > 0">
+                                            <tr *ngFor="let d of variantFactors;  let tp = index">
+                                                <td><span class="td-font">{{d.print_area.title}}</span></td>
+                                                <td><span class="td-font">{{d.print_area.p_width | number}}x{{d.print_area.p_height | number}}</span></td>
+                                                <td style="width: 100px;"><input type="number" min="0.01" max="1" step="0.01" required placeholder="" [(ngModel)]="d.multiplier" [value]="d.multiplier" class="form-control"></td>
+                                                <td style="width: 220px;">
+                                                    <div class="input-group">
+                                                        <input type="number" class="form-control" min="1" max="{{d.print_area.p_width}}" step="1" [value]="d.multiplier * d.print_area.p_width" readonly (change)="changeMultiplier($event, d, tp, 'w')">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text" style="padding:0 5px 0 5px !important;"><small>x</small></span>
+                                                        </div>
+                                                        <input type="number" class="form-control" min="1" max="{{d.print_area.p_height}}" step="1" readonly [value]="d.multiplier * d.print_area.p_height" (change)="changeMultiplier($event, d, tp, 'h')">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text" style="padding:0 5px 0 5px !important;"><small>mm</small></span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <i class="fa fa-save save" (click)="savePrintArea(d, tp)"></i>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                        <tr *ngIf="variantFactors.length == 0">
+                                            <td colspan="10" class="text-center">
+                                                <h2 class="nodata">No Print Areas Found</h2>
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-template #tradePriceConfirming>
+        <div class="modal-body text-center">
+            <h2 class="primary">Confirmation</h2>
+            <p>Do you want to Delete?</p>
+            <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+            <button type="button" class="primary ml-1" (click)="deleteTradePrice()" [disabled]="Loading" [ngClass]="Loading ? 'in-progress' : ''">
+                Yes <span></span><span></span><span></span>
+            </button>
+        </div>
+    </ng-template>
+</div>

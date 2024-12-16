@@ -1,0 +1,145 @@
+.admin-panel {
+    /* CHECKBOX START */
+    .personalize-wrapper {
+        width: 80%;
+    }
+
+    [type="checkbox"]:not(:checked),
+    [type="checkbox"]:checked {
+        position: unset;
+    }
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 45px;
+        height: 20px;
+        margin-top: 8px;
+    }
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: 0.4s;
+        transition: 0.4s;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 15px;
+        width: 15px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        -webkit-transition: 0.4s;
+        transition: 0.4s;
+    }
+    input:checked + .slider {
+        background-color: var(--ap-primary);
+    }
+    input:focus + .slider {
+        box-shadow: 0 0 1px var(--ap-primary);
+    }
+    input:checked + .slider:before {
+        -webkit-transform: translateX(25px);
+        -ms-transform: translateX(25px);
+        transform: translateX(25px);
+    }
+    .slider.round {
+        border-radius: 34px;
+    }
+    .slider.round:before {
+        border-radius: 50%;
+    }
+    /* CHECKBOX END */
+}
+.website {
+    /* CHECKBOX START */
+    .personalize-wrapper {
+        width: 80%;
+    }
+    [type="checkbox"]:not(:checked),
+    [type="checkbox"]:checked {
+        position: unset;
+    }
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 20px;
+        margin-top: 8px;
+    }
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    /* CHECKBOX START */
+    .personalize-wrapper {
+        width: 80%;
+    }
+    [type="checkbox"]:not(:checked),
+    [type="checkbox"]:checked {
+        position: unset;
+    }
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 20px;
+        margin-top: 8px;
+    }
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: 0.4s;
+        transition: 0.4s;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 15px;
+        width: 15px;
+        left: 4px;
+        bottom: 3px;
+        background-color: white;
+        -webkit-transition: 0.4s;
+        transition: 0.4s;
+    }
+    input:checked + .slider {
+        background-color: #307477;
+    }
+    input:focus + .slider {
+        box-shadow: 0 0 1px #307477;
+    }
+    input:checked + .slider:before {
+        -webkit-transform: translateX(36px);
+        -ms-transform: translateX(36px);
+        transform: translateX(36px);
+    }
+    .slider.round {
+        border-radius: 34px;
+    }
+    .slider.round:before {
+        border-radius: 50%;
+    }
+    /* CHECKBOX END */
+}

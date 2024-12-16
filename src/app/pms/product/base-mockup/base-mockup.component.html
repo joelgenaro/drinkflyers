@@ -1,0 +1,74 @@
+<div class="main">
+    <div class="header">
+        <!-- <h1>Mockups</h1> -->
+    </div>
+    <div class="mockups-table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th *ngFor="let h of mockups; let in = index">
+                        <div class="d-flex aligne-items-center">
+                            <div class="checkbox-container text-right">
+                                <span class="text">{{h.title}}</span>
+                                <label class="checkbox primary ml-1">
+                                    <input type="checkbox" (click)="confirmingDMockupModal(changeDefaultMockup,h.id)" [checked]="ds.defaultMockupId==h.id">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody *ngIf="fetching === false">
+                <tr *ngFor="let el of elevations;let inde=index">
+                    <!-- <td class="elevation-col">
+                        <div class="title">{{el.title}}</div>
+                    </td> -->
+                    <ng-container *ngFor="let moc of mockups;let i= index">
+                        <td>
+                            <div class="mockup-wrapper">
+                                <div class="image-wrapper">
+                                    <img style="width: 100px;" [defaultImage]="spinnerSVG" [lazyLoad]="api.elevationImg(moc.id,el.id)" id="{{el.id+ 'img-src'+ i}}">
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+                </tr>
+            </tbody>
+
+            <tbody *ngIf="fetching === true">
+                <tr>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <img src="assets/images/rolling-main.svg" alt="">
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+
+            <tbody *ngIf="elevationFetch == true && fetching===false" [appSkeletonTabelLoader]="loaderOptions"></tbody>
+
+            <tbody *ngIf="(mockups.length == 0 && fetching === false) ||(elevations.length == 0 && elevationFetch == false)">
+                <tr>
+                    <td colspan="8">
+                        <app-no-data-found></app-no-data-found>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<ng-template #changeDefaultMockup>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do yo Want To Change Default Mockup?</p>
+        <button type="button" class="dark" (click)="setDefault()">No</button>
+        <button type="button" class="danger ml-1" (click)="setDefaultMockup()">
+            <div class="loading-dots" [ngClass]="loading?'in-progress':''">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>

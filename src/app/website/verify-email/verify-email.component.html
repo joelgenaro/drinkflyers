@@ -1,0 +1,28 @@
+<div class="registration-container">
+    <div class="registration-box">
+        <div class="top-bar">
+            <p class="text-center">Verification Status</p>
+        </div>
+        <div class="successfully-registered" *ngIf="codeStatus === 'inProgress'">
+            <h2>Please wait while we are verifying you</h2>
+        </div>
+        <div class="successfully-registered" *ngIf="codeStatus === 'valid'">
+            <h1>Your email has been verified.</h1>
+            <h4>Redirecting you to Dashboard.</h4>
+        </div>
+
+        <div class="successfully-registered" *ngIf="codeStatus === 'expire'">
+            <h2 style="text-transform: none;">The verification code has expired.<br>
+                Please <a style="cursor: pointer;color: #317478;" class="lr-txt-secondary" (click)="resendCode()">click here</a> to resend a new one.</h2>
+        </div>
+
+        <div class="successfully-registered" *ngIf="codeStatus === 'resent'">
+            <h2 style="text-transform: none;">Verfication code for registration is resent. <br>
+                Please check your email.</h2>
+        </div>
+        <div class="successfully-registered" *ngIf="codeStatus === 'invalidCode'">
+            <h2 style="text-transform: none;">Unable To Verify Please Check your Latest Email <br>
+            </h2>
+        </div>
+    </div>
+</div>

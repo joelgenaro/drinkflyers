@@ -1,0 +1,7 @@
+<ul class="breadcrumb">
+    <li><a [routerLink]="['/']">Home</a></li>
+    <li *ngFor="let item of data">
+        <a *ngIf="item.link != ''" [routerLink]="item.link" [queryParams]="item?.params">{{item.value}}</a>
+        <ng-container *ngIf="item.link == ''">{{item.value}}</ng-container>
+    </li>
+</ul>

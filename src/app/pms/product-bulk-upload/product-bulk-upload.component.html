@@ -1,0 +1,271 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto mt-2 mb-1">
+                <h2 class="primary">Base Product Bulk Uploads</h2>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="search m-0 mt-1">
+                <input class="d-none" type="file" #f (change)="onFileChange($event)" id="csv-file">
+                <div class="input-group m-0">
+                    <div class="group">
+                        <input type="text" class="post" placeholder="Upload CSV File" [(ngModel)]="filename" readonly />
+                        <div class="post">
+                            <button class="secondary" type="button" (click)="browseFile($event)">Browse File</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="action-btns">
+                <button class="primary mt-1 mr-2 mb-1" type="button" (click)="searchReviews()">Submit</button>
+                <a class="mt-1 mr-2 mb-1" [routerLink]="['/user/product-bulk-upload-list']"><button class="secondary" type="button">Bulk Upload List</button></a>
+                <a class="mt-1 mr-2 mb-1" href="/assets/sample/sample-data.csv" target="_blank"><button class="secondary" type="button">Download Sample</button></a>
+                <button class="info mt-1 mr-2 mb-1" type="button" (click)="openModal(sample, -1)">View Sample</button>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-12 results-section" *ngIf="!insertion">
+        <div class="row no-gutters mt-2 result-data" *ngIf="resultStatus == true">
+            <div class="col-md-4">
+                <h4>Total Product: {{ totalProduct }}</h4>
+            </div>
+            <div class="col-md-4">
+                <h4 class="success-color">Total Valid Products: {{ totalSuccess }}</h4>
+            </div>
+            <div class="col-md-4">
+                <h4 class="duplicate-color">Total Invalid Products: {{ totalFailed }}</h4>
+            </div>
+        </div>
+
+        <div class="col-md-12 mt-2 m-0 p-0" *ngIf="bulkUploadData.length > 0">
+            <h2 class="primary">Existing Products</h2>
+            <div class="table-responsive product-box">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                <label class="checkbox primary">
+                                    <input type="checkbox" (click)="checkAllProducts()" />
+                                    <span class="checkmark"></span>
+                                </label>
+                            </th>
+                            <th>Product Name</th>
+                            <th>SKU</th>
+                            <th>Tag</th>
+                            <th>Last Child Category</th>
+                            <th>Status</th>
+                            <th>Failed Reason</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let d of bulkUploadData; let i = index">
+                            <td [ngClass]="{'border-row': !d.status}">
+                                <ng-container *ngIf="d.status">
+                                    <label class="checkbox primary">
+                                        <input type="checkbox" (click)="addProduct(d.id, i)" [checked]="checkProductId(d.id)" />
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </ng-container>
+                            </td>
+                            <td>{{ d.name }}</td>
+                            <td>{{ d.sku }}</td>
+                            <td>{{ d.tag }}</td>
+                            <td>{{ d.category }}</td>
+                            <td [ngClass]="{'insert-fail': d.status == false, 'insert-success': d.status == true}">{{ d.status? 'valid': 'invalid' | titlecase }}</td>
+                            <td [ngClass]="{'fail-reason': d.insertation !== null }">{{ d.failed_reason }}</td>
+                            <td class="d-flex justify-content-center">
+                                <!-- <button class="secondary mt-1 mr-2 mb-1" type="button" (click)="openProductModal(editProduct, i)">Edit</button> -->
+                                <div class="ml-1 mb-1" (click)="openProductModal(editProduct, i)">
+                                    <button type="button" class="sm secondary"><i class="fa fa-edit"></i></button>
+                                </div>
+                                <div class="ml-1 mb-1" (click)="confirmingModal(confirming, d.id, i)">
+                                    <button type="button" class="sm danger"><i class="fa fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="bottom-btn" *ngIf="productIds.length > 0">
+            <div class="d-flex justify-content-end flex-wrap mb-2">
+                <div class="button-group mb-2 ml-2">
+                    <button type="button" class="primary lg" (click)="addBulkProducts()">Proceed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 results-section" *ngIf="insertion">
+        <div class="row no-gutters mt-2 result-data" *ngIf="resultStatus == true">
+            <div class="col-md-4">
+                <h4>Total Product: {{ totalProduct }}</h4>
+            </div>
+            <div class="col-md-4">
+                <h4 class="success-color">Total Success Products: {{ totalSuccess }}</h4>
+            </div>
+            <div class="col-md-4">
+                <h4 class="duplicate-color">Total Failed Products: {{ totalFailed }}</h4>
+            </div>
+        </div>
+
+        <div class="col-md-12 mt-2 m-0 p-0" *ngIf="bulkUploadData.length > 0">
+            <h2 class="primary">Existing Products</h2>
+            <div class="table-responsive product-box">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                <label class="checkbox primary">
+                                    <input type="checkbox" (click)="checkAllProducts()" />
+                                    <span class="checkmark"></span>
+                                </label>
+                            </th>
+                            <th>Product Name</th>
+                            <th>SKU</th>
+                            <th>Tag</th>
+                            <th>Last Child Category</th>
+                            <th>Status</th>
+                            <th>Insertation Status</th>
+                            <th>Failed Reason</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let d of bulkUploadData; let i = index">
+                            <td [ngClass]="{'border-row': !d.status}">
+                                <ng-container *ngIf="d.insertation != 'successed'">
+                                    <label class="checkbox primary">
+                                        <input type="checkbox" (click)="addProduct(d.id, i)" [checked]="checkProductId(d.id)" />
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </ng-container>
+                            </td>
+                            <td>{{ d.name }}</td>
+                            <td>{{ d.sku }}</td>
+                            <td>{{ d.tag }}</td>
+                            <td>{{ d.category }}</td>
+                            <td [ngClass]="{'insert-fail': d.status == false, 'insert-success': d.status == true}">{{ d.status? 'valid': 'invalid' | titlecase }}</td>
+                            <td [ngClass]="{'insert-fail': d.insertation != 'successed', 'insert-success': d.insertation == true}">{{ d.insertation == 'successed'? 'inserted': 'failed' | titlecase }}</td>
+                            <td [ngClass]="{'fail-reason': d.insertation !== null }">{{ d.failed_reason }}</td>
+                            <td class="d-flex justify-content-center">
+                                <!-- <button class="secondary mt-1 mr-2 mb-1" type="button" (click)="openProductModal(editProduct, i)">Edit</button> -->
+                                <div class="ml-1 mb-1" *ngIf="d.insertation != 'successed'" (click)="openProductModal(editProduct, i)">
+                                    <button type="button" class="sm secondary"><i class="fa fa-edit"></i></button>
+                                </div>
+                                <div class="ml-1 mb-1" *ngIf="d.insertation != 'successed'" (click)="confirmingModal(confirming, d.id, i)">
+                                    <button type="button" class="sm danger"><i class="fa fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="bottom-btn" *ngIf="productIds.length > 0">
+            <div class="d-flex justify-content-end flex-wrap mb-2">
+                <div class="button-group mb-2 ml-2">
+                    <button type="button" class="primary lg" (click)="addBulkProducts()">Proceed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #sample>
+    <div class="modal-header">
+        <h3 class="modal-title pull-left">Sample</h3>
+        <i (click)="modalRef.hide()" class="fa fa-times cancel-btn"></i>
+    </div>
+    <div class="modal-body">
+        <div class="table-responsive product-box">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th *ngFor="let col of colArray">{{col}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let row of userArray">
+                        <td *ngFor="let col of row">{{col}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #editProduct>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modalTitle}}</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="dataForm" (ngSubmit)="save(dataForm,f)" #f="ngForm">
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Product Name <span class="mendatory">*</span></label>
+                    <input formControlName="name" class="form-control mt-0" placeholder="Enter Product Name" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.name, f)" class="errors">
+                        <p *ngIf="g.name.errors.required">Product Name is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">SKU <span class="mendatory">*</span></label>
+                    <input formControlName="sku" class="form-control mt-0" placeholder="Enter SKU" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.sku, f)" class="errors">
+                        <p *ngIf="g.sku.errors.required">SKU is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Base Product <span class="mendatory">*</span></label>
+                    <div class="mb-2">
+                        <select class="form-control" formControlName="base_product_sku" [ngClass]="{ 'form-submitted': f.submitted }">
+                            <option *ngFor="let pro of baseProductList" [value]="pro.sku">
+                                {{ pro.name }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Tag <span class="mendatory">*</span></label>
+                    <ng-select [multiple]="true" [ngClass]="{'form-submitted': f.submitted}" formControlName="tag">
+                        <ng-option *ngFor="let tag of tagList" [value]="tag.full_name">{{ tag.full_name}}</ng-option>
+                    </ng-select>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Child Category <span class="mendatory">*</span></label>
+                    <div class="mb-2">
+                        <select class="form-control" formControlName="category" [ngClass]="{ 'form-submitted': f.submitted }">
+                            <option *ngFor="let category of lastChildCatList" [value]="category.name">
+                                {{ category.name }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="primary" [ngClass]="Loading?'in-progress':''">
+                <div class="loading-dots">Save
+                    <span></span><span></span><span></span>
+                </div>
+            </button>
+            <button type="button" class="dark ml-1" (click)="cancelButton(f)">Cancel</button>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #confirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="deleteRow()">
+            <div class="loading-dots" [ngClass]="loginLoading?'in-progress':''">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>

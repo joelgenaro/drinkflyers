@@ -1,0 +1,81 @@
+<app-steps-template [step]="'countries'"></app-steps-template>
+
+<div class="row no-gutters">
+    <div class="col-md-12  mb-1 mt-n3">
+        <ng-container *ngIf="dataStatus">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group has-search col-md-5 m-0 mb-3">
+                        <div class="input-group">
+                            <div class="group">
+                                <div class="pre">
+                                    <button class="secondary">
+                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="post" [(ngModel)]="searchString" [ngModelOptions]="{standalone: true}" placeholder="Enter Country Name">
+                                <div class="post">
+                                    <button class="secondary">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="form-group has-search col-md-5 m-0 mb-3 mr-6 ml-3">
+                        <div class="input-group">
+                            <div class="group">
+                                <div class="pre">
+                                    <button class="secondary">
+                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="post" [(ngModel)]="searchSelectedString" [ngModelOptions]="{standalone: true}" placeholder="Enter Selected Country Name">
+                                <div class="post">
+                                    <button class="secondary">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="permissions-container">
+                    <div class="permissions-list-box">
+                        <label class="mb-0 heading-permissions">Click on countries to add in zone</label>
+                        <div class="row">
+                            <div class="col-md-6" *ngFor="let d of countriesList | filter:searchString; let i = index" [ngClass]="{'disabled-class': checkZoneCountry(d.id)}">
+                                <div class="permissions-items" (click)="selectCountry(d)"><img [src]="apis.getFlagImage(d.iso2)" width="16" height="12"> {{d.name}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="arrow"><i class="fas fa-arrows-alt-h"></i></div>
+                    <div class="permissions-list-box">
+                        <label class="mb-0 heading-permissions">Selected countries</label>
+                        <div class="row">
+                            <div class="col-md-6" *ngFor="let d of selectedCountries | filter:searchSelectedString; let i = index">
+                                <div class="permissions-items" (click)="unselectCountry(d)"><img [src]="apis.getFlagImage(d.iso2)" width="16" height="12"> {{d.name}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mb-4">
+                    <div class="button-group mr-2">
+                        <div class="icon primary pre">
+                            <i class="fa fa-angle-left"></i>
+                        </div>
+                        <button type="submit" class="primary" [routerLink]="['/user/zone/detail']" [queryParams]="{ id:zoneId }">Back</button>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="post primary" (click)="assignCountries()" [ngClass]="loginLoading?'in-progress':''">Save
+                            <span></span><span></span><span></span>
+                        </button>
+                        <div class="icon post primary">
+                            <i class="fa fa-angle-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <div class="details-container" *ngIf="!dataStatus">
+            <img src="assets/images/rolling-main.svg" style="width: 70px; margin-top: 5%;">
+        </div>
+    </div>
+</div>

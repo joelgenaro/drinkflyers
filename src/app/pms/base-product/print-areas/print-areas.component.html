@@ -1,0 +1,145 @@
+<div class="personalize-page">
+
+    <div class="personalize-container">
+        <!-- <div class="images-section" [class.d-none]="productImages === undefined || productImages.length == 0">
+            <div class="image-box" *ngFor="let img of productImages" (click)="selectImage(img)" [class.selected]="selectedImage?.id == img.id">
+                <img [src]="api.baseProductImageUrl(img.id)" alt="" />
+            </div>
+        </div> -->
+        <!-- <div class="message" *ngIf="selectedImage == null ">
+            <div>
+                <h1>Select Image</h1>
+                <p>Please select an image to define print areas</p>
+            </div>
+        </div> -->
+        <div class="canvas-section">
+            <div class="tools" style="display: none;">
+                <div class="plus-btn"><i class="fas fa-plus"></i></div>
+                <div *ngIf="printArea == 0 " class="tool rectangle" (click)="addPrintArea()">
+                    <i class="far fa-square"></i>
+                    <span>Print Area</span>
+                </div>
+                <div class="tool refresh" (click)="resizeCanvas()">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Refresh</span>
+                </div>
+            </div>
+            <!-- <ng-container *ngIf="selectedImage == null && this.ds.elevationId">
+                <div class="col-md-10 mb-2">
+                    <div class="img-wrapper">
+                        <img src="assets/images/rolling-main.svg" alt="">
+                    </div>
+                </div>
+            </ng-container> -->
+            <div class="canvas-wrapper" id="canvas-wrapper" #canvaswrapper>
+                <canvas id="main-canvas" [class.d-none]="uploadNewImage" width="400" height="400"></canvas>
+                <div class="loader-wrapper">
+                    <img src="assets/images/rolling-gray.svg" *ngIf="canvasData.loadingCanvas">
+                </div>
+            </div>
+            <div class="upload-image" [class.d-none]="!uploadNewImage" style="width: 400px; height: auto; border: 1px dashed #ccc; border-radius: 12px; overflow: hidden; text-align: center; vertical-align: middle; display: flex; flex-direction: column; justify-content: center;">
+                <input type="file" style="display: none;" id="elevation_image" (change)="onThumbnailChange($event, imageCropTemplate)">
+                <img style="margin:20px 20px 20px 20px;max-height: 400px;  max-width: 400px; width: auto; height:auto; cursor: pointer; " (click)="browseThumbnail()" [src]="thumbnail" id="elevation_image_src">
+                <h3 *ngIf="!selectedFile" style="padding: 20px; padding-top: 0;">Upload a Preview Image</h3>
+            </div>
+        </div>
+        <div class="properties-section">
+            <div class="attributes-container">
+                <form [formGroup]="dataForm" (ngSubmit)="saveDesign('single')" #f="ngForm">
+                    <h1 class="mb-3 attribute">Properties</h1>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Print Area Name <span class="mendatory">*</span></label>
+                            <div class="mb-2">
+                                <input formControlName="title" placeholder="Print Area Name here" type="text" class="form-control mt-0" [ngClass]="{'form-submitted': f.submitted}" [attr.disabled]="selectedItem?.type === 'group' ? true : null">
+                                <div *ngIf="ui.checkErrors(g.title, f)" class="errors">
+                                    <p *ngIf="g.title.errors.required">Print Area Name is required</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Print Width (mm) <span class="mendatory">*</span></label>
+                            <div class="mb-2">
+                                <input formControlName="pwidth" type="number" step="1" class="form-control mt-0" placeholder="Width" [ngClass]="{'form-submitted': f.submitted}" [attr.disabled]="selectedItem?.type === 'group' ? true : null">
+                                <div *ngIf="ui.checkErrors(g.pwidth, f)" class="errors">
+                                    <p *ngIf="g.pwidth.errors.required">Print Width is required</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Print Height (mm) <span class="mendatory">*</span></label>
+                            <div class="mb-2">
+                                <input formControlName="pheight" type="number" step="1" class="form-control mt-0" placeholder="Height" [ngClass]="{'form-submitted': f.submitted}" [attr.disabled]="selectedItem?.type === 'group' ? true : null">
+                                <div *ngIf="ui.checkErrors(g.pheight, f)" class="errors">
+                                    <p *ngIf="g.pheight.errors.required">Print Height is required</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Preview Width (px) <span class="mendatory">*</span></label>
+                            <div class="mb-2">
+                                <input formControlName="width" type="number" step="1" class="form-control mt-0" placeholder="Width" [ngClass]="{'form-submitted': f.submitted}" [attr.disabled]="selectedItem?.type === 'group' ? true : null">
+                                <div *ngIf="ui.checkErrors(g.width, f)" class="errors">
+                                    <p *ngIf="g.width.errors.required">Width is required</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Preview Height (px) <span class="mendatory">*</span></label>
+                            <div class="mb-2">
+                                <input formControlName="height" type="number" step="1" class="form-control mt-0" placeholder="Height" [ngClass]="{'form-submitted': f.submitted}" [attr.disabled]="selectedItem?.type === 'group' ? true : null">
+                                <div *ngIf="ui.checkErrors(g.height, f)" class="errors">
+                                    <p *ngIf="g.height.errors.required">Height is required</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label>X Coordinate (px) <span class="mendatory">*</span></label>
+                            <div class="mb-2">
+                                <input formControlName="x" type="number" step="1" class="form-control mt-0" placeholder="X Coordinate" [ngClass]="{'form-submitted': f.submitted}">
+                                <div *ngIf="ui.checkErrors(g.x, f)" class="errors">
+                                    <p *ngIf="g.x.errors.required">X Coordinate is required</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Y Coordinate (px) <span class="mendatory">*</span></label>
+                            <div class="mb-2">
+                                <input formControlName="y" type="number" step="1" class="form-control mt-0" placeholder="Y Coordinate" [ngClass]="{'form-submitted': f.submitted}">
+                                <div *ngIf="ui.checkErrors(g.y, f)" class="errors">
+                                    <p *ngIf="g.y.errors.required">Y Coordinate is required</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row my-2">
+                        <div class="col-md-12 text-center">
+                            <button class="secondary lg save-loading text-center" type="submit" id="printAreaSaveButton" [ngClass]="saveLoading?'in-progress':''">
+                                <div class="loading-dots">Save
+                                    <span></span><span></span><span></span>
+                                </div>
+                            </button>
+                        </div>
+                        <!-- <div class="col-md-6">
+                            <button class="primary lg w-100 py-2" (click)="deleteDesign()">Delete</button>
+                        </div> -->
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #imageCropTemplate>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Select Image Area</h4>
+    </div>
+    <div class="modal-body">
+        <image-cropper [imageFile]="imageFile" [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="false" format="png" (imageCropped)="croppedImage = $event.base64"></image-cropper>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="primary" (click)="cropComplete()">Save</button>
+        <button type="button" class="secondary" (click)="imageModalRef.hide()">Cancel</button>
+    </div>
+</ng-template>

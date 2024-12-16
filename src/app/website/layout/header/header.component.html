@@ -1,0 +1,19 @@
+<header>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-xl" style="background-color: #fff;">
+            <a class="navbar-brand" [routerLink]="['/']" routerLinkActive="active">
+                <!-- <img src="/assets/img/logo.png" class="logo" alt="img"> -->
+            </a>
+            <button [ngClass]="!isCollapsed? 'cross' : ''" class="navbar-toggler collapsed" (click)="setCollapsed()" type="button" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="toggler-icon"></span>
+                <span class="toggler-icon"></span>
+                <span class="toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarsExampleDefault" [collapse]="isCollapsed" [isAnimated]="true">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item my-portal" *ngIf="isAuthenticated"><a class="button" [routerLink]="['/user/dashboard']"><button class="button home-explore-btn btn blue-button-bg" (click)="isCollapsed=true">Portal</button></a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</header>

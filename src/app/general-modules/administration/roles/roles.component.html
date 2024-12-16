@@ -1,0 +1,210 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Roles</h2>
+            </div>
+            <div class="col-md-3 d-flex justify-content-between">
+                <h6 class="col-md-4 pt-0 m-0 sort">Sort</h6>
+                <select class="col-md-8 m-0 pl-2 sort-select" (change)="doSort($event, 'asc')">
+                    <option value="">Select Sort</option>
+                    <option value="name">Name</option>
+                </select>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="search m-0 mb-2">
+                <div class="input-group">
+                    <div class="group">
+                        <div class="pre">
+                            <button class="secondary">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="post" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Roles">
+                        <div class="post">
+                            <button class="secondary">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)" class="m-0 mb-2 w-25">
+                <option value="" [disabled]="true">Select per page</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15" [selected]="true">15</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="75">75</option>
+                <option value="100">100</option>
+            </select>
+            <button type="button" class="m-0 mb-2 primary" *ngIf="api.checkPermission('create-role')" (click)="openModal(addForm, -1)">Add Role</button>
+        </div>
+    </div>
+
+    <div class="col-md-12 mb-1 results-section">
+        <div class="table-responsive product-box">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Sr. # </th>
+                        <th>Name </th>
+                        <th class="text-center" style="width: 200px;" *ngIf="api.checkPermission('update-role')">Action</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="rolesList.length > 0 && dataStatus">
+                    <tr *ngFor="let d of rolesList | filter:searchKeyword; let i = index">
+                        <td>{{ getSerialNumber(i) }} </td>
+                        <td>{{ d.name }}</td>
+                        <td class=" d-flex justify-content-center" *ngIf="api.checkPermission('update-role')">
+                            <!-- <div class="ml-1 danger">
+                                <i class="fa fa-trash" (click)="confirmingModal(roleConfirming, d.id,i)"></i>
+                            </div> -->
+                            <div class="ml-1">
+                                <button type="button" class="sm secondary" (click)="openModal(addForm,i)"><i class="fa fa-edit"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody *ngIf="rolesList.length == 0 && dataStatus">
+                    <tr>
+                        <td colspan="3">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </tbody>
+                <ng-container *ngIf="!dataStatus">
+                    <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                </ng-container>
+            </table>
+        </div>
+    </div>
+    <div col-md-12 footer-section>
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus">
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul>
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<ng-template #addForm>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Role</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="dataForm" (ngSubmit)="save(dataForm, f)" #f="ngForm">
+            <div class="row">
+                <div class="col-md-5 mb-2">
+                    <label class="mb-0 mt-0">Name<span class="mendatory">*</span></label>
+                    <input formControlName="name" class="form-control mt-0" placeholder="Enter Role Name" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.name, f)" class="errors">
+                        <p *ngIf="g.name.errors.required">Name is required</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label class="mb-0 mt-0">Search Permissions</label>
+                    <input [(ngModel)]="searchString" [ngModelOptions]="{standalone: true}" class="form-control mt-0" placeholder="Enter permission Name">
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="dark mr-2" (click)="cancelButton(f)">Cancel</button>
+                        <button type="submit" class="primary">
+                            <div [ngClass]="loginLoading?'in-progress':''">Save
+                                <span></span><span></span><span></span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="create-content">
+                <input type="checkbox" class="create-another" [(ngModel)]="isChecked" [ngModelOptions]="{standalone: true}">
+                <div class="create-text">
+                    <p>Create another</p>
+                </div>
+            </div>
+
+
+            <div class="permissions-container">
+
+                <div class="permissions-list-box">
+                    <label class="mb-0 heading-permissions">Click on permissions to add in role</label>
+                    <div class="row">
+                        <div class="col-md-6" *ngFor="let d of permissionsList | filter:searchString; let i = index">
+                            <!-- <input *ngIf="selectedIndex > -1" [checked]="checkIfPermissionExist(d)" type="checkbox" [name]="d.id" [id]="d.id" (change)="addRemovePermission(d)">
+                            <input *ngIf="selectedIndex == -1" type="checkbox" [name]="d.id" [id]="d.id" (change)="addRemovePermission(d)">
+                            <label [for]="d.id">{{d.name}}</label> -->
+                            <div class="permissions-items" (click)="addRemovePermission(d)">
+                                {{d.name}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arrow"><i class="fas fa-arrows-alt-h"></i></div>
+
+                <div class="permissions-list-box">
+                    <label class="mb-0 heading-permissions">Selected Permissions</label>
+                    <div class="row">
+                        <div class="col-md-6" *ngFor="let d of selectedPermissions; let i = index">
+                            <!-- <input checked="true" type="checkbox" [name]="d.id" [id]="d.id" (change)="addRemovePermission(d)">
+                            <label [for]="d.id">{{d.name}}</label> -->
+                            <div class="permissions-items" (click)="addRemovePermission(d)">
+                                {{d.name}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #roleConfirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="sm black" (click)="modalRef.hide()">No</button>
+        <button type="button" class="sm logo-red" (click)="delete()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Yes
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</ng-template>

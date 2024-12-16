@@ -1,0 +1,138 @@
+<div class="signin-container">
+    <div class="box-container">
+        <div class="left-box">
+            <div>
+                <img src="assets/images/logo.jpg">
+            </div>
+            <div style="width: 100%; display: flex; justify-content: center;">
+                <form [formGroup]="dataForm" (ngSubmit)="signUp(f)" #f="ngForm" style="width: 57%;" class="form-data">
+                    <div class="input-container">
+                        <h4>Sign up to Star Dropship</h4>
+                    </div>
+                    <div class="input-container">
+                        <label>Full name:</label>
+                        <div class="email-wrapper">
+                            <input type="text" formControlName="first_name" class="email" placeholder="" [ngClass]="{'form-submitted': f.submitted}">
+                        </div>
+                        <div *ngIf="ui.checkErrors(g.first_name, f)" class="errors">
+                            <p *ngIf="g.first_name.errors.required">Full name is required</p>
+                            <p *ngIf="g.first_name.errors.maxlength">Full name should not exceed {{ g.first_name.errors.maxlength.requiredLength }} characters</p>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <label>Email:</label>
+                        <div class="email-wrapper">
+                            <input type="text" formControlName="email" class="email" placeholder="Enter Email" [ngClass]="{'form-submitted': f.submitted}">
+                        </div>
+                        <div *ngIf="ui.checkErrors(g.email, f)" class="errors">
+                            <p *ngIf="g.email.errors.required">Email is required</p>
+                            <p *ngIf="g.email.errors.email">Please enter valid email</p>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <label>Password:</label>
+                        <div class="input-group">
+                            <div class="group">
+                                <input type="password" class="post" autofill="false" formControlName="password" class="password" placeholder="Enter Password" [ngClass]="{'form-submitted': f.submitted}" name="yourword" />
+                            </div>
+                        </div>
+                        <div *ngIf="ui.checkErrors(g.password, f)" class="errors">
+                            <p *ngIf="g.password.errors.required">Password is required</p>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <div style="width: 8%;">
+                                <input type="checkbox" formControlName="terms" style="width: 20px;">
+                            </div>
+                            <div style="width: 92%;">
+                                <span style="font-size: 12px; color: #222;">I agree to Star Dropship's <a class="link-color">Term of Service</a> and <a class="link-color">Privacy Policy</a>.</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <div style="width: 8%;">
+                                <input type="checkbox" formControlName="receive_email" style="width: 20px;">
+                            </div>
+                            <div style="width: 92%;">
+                                <span style="font-size: 12px; color: #222;">
+                                    I'd like to receive emails from Star Dropship to be informed about the latest updates. <br>
+                                    <i>You can unsubscribe at any time.</i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <button [disabled]="SignUpLoading" class="login" [ngClass]="SignUpLoading?'in-progress':''">Sign up
+                            <span></span><span></span><span></span>
+                        </button>
+                    </div>
+                    <div class="input-container" style="border-bottom: solid 1px #ccc;"></div>
+                    <div class="input-container">
+                        <span><a [routerLink]="['/login']">Sign in</a> - <a [routerLink]="['/forgot-password']">Forgot password?</a></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="right-box">
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%;">
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <div class="img-wrapper">
+                        <img src="assets/images/rolling-main.svg" alt="">
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="dataStatus == 'done'">
+                    <img [defaultImage]="spinnerSVG" [lazyLoad]="thumbnail">
+                    <div style="width: 95%; text-align: center;">
+                        <h2 *ngIf="signupContent.title1 !== null">{{signupContent.title1}}</h2>
+                    </div>
+                    <div style="width: 95%; font-size: 13px;">
+                        <div *ngIf="signupContent.content !== null" class="ql-container ql-snow" style="border-width: 0;">
+                            <div class="ql-editor" [innerHTML]="transformHtml(signupContent.content)"></div>
+                        </div>
+                    </div>
+                    <div style="width: 95%; text-align: center;" *ngIf="signupContent.link !== null && signupContent.btn_text !== null">
+                        <button class="deadlines" (click)="goToUrl()" [ngStyle]="{'background-color':signupContent.btn_color !== null ? signupContent.btn_color : '#fff', 'color':signupContent.btn_text_color !== null ? signupContent.btn_text_color : '#000' }">{{signupContent.btn_text}}</button>
+                    </div>
+                </ng-container>
+                <!-- <img src="assets/images/signup.png">
+                <div class="info">
+                    <div class="info-main">
+                        <div class="info-padding"></div>
+                        <div class="info-center">
+                            <div style="display: flex; margin-bottom: 10px;">
+                                <div class="info-center-left"><i class="fas fa-check tick-color"></i></div>
+                                <div class="info-center-right">
+                                    <div class="full-div">
+                                        <h2>Work with best</h2>
+                                    </div>
+                                    <div class="full-div"><span>Connect with the world's best ecommerce platforms</span></div>
+                                </div>
+                            </div>
+                            <div style="display: flex; margin-bottom: 10px;">
+                                <div class="info-center-left"><i class="fas fa-check tick-color"></i></div>
+                                <div class="info-center-right">
+                                    <div class="full-div">
+                                        <h2>Test your design limits</h2>
+                                    </div>
+                                    <div class="full-div"><span>Use our Design Maker to create exciting product</span></div>
+                                </div>
+                            </div>
+                            <div style="display: flex; margin-bottom: 10px;">
+                                <div class="info-center-left"><i class="fas fa-check tick-color"></i></div>
+                                <div class="info-center-right">
+                                    <div class="full-div">
+                                        <h2>Stay informed</h2>
+                                    </div>
+                                    <div class="full-div"><span>Follow our</span> &nbsp; <a class="link-color">Fullfillments updates</a>
+                                        <span style="color: #F8F8F8 !important;"> Follow our Follow our Follow our</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-padding"></div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </div>
+</div>

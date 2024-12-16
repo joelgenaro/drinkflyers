@@ -1,0 +1,64 @@
+.main-background {
+    background: #fff;
+}
+.header-section {
+    position: sticky;
+    top: 65px;
+    padding-left: 60px !important;
+    padding-right: 60px !important;
+    padding-top: 40px !important;
+}
+
+.main-row {
+    margin: 10px;
+}
+h6.sort {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #484848;
+}
+.info {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    flex-direction: column;
+}
+.info img {
+    width: 120px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+.info button {
+    color: #222;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+.add-billing {
+    color: #1a73e8;
+    margin-left: 5px;
+}
+.plus-color {
+    color: #888;
+}
+.form-control {
+    height: 40px !important;
+}
+.info-wrapper img {
+    width: 13px;
+}
+.font-15 {
+    font-size: 15px !important;
+}
+
+.font-14 {
+    font-size: 14px !important;
+}
+
+.font-12 {
+    font-size: 12px !important;
+}
+.checkbox-width {
+    width: 20px;
+}

@@ -1,0 +1,236 @@
+<div class="sub-container">
+    <form [formGroup]="dataForm" (ngSubmit)="addInfo(dataForm, f)" #f="ngForm">
+        <div class="row">
+            <!-- <input type="text" [(ngModel)]="baseProductId" [ngModelOptions]="{standalone: true}"> -->
+            <h1>{{ baseProductId }}</h1>
+            <br />
+
+            <div class="col-md-3 text-center" style="display: none;">
+                <img src="assets/images/sample1.jpg" style="max-width: 100%; height: auto;" class="mb-2">
+                Main Mockup Image
+
+            </div>
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <label>Product title <span class="mendatory">*</span></label>
+                        <input formControlName="name" class="form-control mt-0" placeholder="Enter Product Name" [ngClass]="{ 'form-submitted': f.submitted }" />
+                        <div *ngIf="ui.checkErrors(g.name, f)" class="errors">
+                            <p *ngIf="g.name.errors.required">
+                                Product Name is required
+                            </p>
+                            <p *ngIf="g.name.errors.maxlength">
+                                Product title should not exceed
+                                {{ g.name.errors.maxlength.requiredLength }} characters
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 mb-2">
+                        <label>Description</label>
+                        <!-- <textarea class="form-control mt-0" rows="6" formControlName="description" class="form-control mt-0" placeholder="Enter Description" [ngClass]="{ 'form-submitted': f.submitted }"></textarea> -->
+                        <angular-editor formControlName="description" [config]="editorConfig" [ngClass]="{'form-submitted': f.submitted}"></angular-editor>
+                        <div *ngIf="ui.checkErrors(g.description, f)" class="errors">
+                            <p *ngIf="g.description.errors.required">
+                                Description Name is required
+                            </p>
+                            <p *ngIf="g.description.errors.maxlength">
+                                Description title should not exceed
+                                {{ g.description.errors.maxlength.requiredLength }} characters
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 mb-2">
+                        <label>Tags <span class="mendatory">*</span></label>
+                        <ng-select [multiple]="true" [(ngModel)]="selectedTags" [ngModelOptions]="{ standalone: true }">
+                            <ng-option *ngFor="let tag of tagsList" [value]="tag.id">{{
+                                tag.full_name
+                                }}</ng-option>
+                        </ng-select>
+                    </div>
+                    <div class="col-md-12 mb-2 mt-3">
+                        <div class="checkbox-container text-right">
+                            <label class="checkbox primary">
+                                <input type="checkbox" [(ngModel)]="customSku" [ngModelOptions]="{standalone: true}">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span class="text">Create a custom SKU</span>
+                        </div>
+                        <ng-container *ngIf="customSku === true">
+                            <input formControlName="sku" class="form-control mt-0" placeholder="Enter SKU" [ngClass]="{ 'form-submitted': f.submitted }" />
+                            <div *ngIf="ui.checkErrors(g.sku, f)" class="errors">
+                                <p *ngIf="g.sku.errors.required">SKU is required</p>
+                                <p *ngIf="g.sku.errors.maxlength">SKU should not exceed {{ g.sku.errors.maxlength.requiredLength }} characters</p>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row  mt-2" style="display: none">
+            <div class="col-md-4 mb-2">
+                <button type="button" #modalBtn class="primary" (click)="openModal(addForm)">
+                    Base Product
+                </button>
+            </div>
+        </div>
+        <div class="bottom-btn">
+            <div class="button-group">
+                <button type="submit" class="post primary lg" [disabled]="productDetailLoading" [ngClass]="productDetailLoading ? 'in-progress' : ''">
+                    Save <span></span><span></span><span></span>
+                </button>
+                <div class="icon post primary">
+                    <i class="fa fa-angle-right"></i>
+                </div>
+
+                <button type="submit" class="post secondary lg ml-1" [disabled]="productDetailLoading" [ngClass]="productDetailLoading ? 'in-progress' : ''">
+                    Next <span></span><span></span><span></span>
+                </button>
+                <div class="icon post secondary">
+                    <i class="fa fa-angle-right"></i>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<ng-template #addForm>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Select Base Product</h4>
+        <button type="button" class="close pull-right" (click)="cancelNewProduct()">
+            <span><i class="fas fa-times"></i></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <ng-container *ngIf="baseProductList.length > 0">
+            <div class="results">
+                <div class="row no-gutters d-flex justify-content-between align-items-start search-pagination">
+                    <div class="search m-0 mt-2">
+                        <div class="input-group mb-0">
+                            <div class="group">
+                                <div class="pre">
+                                    <button class="secondary">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="post" placeholder="Search Here" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" />
+                                <div class="post">
+                                    <button class="secondary">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <select class="m-0 mt-2 w-25" [(ngModel)]="perPage" (change)="selectPerPage($event)">
+                        <option value="" [disabled]="true">Select per page</option>
+                        <option value="5">5</option>
+                        <option value="10" [selected]="true">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="75">75</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="artwork-box" *ngFor="let d of baseProductList; let i = index">
+                        <div class="artwork-inner-box" [class.font-prop]="this.selectedBaseProductId == d.id" (click)="selectedBaseProduct(d.id, i)">
+                            <div class="image-wrapper">
+                                <!-- <img [src]="ds.baseProductDefaultImage(d.id)" alt="" /> -->
+                                <img [defaultImage]="spinnerSVG" [lazyLoad]="ds.baseProductDefaultImage(d.id)">
+                            </div>
+                            <div class="footer">
+                                <span class="footer-content">
+                                    <p class="footer-title">{{ d.name }}</p>
+                                    <p class="footer-category">{{ d.category.name }}</p>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-1 p-0 footer-section">
+                    <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+                        <ul class="pagination justify-content-left m-0">
+                            <li class="page-item">
+                                <small *ngIf="page < 10">Current page: 0{{ page }}</small>
+                                <small *ngIf="page >= 10">Current page: {{ page }}</small>
+                            </li>
+                        </ul>
+                        <ul class="pagination justify-content-left m-0">
+                            <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                                <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page - 1)">Previous</a>
+                            </li>
+                            <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                                <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                            </li>
+                            <ng-container *ngIf="pagination.last_page <= 6">
+                                <ng-container *ngFor="
+                                                let p of [].constructor(pagination.last_page);
+                                                let i = index
+                                            ">
+                                    <li [class]="
+                                            page == i + 1
+                                                ? 'page-item active'
+                                                : 'page-item'
+                                        ">
+                                        <a class="page-link" href="javascript: void(0)" (click)="setPagination(i + 1)">{{ i + 1 }}</a>
+                                    </li>
+                                </ng-container>
+                            </ng-container>
+                            <ng-container *ngIf="pagination.last_page >= 7">
+                                <ng-container *ngFor="
+                                                let p of [].constructor(pagination.last_page);
+                                                let i = index
+                                            ">
+                                    <li *ngIf="i < 4" [class]="
+                                                    page == i + 1
+                                                        ? 'page-item active'
+                                                        : 'page-item'
+                                                ">
+                                        <a class="page-link" href="javascript: void(0)" (click)="setPagination(i + 1)">{{ i + 1 }}</a>
+                                    </li>
+                                    <li *ngIf="pagination.last_page - i == 3" [class]="
+                                                    page == i + 1
+                                                        ? 'page-item active'
+                                                        : 'page-item'
+                                                ">
+                                        <a class="page-link">...</a>
+                                    </li>
+                                    <li *ngIf="
+                                                    pagination.last_page - i == 1 ||
+                                                    pagination.last_page - i == 2
+                                                " [class]="
+                                                    page == i + 1
+                                                        ? 'page-item active'
+                                                        : 'page-item'
+                                                ">
+                                        <a class="page-link" href="javascript: void(0)" (click)="setPagination(i + 1)">{{ i + 1 }}</a>
+                                    </li>
+                                </ng-container>
+                            </ng-container>
+                            <li class="page-item" *ngIf="pagination.next_page_url != null">
+                                <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page + 1)">Next</a>
+                            </li>
+                            <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                                <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="dataStatus == 'fetching'">
+            <div class="results">
+                <div class="img-wrapper">
+                    <img src="assets/images/rolling-main.svg" alt="" />
+                </div>
+            </div>
+        </ng-container>
+        <div *ngIf="baseProductList.length == 0 && dataStatus == 'done'">
+            <div class="results">
+                <app-no-data-found></app-no-data-found>
+            </div>
+        </div>
+    </div>
+</ng-template>

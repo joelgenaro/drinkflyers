@@ -1,0 +1,28 @@
+<section class="navbar" *ngIf="ds.activeTab!=='personalized-region'" >
+    <div class="navbar-heading">
+        <!-- <h3>Virtual Product</h3> -->
+        <h3>CREATE A NEW PRODUCT</h3>
+    </div>
+    <div class="navbar-links">
+        <div class="navbar-items" *ngFor="let tab of ds.tabs; let i = index;">
+            <ng-container *ngIf="ds.productId > -1">
+                <a *ngIf="!tab.disabled" [routerLink]="tab.link" [queryParams]="{id: ds.productId, base_id: ds.baseProductId}" routerLinkActive="active">
+                    <div [class.active]="tab.link === ds.activeTab" class="step-circle">{{i+1}}</div>
+                    <p [class.active]="tab.link === ds.activeTab">{{tab.title}}</p>
+                </a>
+                <a *ngIf="tab.disabled">
+                    <div [class.active]="tab.link === ds.activeTab" class="step-circle">{{i+1}}</div>
+                    <p [class.active]="tab.link === ds.activeTab">{{tab.title}}</p>
+                </a>
+            </ng-container>
+            <ng-container *ngIf="ds.productId == -1">
+                <a routerLinkActive="active">
+                    <div [class.active]="tab.link === ds.activeTab" class="step-circle">{{i+1}}</div>
+                    <p [class.active]="tab.link === ds.activeTab">{{tab.title}}</p>
+                </a>
+            </ng-container>
+        </div>
+    </div>
+</section>
+
+<router-outlet></router-outlet>

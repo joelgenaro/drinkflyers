@@ -1,0 +1,76 @@
+.admin-panel {
+    h1, h2, h3, h4, h5 {
+        font-weight: 600;
+        // text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 0;
+        margin: 0;
+    }
+
+    .mendatory {
+        color: var(--ap-danger);
+    }
+
+    h1.primary, h2.primary, h3.primary, h4.primary, h5.primary, p.primary, label.primary {
+        color: var(--ap-primary);
+    }
+
+    h1.secondary, h2.secondary, h3.secondary, h4.secondary, h5.secondary, p.secondary, label.secondary {
+        color: var(--ap-secondary);
+    }
+
+    h1.success, h2.success, h3.success, h4.success, h5.success, p.success, label.success {
+        color: var(--ap-success);
+    }
+
+    h1.danger, h2.danger, h3.danger, h4.danger, h5.danger, p.danger, label.danger {
+        color: var(--ap-danger);
+    }
+
+    h1.warning, h2.warning, h3.warning, h4.warning, h5.warning, p.warning, label.warning {
+        color: var(--ap-warning);
+    }
+
+    h1.info, h2.info, h3.info, h4.info, h5.info, p.info, label.info {
+        color: var(--ap-info);
+    }
+
+    h1.light, h2.light, h3.light, h4.light, h5.light, p.light, label.light {
+        color: var(--ap-light);
+    }
+
+    h1.dark, h2.dark, h3.dark, h4.dark, h5.dark, p.dark, label.dark {
+        color: var(--ap-dark);
+    }
+
+    h1 {
+        font-size: 18px;
+    }
+    h2 {
+        font-size: 16px;
+    }
+    h3 {
+        font-size: 14px;
+    }
+    h4 {
+        font-size: 13px;
+    }
+    h5 {
+        font-size: 12px;
+    }
+}
+
+@mixin maxLines($property) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: $property; /* number of lines to show */
+    -webkit-box-orient: vertical;
+}
+
+@for $i from 1 through 5 {
+    $lines: $i;
+    .max-#{$i}-lines {
+        @include maxLines($i)
+    }
+}

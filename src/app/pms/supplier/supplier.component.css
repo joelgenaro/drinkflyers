@@ -1,0 +1,168 @@
+.header-section {
+    position: sticky;
+    top: 65px;
+}
+.results-section {
+    height: calc(100vh - 257px);
+    overflow: auto;
+}
+.main-row {
+    margin: 10px;
+}
+h6.sort {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #484848;
+}
+select.sort-select {
+    color: #484848;
+}
+
+.create-content {
+    display: flex;
+    align-items: baseline;
+}
+input[type="checkbox"].create-another {
+    height: auto !important;
+    width: 13px !important;
+    position: relative !important;
+    left: 0 !important;
+    cursor: pointer;
+    display: block;
+}
+.create-text p {
+    margin: 0;
+}
+.create-text {
+    margin: 0 0 0 8px;
+}
+label {
+    font-size: 0.9rem;
+    margin: 0;
+}
+.page-item.active .page-link {
+    background-color: var(--ap-primary) !important;
+    border-color: var(--ap-primary) !important;
+}
+.page-link {
+    color: var(--ap-primary);
+    box-shadow: none;
+}
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+input.form-control {
+    height: 40px;
+    border-radius: 6px;
+    background-color: #fff;
+    border-radius: 7px;
+}
+.has-search .form-control-feedback1 {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: var(--ap-primary);
+    border-radius: 0 7px 7px 0;
+    padding: 0 22px;
+    z-index: 2;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #fff;
+    margin: 1px 0 0 0;
+}
+.add-btn {
+    background-color: transparent;
+    border: 1px solid var(--ap-primary) !important;
+    color: var(--ap-primary);
+    border-radius: 7px;
+}
+button.sm.main-color {
+    border: 1px solid var(--ap-primary);
+}
+.user-panel .table-striped tbody tr:nth-of-type(odd) {
+    background-color: transparent !important;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: transparent !important;
+}
+i.fas.fa-dot-circle {
+    color: var(--ap-primary);
+    font-size: 12px;
+}
+i.fas.fa-dot-circle.gray {
+    color: #9a9a9a;
+}
+/* UP DOWN ARROW */
+.arrows {
+    padding: 0 0 0 5px;
+}
+.arrow {
+    border: solid black;
+    border-width: 0 1px 1px 0;
+    display: inline-block;
+    padding: 2.5px;
+}
+.asc {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+    margin: 0 -6px 5px 0;
+    cursor: pointer;
+}
+.desc {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    cursor: pointer;
+}
+.active {
+    color: var(--ap-primary);
+    border-width: 0 2px 2px 0;
+}
+/* CARD TABLE */
+.card {
+    background-color: transparent !important;
+}
+.table.table-striped {
+    background-color: #fff;
+    border-radius: 10px 10px 10px 10px !important;
+}
+.table {
+    margin: 0 !important;
+}
+.table thead th {
+    border-bottom: 2px solid #dee2e6;
+    color: var(--ap-secondary);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 0.75rem 0;
+}
+.table tbody td {
+    font-size: 14px;
+}
+.product-box {
+    padding: 10px;
+    border-radius: 4px;
+    margin: 0 0 10px 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+.company-active {
+    display: block;
+}
+.company-inactive {
+    display: none;
+}

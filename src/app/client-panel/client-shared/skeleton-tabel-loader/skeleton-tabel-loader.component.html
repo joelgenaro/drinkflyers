@@ -1,0 +1,7 @@
+<tr *ngFor="let r of rows">
+    <ng-container *ngFor="let c of cols">
+        <td [attr.colspan]="c">
+            <div class="bar"></div>
+        </td>
+    </ng-container>
+</tr>

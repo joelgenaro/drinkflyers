@@ -1,0 +1,214 @@
+<div class="dasboard-main">
+    <h1>Dashboard</h1>
+    <div class="width-100">
+        <div class="cal-btn">
+            <!-- <i class="fas fa-calendar-alt"></i> last 30 days -->
+            <input type="search" class="post search-input" placeholder="Select Date Here" bsDaterangepicker [(ngModel)]="bsRangeValue" (ngModelChange)="rangeDate()" [bsConfig]="{ rangeInputFormat : 'DD/MM/YYYY', dateInputFormat: 'DD/MM/YYYY', adaptivePosition: true }">
+        </div>
+    </div>
+
+    <div class="top-card">
+        <div class="top-card-item">
+            <p>Owned sales channel</p>
+            <h2>{{dashboardData.totalChannel? dashboardData.totalChannel: 0}}</h2>
+        </div>
+        <div class="top-card-item">
+            <p>Total active clients</p>
+            <h2>{{dashboardData.totlaClients? dashboardData.totlaClients: 0}}</h2>
+        </div>
+        <div class="top-card-item">
+            <p>Total orders today</p>
+            <h2>{{dashboardData.todayOrders? dashboardData.todayOrders: 0}}</h2>
+        </div>
+        <div class="top-card-item">
+            <p>Orders in production</p>
+            <h2>{{dashboardData.orderInProduction? dashboardData.orderInProduction: 0}}</h2>
+        </div>
+    </div>
+
+    <div class="graph-card">
+        <div class="graph-card-item">
+            <p>Total Sales</p>
+            <h2>&pound;6,022.24</h2>
+            <p class="no-dot">SALES OVER TIME</p>
+            <div style="display: flex; width: 100%; justify-content: center;">
+                <img *ngIf="this.dataStatus=='fetching'" src="assets/images/rolling-gray.svg" width="40px">
+            </div>
+            <apx-chart *ngIf="this.dataStatus=='done'" [series]="ChartOptionsTotalSales.series" [chart]="ChartOptionsTotalSales.chart" [xaxis]="ChartOptionsTotalSales.xaxis" [dataLabels]="ChartOptionsTotalSales.dataLabels" [grid]="ChartOptionsTotalSales.grid" [stroke]="ChartOptionsTotalSales.stroke" [title]="ChartOptionsTotalSales.title"></apx-chart>
+        </div>
+        <div class="graph-card-item">
+            <p>Total Orders</p>
+            <h2>234</h2>
+            <p class="no-dot">ORDERS OVER TIME</p>
+            <div style="display: flex; width: 100%; justify-content: center;">
+                <img *ngIf="this.dataStatus=='fetching'" src="assets/images/rolling-gray.svg" width="40px">
+            </div>
+            <apx-chart *ngIf="this.dataStatus=='done'" [series]="ChartOptionsAverageSales.series" [chart]="ChartOptionsAverageSales.chart" [xaxis]="ChartOptionsAverageSales.xaxis" [dataLabels]="ChartOptionsAverageSales.dataLabels" [grid]="ChartOptionsAverageSales.grid" [stroke]="ChartOptionsAverageSales.stroke" [title]="ChartOptionsAverageSales.title"></apx-chart>
+        </div>
+        <div class="graph-card-item">
+            <p>Average Order Value</p>
+            <h2>&pound;21.89</h2>
+            <p class="no-dot">SALES VALUE OVER TIME</p>
+            <div style="display: flex; width: 100%; justify-content: center;">
+                <img *ngIf="this.dataStatus=='fetching'" src="assets/images/rolling-gray.svg" width="40px">
+            </div>
+            <apx-chart *ngIf="this.dataStatus=='done'" [series]="ChartOptionsAverageOrderValue.series" [chart]="ChartOptionsAverageOrderValue.chart" [xaxis]="ChartOptionsAverageOrderValue.xaxis" [dataLabels]="ChartOptionsAverageOrderValue.dataLabels" [grid]="ChartOptionsAverageOrderValue.grid" [stroke]="ChartOptionsAverageOrderValue.stroke" [title]="ChartOptionsAverageOrderValue.title"></apx-chart>
+        </div>
+    </div>
+
+    <div class="bottom-card">
+        <div class="bottom-card-item">
+            <p>Top selling products by category</p>
+            <table class="table table-striped">
+                <ng-container *ngIf="sellingProductCategory.length > 0">
+                    <thead>
+                        <tr *ngFor="let ocsr of sellingProductCategory">
+                            <td>{{ocsr.name}}</td>
+                            <td style="width:60px;">21</td>
+                            <td style="text-align: right;">&pound;210.99 </td>
+                        </tr>
+                    </thead>
+                </ng-container>
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <div style="display: flex; width: 100%; justify-content: center;">
+                        <img *ngIf="this.dataStatus=='fetching'" src="assets/images/rolling-gray.svg" width="50px">
+                    </div>
+                </ng-container>
+                <tbody *ngIf="sellingProductCategory.length == 0 && dataStatus == 'done'">
+                    <tr>
+                        <td colspan="3">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="bottom-card-item">
+            <p>Top selling products by design</p>
+            <table class="table table-striped">
+                <ng-container *ngIf="sellingProductDesign.length > 0">
+                    <thead>
+                        <tr *ngFor="let ocsr of sellingProductDesign">
+                            <td>{{ocsr.name}}</td>
+                            <td style="width:60px;">21</td>
+                            <td style="text-align: right;">&pound;210.99 </td>
+                        </tr>
+                    </thead>
+                </ng-container>
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <div style="display: flex; width: 100%; justify-content: center;">
+                        <img *ngIf="this.dataStatus=='fetching'" src="assets/images/rolling-gray.svg" width="50px">
+                    </div>
+                </ng-container>
+                <tbody *ngIf="sellingProductDesign.length == 0 && dataStatus == 'done'">
+                    <tr>
+                        <td colspan="3">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="bottom-card-item">
+            <p>Top ten owned channels by sales revenue</p>
+            <table class="table table-striped">
+                <ng-container *ngIf="ownedChannelSalesRevenue.length > 0">
+                    <thead>
+                        <tr *ngFor="let ocsr of ownedChannelSalesRevenue">
+                            <td>{{ocsr.name}}</td>
+                            <td style="width:60px;">21</td>
+                            <td style="text-align: right;">&pound;210.99 </td>
+                        </tr>
+                    </thead>
+                </ng-container>
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <div style="display: flex; width: 100%; justify-content: center;">
+                        <img *ngIf="this.dataStatus=='fetching'" src="assets/images/rolling-gray.svg" width="50px">
+                    </div>
+                </ng-container>
+                <tbody *ngIf="ownedChannelSalesRevenue.length == 0 && dataStatus == 'done'">
+                    <tr>
+                        <td colspan="3">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="bottom-card-item">
+            <p>Top ten clients by sales revenue</p>
+            <table class="table table-striped">
+                <ng-container *ngIf="clientSalesRevenue.length > 0">
+                    <thead>
+                        <tr *ngFor="let csr of clientSalesRevenue">
+                            <td>{{csr.user.first_name}} {{csr.user.last_name}}</td>
+                            <td style="width:60px;">21</td>
+                            <td style="text-align: right;">&pound;210.99 </td>
+                        </tr>
+                    </thead>
+                </ng-container>
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <div style="display: flex; width: 100%; justify-content: center;">
+                        <img *ngIf="this.dataStatus=='fetching'" src="assets/images/rolling-gray.svg" width="50px">
+                    </div>
+                </ng-container>
+                <tbody *ngIf="clientSalesRevenue.length == 0 && dataStatus == 'done'">
+                    <tr>
+                        <td colspan="3">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <td>WWF</td>
+                        <td style="width:60px;">21</td>
+                        <td style="text-align: right;">&pound;210.99 </td>
+                    </tr>
+                    <tr>
+                        <td>Scope UK</td>
+                        <td style="width:60px;">21</td>
+                        <td style="text-align: right;">&pound;210.99 </td>
+                    </tr>
+                    <tr>
+                        <td>Woeld Animal Protection</td>
+                        <td style="width:60px;">21</td>
+                        <td style="text-align: right;">&pound;210.99 </td>
+                    </tr>
+                    <tr>
+                        <td>Perry the Park Keeper</td>
+                        <td style="width:60px;">21</td>
+                        <td style="text-align: right;">&pound;210.99 </td>
+                    </tr>
+                    <tr>
+                        <td>Numberblocks</td>
+                        <td style="width:60px;">21</td>
+                        <td style="text-align: right;">&pound;210.99 </td>
+                    </tr>
+                    <tr>
+                        <td>Stephen Lawrence Day</td>
+                        <td style="width:60px;">21</td>
+                        <td style="text-align: right;">&pound;210.99 </td>
+                    </tr>
+                    <tr>
+                        <td>English heritage</td>
+                        <td style="width:60px;">21</td>
+                        <td style="text-align: right;">&pound;210.99 </td>
+                    </tr>
+                    <tr>
+                        <td>Bcano</td>
+                        <td style="width:60px;">21</td>
+                        <td style="text-align: right;">&pound;210.99 </td>
+                    </tr>
+                    <tr>
+                        <td>Cosy Fish</td>
+                        <td style="width:60px;">21</td>
+                        <td style="text-align: right;">&pound;210.99 </td>
+                    </tr>
+                </thead>
+            </table> -->
+        </div>
+    </div>
+</div>

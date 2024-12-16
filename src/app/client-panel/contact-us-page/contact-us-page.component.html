@@ -1,0 +1,71 @@
+<main>
+  <section class="register_holder">
+    <div class="container" *ngIf="dataStatus == true">
+      <div class="register_form login_form">
+        <h1 class="mb-2 text-center">Contact Us</h1>
+        <div class="alert alert-danger" role="alert" *ngIf="registrationError">
+            {{registrationError}}
+        </div>
+
+        <form [formGroup]="contactUsPageForm" (ngSubmit)="savePageContent(contactUsPageForm)" #f="ngForm">
+          <div class="row">
+              <div class="col-md-12">
+                  <div class="form-group">
+                      <label for="">Address:</label>
+                      <input type="text" class="fadeIn"  formControlName="address" placeholder="Enter address">
+                      <div *ngIf="ui.checkErrors(g.address, f)" class="errors">
+                      <p *ngIf="g.address.errors.required">Address is required</p>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-md-12">
+                  <div class="form-group">
+                      <label for="">Phone no:</label>
+                      <input type="text" class="fadeIn" formControlName="phone" placeholder="Enter contact number">
+                      <div *ngIf="ui.checkErrors(g.phone, f)" class="errors">
+                      <p *ngIf="g.phone.errors.required">Contact number is required</p>  
+                      </div>                    
+                  </div>
+              </div>  
+              <div class="col-md-12">
+                <div class="form-group">
+                    <label for="">Info Email:</label>
+                    <input type="text" class="fadeIn" formControlName="contact_email" placeholder="Enter contact email"> 
+                    <div *ngIf="ui.checkErrors(g.contact_email, f)" class="errors">
+                    <p *ngIf="g.contact_email.errors.required">Contact email is required</p>        
+                    </div>            
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="">Support Email</label>
+                    <input type="text" class="fadeIn" formControlName="support_email" placeholder="Enter support email"> 
+                    <div *ngIf="ui.checkErrors(g.support_email, f)" class="errors">
+                    <p *ngIf="g.support_email.errors.required">Support email is required</p>        
+                    </div>            
+                </div>
+            </div>
+            <!-- <div class="col-md-12">
+                <div class="form-group">
+                    <input type="text" class="fadeIn" formControlName="sales_email" placeholder="Enter sales email"> 
+                    <div *ngIf="ui.checkErrors(g.sales_email, f)" class="errors">
+                    <p *ngIf="g.sales_email.errors.required">Sales email is required</p>        
+                    </div>            
+                </div>
+            </div>   -->
+              <div class="col-md-12">
+                  <div class="form-group text-center">
+                     <button class="sm red"  [disabled]= "waiting.update" [ngClass]="{'in-progress': waiting.update}">Update
+                         <span></span>
+                         <span></span>
+                         <span></span>
+                     </button>
+                  </div>
+              </div>
+          </div>
+      </form>
+     </div>
+    </div>
+  </section>
+</main>
+

@@ -1,0 +1,168 @@
+<div class="sub-container">
+    <form [formGroup]="dataForm" (ngSubmit)="addInfo(dataForm, f)" #f="ngForm">
+        <div class="row">
+            <div class="col-md-4 mb-2" formArrayName="categories">
+                <label>Category <span class="mendatory">*</span></label>
+                <div class="mb-2" *ngFor="let cat of categories.controls; let i = index">
+                    <div [formGroupName]="i">
+                        <div class="add-new">
+                            <select (change)="selectCategory($event, i)" class="form-control" formControlName="category_id" [ngClass]="{ 'form-submitted': f.submitted }">
+                                <option [ngValue]="null" disabled>Select Category</option>
+                                <option *ngFor="let category of categoriesList[i]" [value]="category.id">
+                                    {{ category.name }}
+                                </option>
+                            </select>
+                            <button type="button" class="sm" (click)="openCategoryModal(addCategory,i)">New</button>
+                        </div>
+                        <!-- <div *ngIf="ui.checkErrors(cat, f)" class="errors">
+                            <p *ngIf="cat.errors.required">Category is required</p>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-2">
+                <label>FulFilment <span class="mendatory">*</span></label>
+                <select class="form-control" formControlName="fulfillment_center_id" [ngClass]="{'form-submitted': f.submitted}">
+                    <option [ngValue]="null" disabled>Select FulFilment</option>
+                    <option *ngFor="let item of fulFilmentList" [value]="item.id">{{item.title}}</option>
+
+                </select>
+                <div *ngIf="ui.checkErrors(g.fulfillment_center_id, f)" class="errors">
+                    <p *ngIf="g.fulfillment_center_id.errors.required">FulFilment is required</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-2">
+                <label>Product Name <span class="mendatory">*</span></label>
+                <input formControlName="name" class="form-control mt-0" placeholder="Enter Product Name" [ngClass]="{ 'form-submitted': f.submitted }" />
+                <div *ngIf="ui.checkErrors(g.name, f)" class="errors">
+                    <p *ngIf="g.name.errors.required">
+                        Product Name is required
+                    </p>
+                    <p *ngIf="g.name.errors.maxlength">
+                        Product Name should not exceed
+                        {{ g.name.errors.maxlength.requiredLength }} characters
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-2">
+                <label>SKU <span class="mendatory">*</span></label>
+                <input formControlName="sku" class="form-control mt-0" placeholder="Enter SKU" [ngClass]="{ 'form-submitted': f.submitted }" />
+                <div *ngIf="ui.checkErrors(g.sku, f)" class="errors">
+                    <p *ngIf="g.sku.errors.required">SKU is required</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-2">
+                <label>Tags</label>
+                <ng-select [multiple]="true" [(ngModel)]="selectedTags" [ngModelOptions]="{ standalone: true }">
+                    <ng-option *ngFor="let tag of tagsList" [value]="tag.id">{{
+                        tag.full_name
+                        }}</ng-option>
+                </ng-select>
+            </div>
+            <div class="col-md-4 mb-2">
+                <label>Poduct Type <span class="mendatory">*</span></label>
+                <select class="form-control" formControlName="variable" [ngClass]="{'form-submitted': f.submitted}">
+                    <option [value]="0">Simple</option>
+                    <option [value]="1">Variable</option>
+                </select>
+            </div>
+            <div class="col-md-12 mb-10">
+                <label>Description <span class="mendatory">*</span></label>
+                <angular-editor formControlName="description" [config]="editorConfig" [ngClass]="{'form-submitted': f.submitted}"></angular-editor>
+                <!-- <quill-editor formControlName="description" [modules]="editorConfig" [ngClass]="{'form-submitted': f.submitted}"></quill-editor> -->
+                <!-- <textarea formControlName="description" rows="5" class="form-control mt-0" placeholder="Enter Product Description" [ngClass]="{ 'form-submitted': f.submitted }"></textarea> -->
+                <div *ngIf="ui.checkErrors(g.description, f)" class="errors">
+                    <p *ngIf="g.description.errors.required">
+                        Description is required
+                    </p>
+                    <p *ngIf="g.description.errors.maxlength">
+                        Description should not exceed
+                        {{ g.description.errors.maxlength.requiredLength }} characters
+                    </p>
+                </div>
+            </div>
+            <!-- <div class="col-md-4 mb-2">
+                <label>Type <span class="mendatory">*</span></label>
+                <select class="form-control" formControlName="type" [ngClass]="{'form-submitted': f.submitted}">
+                    <option value="null">Select Type</option>
+                    <option value="stock">Stock</option>
+                    <option value="virtual_product">Virtual Product</option>
+                    <option value="base_product">Base Product</option>
+                </select>
+                <div *ngIf="ui.checkErrors(g.type, f)" class="errors">
+                    <p *ngIf="g.type.errors.required">Type is required</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-2">
+                <label>Base Price <span class="mendatory">*</span></label>
+                <input type="number" min="0" formControlName="base_price" class="form-control mt-0" placeholder="Enter Base Price" [ngClass]="{'form-submitted': f.submitted}">
+                <div *ngIf="ui.checkErrors(g.base_price, f)" class="errors">
+                    <p *ngIf="g.base_price.errors.required">Base Price is required</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-2">
+                <label>Is it Personalized Product?<span class="mendatory">*</span></label>
+                <div class="personalize-wrapper">
+                    <label class="switch">
+                        <input type="checkbox" formControlName="personalize" [ngClass]="{'form-submitted': f.submitted}">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div> -->
+        </div>
+        <div class="row" *ngIf="fetchingCategories === true">
+            <div class="col-md-4 mb-2">
+                <div class="img-wrapper text-center">
+                    <img src="assets/images/rolling-main.svg" alt="" />
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-btn">
+            <div class="button-group">
+                <button type="submit" class="post primary lg" [disabled]="productDetailLoading" [ngClass]="productDetailLoading ? 'in-progress' : ''">
+                    Next <span></span><span></span><span></span>
+                </button>
+                <div class="icon post primary">
+                    <i class="fa fa-angle-right"></i>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<ng-template #addCategory>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modalTitle}}</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="dataFormCat" (ngSubmit)="save(c)" #c="ngForm">
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Name <span class="mendatory">*</span></label>
+                    <input formControlName="name" class="form-control mt-0" placeholder="Enter Name" [ngClass]="{'form-submitted': c.submitted}">
+                    <div *ngIf="ui.checkErrors(cat.name, c)" class="errors">
+                        <p *ngIf="cat.name.errors.required">Name is required</p>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="primary" [ngClass]="loginLoading?'in-progress':''">
+                <div class="loading-dots" [ngClass]="loginLoading?'in-progress':''">Save
+                    <span></span><span></span><span></span>
+                </div>
+            </button>
+            <button type="button" class="dark ml-1" (click)="cancelButton(c)">Cancel</button>
+            <!-- <div class="create-content">
+                <input type="checkbox" class="create-another" [(ngModel)]="isChecked" [ngModelOptions]="{standalone: true}">
+                <div class="create-text">
+                    <p>Create another</p>
+                </div>
+            </div> -->
+        </form>
+    </div>
+</ng-template>

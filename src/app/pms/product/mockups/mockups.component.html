@@ -1,0 +1,107 @@
+<div class="sub-container">
+    <div class="mockup-style">
+        <span class="mb-2">Choose mockup style</span>
+    </div>
+    <div class="info">
+        <div><span>Select the mocup images you would like to use below</span></div>
+        <div>After selecting your chosen moclup image, click the <span>Generate mockups</span> button and we'll generate the images for you</div>
+    </div>
+    <div class="main-frame">
+        <div class="main-frame-items" *ngFor="let d of mockupList">
+            <div class="checkbox-position">
+                <input type="checkbox" class="checkbox-position-setting">
+            </div>
+            <div class="w-100" style="margin-top:10px;">
+                <img [src]="d.src">
+            </div>
+            <div class="w-100 text-center">
+                <span>{{d.title}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mockup-frame" *ngFor="let item of mockupMain">
+        <div class="mockup-frame-items-title">
+            <input type="checkbox" class="mockup-checkbox"> {{item.elevation.title}}
+        </div>
+        <div class="mockup-frame-items">
+            <div class="checkbox-position">
+                <input type="checkbox" class="checkbox-position-setting">
+            </div>
+            <div class="w-100" style="margin-top:10px;">
+                <img src="assets/images/sample2.jpg">
+            </div>
+            <div class="w-100 text-center">
+                <span>Girl's Mockup</span>
+            </div>
+        </div>
+        <div class="mockup-frame-items">
+            <div class="checkbox-position">
+                <input type="checkbox" class="checkbox-position-setting">
+            </div>
+            <div class="w-100" style="margin-top:10px;">
+                <img src="assets/images/sample3.jpg">
+            </div>
+            <div class="w-100 text-center">
+                <span>Girl's Mockup</span>
+            </div>
+        </div>
+        <div class="mockup-frame-items">
+            <div class="checkbox-position">
+                <input type="checkbox" class="checkbox-position-setting">
+            </div>
+            <div class="w-100" style="margin-top:10px;">
+                <img src="assets/images/sample4.jpg">
+            </div>
+            <div class="w-100 text-center">
+                <span>Men's Mockup</span>
+            </div>
+        </div>
+        <div class="mockup-frame-items">
+            <div class="checkbox-position">
+                <input type="checkbox" class="checkbox-position-setting">
+            </div>
+            <div class="w-100" style="margin-top:10px;">
+                <img src="assets/images/sample5.jpg">
+            </div>
+            <div class="w-100 text-center">
+                <span>Men's Mockup</span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="mockup-frame">
+        <b>Mockup format</b>
+        <div class="mockup-frame-heading">
+            <input type="radio" name="format" class="mockup-checkbox"> <b>JPG</b>&nbsp;(smaller, your store will load faster)
+        </div>
+        <div class="mockup-frame-heading">
+            <input type="radio" name="format" class="mockup-checkbox"> <b>PNG</b>&nbsp;(bulkier, but with a transparent background)
+        </div>
+
+    </div>
+
+    <!-- <div class="button-frame">
+        <button type="button" class="primary sm mt-2 mr-2">Generate Mockups</button>
+        <button type="button" class="primary sm mt-2" style="display: none;">Details</button>
+    </div> -->
+
+    <div class="bottom-btn button-frame">
+        <div class="button-group">
+            <button type="button" class="post primary lg">
+                Generate Mockups <span></span><span></span><span></span>
+            </button>
+            <div class="icon post primary">
+                <i class="fa fa-angle-right"></i>
+            </div>
+
+            <button type="button" class="post secondary lg ml-1" (click)="routeToDetails()">
+                Next <span></span><span></span><span></span>
+            </button>
+            <div class="icon post secondary">
+                <i class="fa fa-angle-right"></i>
+            </div>
+        </div>
+    </div>
+</div>

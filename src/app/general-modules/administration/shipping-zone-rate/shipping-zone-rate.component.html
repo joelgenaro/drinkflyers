@@ -1,0 +1,339 @@
+<div class="row no-gutters main-row">
+    <!-- <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto mb-2 mt-2">
+                <h2 class="primary">Shipping Zones and Rates</h2>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+    </div> -->
+    <div class="col-md-12 mb-1 mt-2 results-section">
+        <div class="zone-rate-box">
+            <div class="zone-rate-heading">
+                <h2>Shipping Zones and Rates</h2>
+            </div>
+            <hr class="m-0">
+            <div class="zone-rate-container">
+                <div class="shipping-heading">
+                    <h3>Shipping to</h3>
+                    <button (click)="openZoneModal(zoneTemplate, -1, -1)">Create shipping zone</button>
+                </div>
+                <div class="shipping-container">
+                    <ng-container *ngIf="shippingMethodList.length > 0 && shippingMethodStatus == 'done'">
+                        <ng-container *ngFor="let sm of shippingMethodList; let i = index">
+                            <div class="shipping-content">
+                                <ng-container *ngIf="sm.shipping_method_zones.length == 1; else zonesCountryTemplate">
+                                    <div class="shipping-flag">
+                                        <img [src]="api.getFlagImage(sm.shipping_method_zones[0].country.iso2)" width="24" height="18">
+                                    </div>
+                                </ng-container>
+                                <ng-template #zonesCountryTemplate>
+                                    <div class="shipping-flag">
+                                        <i class="fa fa-globe"></i>
+                                    </div>
+                                </ng-template>
+                                <div class="shipping-name">
+                                    <span class="name">{{sm.name}}</span>
+                                    <span class="countries">
+                                        <app-read-more [text]="sm.country_name" [maxLength]="30"></app-read-more><span></span>
+                                        <!-- <ng-container *ngFor="let c of sm.shipping_method_zones">
+                                            <span>{{c.country.name}}, </span>
+                                        </ng-container>
+                                        <div>
+                                            <h1>test</h1>
+                                        </div> -->
+                                        <!-- <div class="item">
+                                            <ng-container *ngFor="let c of sm.shipping_method_zones">
+                                                <pre>{{c.countryName}}</pre>
+                                                <app-read-more [text]="c.countryName" [maxLength]="50"></app-read-more><span>,&nbsp;</span>
+                                            </ng-container>
+                                        </div> -->
+                                        <!-- <ng-container *ngFor="let c of sm.shipping_method_zones; let isLast = last">
+                                            {{c.country.name}}{{isLast ? '' : ', '}}
+                                        </ng-container> -->
+                                    </span>
+                                </div>
+                                <div class="shipping-action">
+                                    <div class="dropdown-container">
+                                        <div class="dropdown">
+                                            <h4 class="drop-text"><i class="fas fa-ellipsis-v"></i></h4>
+                                            <div class="dropdown-content">
+                                                <ul>
+                                                    <li class="edit" (click)="openZoneModal(zoneTemplate, sm.id, i)">Edit zone</li>
+                                                    <li class="delete" (click)="zoneDeleteModal(zoneDeleteTemplate, sm.id, i)">Delete</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <ng-container *ngIf="sm?.shipping_method_rates?.length > 0; else zoneRateTemplate">
+                                <div class="table-responsive product-box rates">
+                                    <table class="table m-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Rate name</th>
+                                                <th class="condition">Condition</th>
+                                                <th class="price">Price</th>
+                                                <th class="action"> </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let r of sm.shipping_method_rates; let j= index">
+                                                <td>{{r.name}}</td>
+                                                <ng-container *ngIf="r.rate_type === 'item_weight'">
+                                                    <td class="condition" *ngIf="r.min_weight == null && r.max_weight == null">—</td>
+                                                    <td class="condition" *ngIf="r.min_weight == null && r.max_weight != null">{{r.min_weight == null? '0': r.min_weight | number : '1.2-3' }}kg - {{r.max_weight == null? '0': r.max_weight | number : '1.2-3' }}kg</td>
+                                                    <td class="condition" *ngIf="r.min_weight != null && r.max_weight == null">{{r.min_weight == null? '0': r.min_weight | number : '1.2-3' }}kg {{r.max_weight == null? 'and up': '' }}</td>
+                                                    <td class="condition" *ngIf="r.min_weight && r.max_weight">{{r.min_weight == null ? '0': r.min_weight | number : '1.2-3'}}kg - {{r.max_weight == null? '0': r.max_weight | number : '1.2-3'}}kg</td>
+                                                </ng-container>
+                                                <ng-container *ngIf="r.rate_type == 'flat'">
+                                                    <td class="condition">Flat rate</td>
+                                                </ng-container>
+                                                <td class="price">{{cs.defaultCurrency}} {{r.price == '' || r.price == null || r.price == '0.00'? '0': r.price | number : '1.2-3'}}</td>
+                                                <td class="action">
+                                                    <div class=" dropdown-container">
+                                                        <div class="dropdown">
+                                                            <h4 class="drop-text"><i class="fas fa-ellipsis-v"></i></h4>
+                                                            <div class="dropdown-content">
+                                                                <ul>
+                                                                    <li class="edit" (click)="openRateModal(rateTemplate, r.id, i)">Edit rate</li>
+                                                                    <li class="delete" (click)="rateDeleteModal(rateDeleteTemplate, r.id, i)">Delete</li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </ng-container>
+                            <ng-template #zoneRateTemplate>
+                                <div class="error-banner no-rate">
+                                    <i class="fa fa-2x fa-exclamation-circle"></i>
+                                    <p>No rates. Customers in this zone won't be able to complete checkout.</p>
+                                </div>
+                            </ng-template>
+                            <div class="add-rates"><button (click)="openRateModal(rateTemplate, sm.id, -1)">Add rate</button></div>
+                            <div class="hr-row"></div>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="shippingMethodStatus == 'fetching'">
+                        <div class="img-wrapper">
+                            <img src="assets/images/rolling-main.svg" alt="">
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="shippingMethodList.length == 0 && shippingMethodStatus == 'done'">
+                        <div class="error-banner">
+                            <i class="fa fa-2x fa-exclamation-circle"></i>
+                            <p>No zones or rates.</p>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="bottom-section">
+            <div class="d-flex justify-content-end flex-wrap">
+                <div class="button-group">
+                    <div class="icon primary pre">
+                        <i class="fa fa-angle-left"></i>
+                    </div>
+                    <button type="submit" class="primary" [routerLink]="['/user/dashboard']" routerLinkActive="router-link-active">Back</button>
+                </div>
+                <div class="button-group ml-2">
+                    <button type="submit" class="post primary" [ngClass]="false?'in-progress':''">Save & Next
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="icon post primary">
+                        <i class="fa fa-angle-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+</div>
+
+<ng-template #zoneTemplate>
+    <div class="modal-container">
+        <form [formGroup]="zoneDataForm" (ngSubmit)="saveZone(f)" #f="ngForm">
+            <div class="modal-header">
+                <h2 class="modal-title pull-left">{{modalTitle}}</h2>
+                <button type="button" class="close pull-right" (click)="cancelZoneButton(f)"><span><i class="fas fa-times"></i></span></button>
+            </div>
+            <div class="modal-body pb-0 pt-0">
+                <div class="row">
+                    <div class="col-md-12 pb-3 pt-3 zone-name-field">
+                        <label class="mb-0 mt-0">Zone Name <span class="mendatory">*</span></label>
+                        <input formControlName="name" class="form-control mt-0" placeholder="Enter Zone Name" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.name, f)" class="errors">
+                            <p *ngIf="g.name.errors.required">Zone name is required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-12 p-0 country">
+                        <div class="search-country">
+                            <div class="input-group">
+                                <input type="text" class="post search-input" [(ngModel)]="searchCountryString" [ngModelOptions]="{standalone: true}" placeholder="Enter Country Name">
+                            </div>
+                        </div>
+                        <ng-container *ngIf="zoneCountryStatus == true">
+                            <div class="img-wrapper">
+                                <img src="assets/images/rolling-main.svg" alt="">
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="zoneList.length > 0 && zoneCountryStatus == false">
+                            <ul class="country-list">
+                                <li class="country-data" *ngFor="let zone of zoneList; let i = index">
+                                    <div class="zone" [style.background]="zone.selected? '#f4f6f8': ''">
+                                        <div class="content-side">
+                                            <label class="checkbox primary">
+                                                <input type="checkbox" (change)="selectZoneCountries(zone.id,i)" [disabled]="zone.selected" [checked]="checkZoneCountries(zone.id,i)">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                            <span class="zone-name">{{zone.name}}</span>
+                                        </div>
+                                        <div class="text-side" *ngIf="zone.selected">
+                                            <span>In another zone</span>
+                                        </div>
+                                    </div>
+                                    <div class="country">
+                                        <ul>
+                                            <li *ngFor="let zr of zone.zone_regions | filter:searchCountryString" [style.background]="zr.selected? '#f4f6f8': ''">
+                                                <div class="content-side">
+                                                    <label class="checkbox primary">
+                                                        <input type="checkbox" (change)="selectCountry(zr.country.id, i, zr.zone_id)" [disabled]="zr.selected" [checked]="checkCountry(zr.country.id,zr.zone_id)">
+                                                        <span class="checkmark"></span>
+                                                    </label>
+                                                    <img [src]="apis.getFlagImage(zr.country.iso2)" width="24" height="18">
+                                                    <span class="country-name">{{zr.country.name}}</span>
+                                                </div>
+                                                <div class="text-side" *ngIf="zr.selected">
+                                                    <span>In another zone</span>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </ng-container>
+                        <ng-container *ngIf="zoneStatus == 'fetching'">
+                            <div class="img-wrapper">
+                                <img src="assets/images/rolling-main.svg" alt="">
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="zoneList.length == 0 && zoneStatus == 'done'">
+                            <app-no-data-found></app-no-data-found>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="dark ml-1" (click)="cancelZoneButton(f)">Cancel</button>
+                <button type="submit" class="primary" [disabled]="saveLoading" [ngClass]="saveLoading?'in-progress':''">
+                    <div class="loading-dots">Save
+                        <span></span><span></span><span></span>
+                    </div>
+                </button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+<ng-template #zoneDeleteTemplate>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="zoneDelete()" [disabled]="deleteLoading" [ngClass]="deleteLoading?'in-progress':''">
+            <div class="loading-dots">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #rateTemplate>
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2 class="modal-title pull-left">{{modalTitle}}</h2>
+            <button type="button" class="close pull-right" (click)="rateModalRef.hide()"><span><i class="fas fa-times"></i></span></button>
+        </div>
+        <form [formGroup]="rateDataForm" (ngSubmit)="saveRate(f)" #f="ngForm">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label class="mb-0 mt-0">Rate Name <span class="mendatory">*</span></label>
+                        <input type="text" list="rateNames" formControlName="name" class="form-control mt-0" placeholder="Enter Zone Name" [ngClass]="{'form-submitted': f.submitted}">
+                        <datalist id="rateNames">
+                            <option *ngFor="let n of shippingMethodRateNames" [value]="n.name">{{ n.name }}</option>
+                        </datalist>
+                        <div *ngIf="ui.checkErrors(h.name, f)" class="errors">
+                            <p *ngIf="h.name.errors.required">Rate name is required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="mb-0 mt-0">Price</label>
+                        <div class="placeholder pound" data-placeholder="£" [attr.data-placeholder-free]="rateDataForm.value.price == '' || rateDataForm.value.price == '0.00'? 'Free': ''" [class]="rateDataForm.value.price == '' || rateDataForm.value.price == '0.00'? 'color' : 'no-color'">
+                            <input type="text" formControlName="price" class="form-control mt-0" placeholder="0.00" [ngClass]="{'form-submitted': f.submitted}">
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-2 mt-2">
+                        <div class="radio-group vertical">
+                            <div class="radio-container">
+                                <label class="radio primary">
+                                    <input type="radio" formControlName="rate_type" value="item_weight" [ngClass]="{ 'form-submitted': f.submitted }">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <span class="text">Based on item weight</span>
+                            </div>
+                            <div class="radio-container">
+                                <label class="radio primary">
+                                    <input type="radio" formControlName="rate_type" value="flat" (change)="flatValue()" [ngClass]="{ 'form-submitted': f.submitted }">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <span class="text">Flat rate</span>
+                            </div>
+                            <div *ngIf="ui.checkErrors(h.rate_type, f)" class="errors">
+                                <p *ngIf="h.rate_type.errors.required">Type is required</p>
+                            </div>
+                        </div>
+                    </div>
+                    <ng-container *ngIf="rateDataForm.value.rate_type === 'item_weight'">
+                        <div class="col-md-6 mb-2">
+                            <label class="mb-0 mt-0">Minimum weight</label>
+                            <div class="placeholder" data-placeholder="kg">
+                                <input type="text" formControlName="min_weight" class="form-control mt-0" placeholder="0" [ngClass]="{'form-submitted': f.submitted}">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="mb-0 mt-0">Maximum weight</label>
+                            <div class="placeholder" data-placeholder="kg">
+                                <input type="text" formControlName="max_weight" class="form-control mt-0" placeholder="No Limit" [ngClass]="{'form-submitted': f.submitted}">
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+                <!-- <p>Form value: {{ rateDataForm.value | json }}</p> -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="dark ml-1" (click)="cancelRateButton(f)">Cancel</button>
+                <button type="submit" class="primary" [disabled]="saveLoading" [ngClass]="saveLoading?'in-progress':''">
+                    <div class="loading-dots">Save
+                        <span></span><span></span><span></span>
+                    </div>
+                </button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+<ng-template #rateDeleteTemplate>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="rateModalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="rateDelete()" [disabled]="deleteLoading" [ngClass]="deleteLoading?'in-progress':''">
+            <div class="loading-dots">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>

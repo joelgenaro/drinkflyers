@@ -1,0 +1,46 @@
+<section class="navbar">
+    <div class="navbar-heading">
+        <h3>
+            Blank Product
+            <span *ngIf="this.ds.productDetails?.name"
+                >[{{ this.ds.productDetails?.name }}]</span
+            >
+        </h3>
+    </div>
+    <div class="navbar-links">
+        <div class="navbar-items" *ngFor="let tab of ds.tabs; let i = index">
+            <ng-container *ngIf="ds.productId > -1">
+                <a
+                    [routerLink]="tab.link"
+                    [queryParams]="{ id: ds.productId }"
+                    routerLinkActive="active"
+                >
+                    <div
+                        [class.active]="tab.link === ds.activeTab"
+                        class="step-circle"
+                    >
+                        {{ i + 1 }}
+                    </div>
+                    <p [class.active]="tab.link === ds.activeTab">
+                        {{ tab.title }}
+                    </p>
+                </a>
+            </ng-container>
+            <ng-container *ngIf="ds.productId == -1">
+                <a routerLinkActive="active">
+                    <div
+                        [class.active]="tab.link === ds.activeTab"
+                        class="step-circle"
+                    >
+                        {{ i + 1 }}
+                    </div>
+                    <p [class.active]="tab.link === ds.activeTab">
+                        {{ tab.title }}
+                    </p>
+                </a>
+            </ng-container>
+        </div>
+    </div>
+</section>
+
+<router-outlet></router-outlet>

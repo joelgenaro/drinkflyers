@@ -1,0 +1,10 @@
+<!-- <p>JSON: {{ response | json}}</p> -->
+<div class="alert alert-success" role="alert" *ngIf="response?.success">
+    <p><strong>Success!!</strong></p>
+    {{ response.msg }}
+</div>
+
+<div class="alert alert-danger" role="alert" *ngIf="response?.success === false">
+    <p><strong>Error!!</strong></p>
+    {{ response.error.general }}
+</div>

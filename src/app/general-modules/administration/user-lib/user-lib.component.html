@@ -1,0 +1,292 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center mb-2">
+            <div class="col-md-auto">
+                <h2 class="primary">User Library</h2>
+            </div>
+            <!-- <div class="col-md-3 d-flex justify-content-between">
+                <h6 class="col-md-4 pt-0 m-0 sort">Sort</h6>
+                <select class="col-md-8 m-0 pl-2 sort-select" (change)="doSort($event, 'asc')">
+                    <option value="">Select Sort</option>
+                    <option value="name">Name</option>
+                    <option value="status">Status</option>
+                </select>
+            </div> -->
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="row no-gutters d-flex justify-content-between align-items-start">
+            <div class="search mb-1">
+                <div class="input-group">
+                    <div class="group">
+                        <div class="pre">
+                            <button class="secondary">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="post" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Here" />
+                        <div class="post">
+                            <button class="secondary">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)" class="col-md-2 m-0 mb-3 pl-2">
+                <option value="" [disabled]="true">Select per page</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15" [selected]="true">15</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="75">75</option>
+                <option value="100">100</option>
+            </select> -->
+            <!-- <button type="button" class="col-md-2 m-0 mb-3 pl-2 secondary" *ngIf="api.checkPermission('user-lib-create-folder') && backIds.length > 0" (click)="backFolder()">
+                <div class="loading-dots" [ngClass]="loginLoading?'in-progress':''">Back
+                    <span></span><span></span><span></span>
+                </div>
+            </button> -->
+
+            <!-- <div class="button-group mb-2" *ngIf="backIds.length > 0" (click)="backFolder()">
+                <div class="icon primary pre">
+                    <i class="fa fa-angle-left"></i>
+                </div>
+                <button class="primary" [disabled]="backLoading" [ngClass]="backLoading?'in-progress':''">Back
+                    <span></span><span></span><span></span>
+                </button>
+            </div> -->
+            <!-- <button type="button" class="secondary mb-2 pl-2" *ngIf="api.checkPermission('user-lib-create-folder') && parentId > 0" (click)="openFileModal(addFileForm, -1)">Create New File</button> -->
+            <!-- <button type="button" class="primary mb-2" *ngIf="api.checkPermission('user-lib-create-folder')" (click)="openModal(addForm, -1)">Create New Folder</button> -->
+        </div>
+    </div>
+    <div class="col-md-12 mb-1 results-section">
+        <ng-container *ngIf="dataStatus == 'fetching'">
+            <div class="folder-content-item">
+                <div class="img-wrapper w-100">
+                    <img src="assets/images/rolling-main.svg" alt="" />
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="dataList.length == 0 && dataStatus == 'done'">
+            <div class="folder-content-item">
+                <div class="folder-item" *ngIf="api.checkPermission('user-lib-create-folder')" (click)="openModal(addForm, -1)">
+                    <div class="folder-main-img file-plus-img">
+                        <img src="assets/img/folder_add.png" />
+                    </div>
+                    <div class="folder-cross-img file-plus-text">Add New Folder</div>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="dataList.length > 0 && dataStatus == 'done'">
+            <div class="folder-content-item">
+
+                <div class="folder-item" *ngFor="let f of dataList; let i = index" (click)="getSubFolderList(f.id, f.parent_id)">
+                    <a style="text-decoration:none; color:inherit;" [routerLink]="[ api.checkUser()+'/user-lib']" [queryParams]="{id: f.id, name:f.name}">
+                        <div class="folder-main-img file-plus-img">
+                            <img src="assets/img/folder.png" />
+                        </div>
+                        <div class="folder-cross-img file-plus-text ">{{f.name}}</div>
+                    </a>
+                </div>
+
+                <div class="folder-item" *ngIf="api.checkPermission('user-lib-create-folder')" (click)="openModal(addForm, -1)">
+                    <div class="folder-main-img file-plus-img">
+                        <img src="assets/img/folder_add.png" />
+                    </div>
+                    <div class="folder-cross-img file-plus-text">Add New Folder</div>
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="dataStatus == 'fetching'">
+            <div class="file-content-item">
+                <div class="img-wrapper w-100">
+                    <img src="assets/images/rolling-main.svg" alt="" />
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="fileList.length == 0 && dataStatus == 'done'">
+            <div class="file-content-item" *ngIf="api.checkPermission('user-lib-create-folder') && parentId > 0" (click)="openFileModal(addFileForm, -1)">
+                <div class="file-item file-plus">
+                    <div class="file-main-img file-plus-img">
+                        <img src="assets/img/image_add.png" alt="" />
+                    </div>
+                    <div class="file-cross-img file-plus-text">Upload New File</div>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="fileList.length > 0 && dataStatus == 'done'">
+            <div class="file-content-item">
+                <div class="file-item" *ngFor="let file of fileList; let i = index">
+                    <div class="file-main-img">
+                        <img [src]="api.getLibFile(file.id,file.imgTime)" />
+                    </div>
+                    <div class="file-cross-img">{{file.name}}</div>
+                    <span class="file-delete" (click)="confirmingModal(designationConfirming, file.id, i)"><i class="far fa-trash-alt"></i></span>
+                </div>
+                <div class="file-item file-plus" *ngIf="api.checkPermission('user-lib-create-folder') && parentId > 0" (click)="openFileModal(addFileForm, -1)">
+                    <div class="file-main-img file-plus-img">
+                        <img src="assets/img/image_add.png" alt="" />
+                    </div>
+                    <div class="file-cross-img file-plus-text">Upload New File</div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+    <div class="col-md-12 footer-section">
+        <!-- <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <ul class="pagination justify-content-left  m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul>
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav> -->
+    </div>
+</div>
+
+<ng-template #addFileForm>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modalTitle}}</h4>
+        <button type="button" class="close pull-right" (click)="modalRef.hide()"><span><i class="fas fa-times"></i></span></button>
+    </div>
+    <div class="modal-body">
+        <div class="sub-container">
+            <input type="file" style="display: none;" id="img-files" (change)="onDocumentChange($event)" multiple>
+            <div class="row">
+                <div class="col-md-5 mb-4">
+                    <div class="drag-drop-container">
+                        <div class="drag-drop-content" (click)="browseFiles($event)" (dragover)="fileDragStart($event)" (dragenter)="fileDragStart($event)" (dragleave)="fileDragEnd($event)" (drop)="fileDropped($event)">
+                            <img src="assets/img/drag-drop-icon-125px.png" alt="Drag Drop Icon">
+                            <p class="select-img">Click here to select photo</p>
+                            <p class="or">OR</p>
+                            <p class="upload-img">Drag files to upload photo</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7 mb-4">
+                    <ng-container *ngIf="uploadedFiles.length == 0">
+                        <div class="detail-container">
+                            <h1>No File Added</h1>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="uploadedFiles.length > 0">
+                        <div class="detail-container">
+                            <div class="detail-content" *ngFor="let file of uploadedFiles; let i = index">
+                                <div class="detail">
+                                    <ng-container *ngIf="file.uploading">
+                                        <div class="img-sec">
+                                            <img src="assets/images/rolling-main.svg" alt="">
+                                            <h3>File Uploading...</h3>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="!file.uploading">
+                                        <div class="img-sec">
+                                            <h3>File Added Successfully.</h3>
+                                            <!-- <img [lazyLoad]="api.baseProductImageUrl(file.id)" alt=""> -->
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #addForm>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modalTitle}}</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="dataForm" (ngSubmit)="save(f)" #f="ngForm">
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Name <span class="mendatory">*</span></label>
+                    <input formControlName="name" class="form-control mt-0" placeholder="Enter Name" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.name, f)" class="errors">
+                        <p *ngIf="g.name.errors.required">Name is required</p>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="primary" [ngClass]="loginLoading?'in-progress':''">
+                <div class="loading-dots" [ngClass]="loginLoading?'in-progress':''">Save
+                    <span></span><span></span><span></span>
+                </div>
+            </button>
+            <button type="button" class="dark ml-1" (click)="cancelButton(f)">Cancel</button>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #designationConfirming>
+    <div class="modal-body text-center">
+        <h2>Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="delete()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Yes
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #changeStatusActive>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Are you sure to Activate {{catName}} ? All sub categories of {{catName}} will be activated automatically.</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="changeStatusAct()">
+            <div class="loading-dots" [ngClass]="loginLoading?'in-progress':''">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>
+<ng-template #changeStatusDeactive>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Are you sure to Deactivate {{catName}}? All sub categories of {{catName}} will be deactivated automatically.</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="changeStatusInact()">
+            <div class="loading-dots" [ngClass]="loginLoading?'in-progress':''">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>

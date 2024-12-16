@@ -1,0 +1,141 @@
+<ng-container *ngIf="invoiceObj > 0">
+    <div class="row no-gutters justify-content-center main-row">
+        <div class="col-md-12 product-box">
+            <div class="row no-gutters justify-content-between">
+                <div class="col-md-4 col-12">
+                    <div class="company-container">
+                        <img src="assets/images/logos/star-edition-logo.svg" class="logo-image">
+                        <p class="comp-city">Stanley House Masterlord Village, West Rd, Ipswich IP3 9SX</p>
+                        <p class="comp-phone">Phone: 01473 598020</p>
+                    </div>
+                    <div class="bill-to-container">
+                        <h1 class="bill-to">Bill To</h1>
+                        <p class="bill-name">{{invoiceData.store.full_name | titlecase}}</p>
+                        <p class="bill-phone">{{invoiceData.store.poc_contact}}</p>
+                    </div>
+                </div>
+                <div class="col-md-5 col-12">
+                    <div class="invoice-heading">
+                        <h1>INVOICE</h1>
+                    </div>
+                    <div class="inv-date-container">
+                        <table class="inv-date-content">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50%;">INVOICE #</th>
+                                    <th style="width: 50%;">DATE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{padLeadingZeros(invoiceData.id, 6)}}</td>
+                                    <td>{{invoiceData.invoice_date | date:'longDate'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="cust-term-container">
+                        <table class="cust-term-content">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50%;">CUSTOMER ID</th>
+                                    <th style="width: 50%;">TERMS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{padLeadingZeros(invoiceData.user_id, 6)}}</td>
+                                    <td>{{invoiceData.invoice_status | titlecase }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-12 col-12">
+                    <div class="inv-data-container">
+                        <table class="inv-data-content">
+                            <ng-container *ngFor="let iItem of invoiceData.invoice_items">
+                                <thead style="margin: 10px 0 0 0 !important;">
+                                    <tr>
+                                        <th class="inv-data-desc" style="padding: 0 15px;">ORDER DETAILS</th>
+                                        <th class="idc-qty" style="padding: 0 10px;">QTY</th>
+                                        <th class="idc-amount" style="padding: 0 10px;">AMOUNT</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="idc-desc">
+                                            <h3><span class="order-no">Order no.</span> {{iItem.order_no}}</h3>
+                                            <table class="items-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="inv-data-desc" style="padding: 0 10px;">Order items no.</th>
+                                                        <th class="idc-qty" style="padding: 0 10px;">Name</th>
+                                                        <th class="idc-qty" style="padding: 0 10px;">Qty</th>
+                                                        <th class="idc-unit-price" style="padding: 0 10px;">Unit price</th>
+                                                        <th class="idc-amount" style="padding: 0 10px;">Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let oItem of iItem.order_items">
+                                                        <td class="idc-desc">{{padLeadingZeros((oItem.id), 6)}}</td>
+                                                        <td class="idc-qty">{{oItem.name}}</td>
+                                                        <td class="idc-qty">{{oItem.quantity | number}}</td>
+                                                        <td class="idc-qty">{{oItem.tp | number}}</td>
+                                                        <td class="idc-amount">{{oItem.total_amount | number}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="idc-qty">{{iItem.quantity}}</td>
+                                        <td class="idc-amount">{{iItem.total_amount | number}}</td>
+                                    </tr>
+                                </tbody>
+                            </ng-container>
+                            <tbody>
+                                <tr>
+                                    <td class="idc-thanks upper-line">Thank you for your business!</td>
+                                    <td class="sub-total upper-line">SUBTOTAL</td>
+                                    <td class="idc-total-amount upper-line">{{invoiceData.order_amount}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="idc-thanks"></td>
+                                    <td class="sub-total">TAX RATE</td>
+                                    <td class="idc-total-amount">4.25%</td>
+                                </tr>
+                                <tr>
+                                    <td class="idc-thanks"></td>
+                                    <td class="sub-total">TAX</td>
+                                    <td class="idc-total-amount">{{invoiceData.tax_amount}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="idc-thanks"></td>
+                                    <td class="g-sub-total">TOTAL</td>
+                                    <td class="g-idc-total-amount">{{cs.defaultCurrency}} {{invoiceData.total_amount | number}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-12 col-12">
+                    <div class="invoice-footer-container">
+                        <p class="if-para">In case of any query, feel free to contact us on below details:</p>
+                        <p class="if-para1">Emial: support@sepod.com</p>
+                        <p class="if-para1">Phone: +14568900</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>
+<ng-container *ngIf="dataStatus == 'fetching'">
+    <div class="img-wrapper">
+        <img src="assets/images/rolling-main.svg" alt="">
+    </div>
+</ng-container>
+
+<ng-container *ngIf="invoiceObj == 0 && dataStatus == 'done'">
+    <div class="no-data">
+        <app-no-data-found></app-no-data-found>
+    </div>
+</ng-container>

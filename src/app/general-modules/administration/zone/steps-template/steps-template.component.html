@@ -1,0 +1,28 @@
+<div class="headbar">
+    <div>
+        <div>
+            <ul id="progressbar" *ngIf="selectedId== -1">
+                <li [ngClass]="{'active': step == 'detail'}" id="detail">
+                    <p>Detail</p>
+                </li>
+                <!-- <li [ngClass]="{'active': step == 'states'}" id="states" *ngIf="api.checkPermission('')">
+                    <p>States</p>
+                </li> -->
+                <li [ngClass]="{'active': step == 'countries'}" id="countries" *ngIf="api.checkPermission('')">
+                    <p>Countries</p>
+                </li>
+            </ul>
+            <ul id="progressbar" *ngIf="selectedId > -1">
+                <li (click)="ds.navigateWindow({id:selectedId,step : 'detail'})" [ngClass]="{'active': step == 'detail'}" id="detail">
+                    <p>Detail</p>
+                </li>
+                <!-- <li (click)="ds.navigateWindow({id:selectedId, step : 'states'})" [ngClass]="{'active': step == 'states'}" id="states" *ngIf="api.checkPermission('')">
+                    <p>States</p>
+                </li> -->
+                <li (click)="ds.navigateWindow({id:selectedId, step : 'countries'})" [ngClass]="{'active': step == 'countries'}" id="countries" *ngIf="api.checkPermission('')">
+                    <p>Countries</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

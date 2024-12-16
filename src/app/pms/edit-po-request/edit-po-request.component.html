@@ -1,0 +1,572 @@
+<div class="row m-3 no-gutters">
+    <div class="col-md-12 mb-1">
+        <div class="row no-gutters d-flex justify-content-between">
+            <div class="col-md-auto">
+                <h2 class="primary mb-1">Update Purchase Order</h2>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+
+        <div class="product-wrapper">
+            <!-- <ng-container *ngIf="ListdataStatus ==  'fetching'">
+                <div class="product-box">
+                    <div class="img-wrapper">
+                        <img src="assets/images/rolling-main.svg" alt="">
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="!productDetail && ListdataStatus == 'done'">
+                <div class="main-container m-0">
+                    <app-no-data-found></app-no-data-found>
+                </div>
+            </ng-container> -->
+            <div class="main-container m-0">
+                <form [formGroup]="PoItemForm" (ngSubmit)="saveForm(PoItemForm, f)" #f="ngForm">
+                    <!-- <div class="product-upper-content">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="product-name">
+                            <h3>{{productDetail.name.charAt(0).toUpperCase() + productDetail.name.slice(1)}}</h3>
+                            <p [routerLink]="['/user/category']" [queryParams]="{id: productDetail.category.id, name: productDetail.category.name}">{{productDetail.category.name.charAt(0).toUpperCase() + productDetail.category.name.slice(1)}}</p>
+                        </span>
+                    </div> -->
+                    <div class="product-lower-content">
+                        <div class="row justify-content-between">
+                            <div class="col-md-4 col-6">
+                                <label>Referance No </label>
+                                <input type="text" readonly class="form-control mt-0" type="text" formControlName="po_no" placeholder="Referance No" />
+                            </div>
+                            <div class="col-md-4 col-6">
+                                <label>Date of Purchase </label>
+                                <input class="form-control mt-0" type="text" formControlName="purchase_date" bsDatepicker [bsConfig]="{
+                                        dateInputFormat: 'MMMM Do YYYY',
+                                        adaptivePosition: true
+                                    }" placeholder="Enter Date" [ngClass]="{
+                                        'form-submitted': f.submitted
+                                    }" />
+                                <div *ngIf="ui.checkErrors(g.purchase_date, f)" class="errors">
+                                    <p *ngIf="g.purchase_date.errors.required">
+                                        Purchase date is required
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="
+                                    col-md-3 col-12
+                                    product-lower-content-btn
+                                ">
+                                <div class="bottom-btn" (click)="openModal(addForm)">
+                                    <div class="button-group">
+                                        <div class="icon primary pre">
+                                            <i class="fa fa-plus"></i>
+                                        </div>
+                                        <button type="button" class="primary">
+                                            Add PO
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Request Note</label>
+                                <textarea rows="5" formControlName="purchaser_notes" class="form-control" placeholder="Enter Note" [ngClass]="{
+                                        'form-submitted': f.submitted
+                                    }"></textarea>
+                                <div *ngIf="ui.checkErrors(g.purchaser_notes, f)" class="errors">
+                                    <p *ngIf="
+                                            g.purchaser_notes.errors.required
+                                        ">
+                                        Purchaser Note is required
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="table-responsive" *ngIf="poItems.controls.length > 0">
+                                <h2 class="primary mb-1 mt-2">PO Items</h2>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <th>Qantity</th>
+                                        <th>Unit</th>
+                                        <th class="text-center price">
+                                            CP
+                                            <span tooltip="Cost Price" class="info-wrapper"><img src="assets/images/info.svg" /></span>
+                                        </th>
+                                        <th class="text-center price">
+                                            TP
+                                            <span tooltip="Trade Price" class="info-wrapper"><img src="assets/images/info.svg" /></span>
+                                        </th>
+                                        <th class="text-center price">
+                                            RRP
+                                            <span tooltip="Recommended Retail Price" class="info-wrapper"><img src="assets/images/info.svg" /></span>
+                                        </th>
+                                        <th class="text-center">Action</th>
+                                    </thead>
+                                    <tbody formArrayName="poItems">
+                                        <ng-container *ngFor="
+                                                let poitem of poItems.controls;
+                                                let i = index
+                                            " [formGroupName]="i">
+                                            <tr>
+                                                <td>
+                                                    <input type="number" min="0" formControlName="quantity" class="form-control" placeholder="Enter quantity" [ngClass]="{
+                                                            'form-submitted':
+                                                                f.submitted
+                                                        }" />
+                                                    <div *ngIf="
+                                                            ui.checkErrors(
+                                                                poItems.controls[
+                                                                    i
+                                                                ].get(
+                                                                    'quantity'
+                                                                ),
+                                                                f
+                                                            )
+                                                        " class="errors">
+                                                        <p *ngIf="
+                                                                poItems.controls[
+                                                                    i
+                                                                ].get(
+                                                                    'quantity'
+                                                                ).errors
+                                                                    .required
+                                                            ">
+                                                            Quantity is required
+                                                        </p>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <select formControlName="unit_id">
+                                                        <option value="null">
+                                                            Select option
+                                                        </option>
+                                                        <option *ngFor="
+                                                                let u of unitList
+                                                            " [value]="u.id">
+                                                            {{ u.full_name }}
+                                                        </option>
+                                                    </select>
+                                                    <div *ngIf="
+                                                            ui.checkErrors(
+                                                                poItems.controls[
+                                                                    i
+                                                                ].get(
+                                                                    'unit_id'
+                                                                ),
+                                                                f
+                                                            )
+                                                        " class="errors">
+                                                        <p *ngIf="
+                                                                poItems.controls[
+                                                                    i
+                                                                ].get('unit_id')
+                                                                    .errors
+                                                                    .required
+                                                            ">
+                                                            Unit is required
+                                                        </p>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input type="number" min="0" class="
+                                                            form-control
+                                                            price-type
+                                                        " formControlName="cost_price" placeholder="Enter Cost Price" />
+                                                    <div *ngIf="
+                                                            ui.checkErrors(
+                                                                poItems.controls[
+                                                                    i
+                                                                ].get(
+                                                                    'cost_price'
+                                                                ),
+                                                                f
+                                                            )
+                                                        " class="errors">
+                                                        <p *ngIf="
+                                                                poItems.controls[
+                                                                    i
+                                                                ].get(
+                                                                    'cost_price'
+                                                                ).errors
+                                                                    .required
+                                                            ">
+                                                            CP is required
+                                                        </p>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input type="number" min="1" class="
+                                                            form-control
+                                                            price-type
+                                                        " formControlName="tp" placeholder="Trade Price" [ngClass]="{
+                                                            'form-submitted':
+                                                                f.submitted
+                                                        }" />
+                                                    <div *ngIf="
+                                                            ui.checkErrors(
+                                                                poItems.controls[
+                                                                    i
+                                                                ].get(
+                                                                    'tp'
+                                                                ),
+                                                                f
+                                                            )
+                                                        " class="errors">
+                                                        <p *ngIf="
+                                                                poItems.controls[
+                                                                    i
+                                                                ].get(
+                                                                    'tp'
+                                                                ).errors
+                                                                    .required
+                                                            ">
+                                                            TP is required
+                                                        </p>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input type="number" min="1" class="
+                                                            form-control
+                                                            price-type
+                                                        " formControlName="rrp" placeholder="Retail Price" [ngClass]="{
+                                                            'form-submitted':
+                                                                f.submitted
+                                                        }" />
+                                                    <div *ngIf="
+                                                            ui.checkErrors(
+                                                                poItems.controls[
+                                                                    i
+                                                                ].get(
+                                                                    'rrp'
+                                                                ),
+                                                                f
+                                                            )
+                                                        " class="errors">
+                                                        <p *ngIf="
+                                                                poItems.controls[
+                                                                    i
+                                                                ].get(
+                                                                    'rrp'
+                                                                ).errors
+                                                                    .required
+                                                            ">
+                                                            RRP is required
+                                                        </p>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="px-3 d-flex justify-content-center">
+                                                        <!-- <p
+                                                            class="danger m-0"
+                                                            (click)="
+                                                                confirmingModal(
+                                                                    opItemConfirming,
+                                                                    poItems
+                                                                        .controls[
+                                                                        i
+                                                                    ],
+                                                                    i
+                                                                )
+                                                            "
+                                                        >
+                                                            <i
+                                                                class="
+                                                                    fa fa-trash
+                                                                "
+                                                            ></i>
+                                                        </p> -->
+                                                        <button class="ml-1 danger sm" type="button" (click)="confirmingModal(opItemConfirming, poItems.controls[i], i)">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-12">
+                                <button type="submit" *ngIf="
+                                        api.checkPermission('add-po-request')
+                                    " class="primary mt-2 mb-2 ml-0" [disabled]="loading" [ngClass]="loading ? 'in-progress' : ''">
+                                    Save <span></span><span></span><span></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #addForm>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{ modalTitle }}</h4>
+        <button type="button" class="close pull-right" (click)="modalRef.hide()">
+            <span><i class="fas fa-times"></i></span>
+        </button>
+    </div>
+    <div class="col-md-12 mb-1 results-section">
+        <div class="
+                row
+                no-gutters
+                d-flex
+                justify-content-between
+                align-items-start
+            ">
+            <div class="search m-0 mt-2">
+                <div class="input-group mb-0">
+                    <div class="group">
+                        <div class="pre">
+                            <button class="secondary">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="post" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Here" />
+                        <div class="post">
+                            <button class="secondary">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <select [(ngModel)]="perPage" (change)="selectPerPage($event)" class="m-0 mt-2 w-25">
+                <option value="" [disabled]="true">Select per page</option>
+                <option value="5" [selected]="true">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="75">75</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+        <div class="product-wrapper pt-2">
+            <ng-container *ngIf="dataStatus === 'fetching'">
+                <div class="img-wrapper">
+                    <img src="assets/images/rolling-main.svg" alt="" />
+                </div>
+            </ng-container>
+            <ng-container *ngIf="dataStatus === 'done' && productList.length === 0">
+                <div class="product-box">
+                    <app-no-data-found></app-no-data-found>
+                </div>
+            </ng-container>
+            <div class="product-box" *ngFor="let d of productList; let i = index">
+                <div class="product-upper-content">
+                    <div class="product-info">
+                        <!-- <div class="item">
+                            <label>Sr. # </label>
+                            <p>{{ getSerialNumber(i) }}</p>
+                        </div> -->
+                        <div class="item">
+                            <label>SKU </label>
+                            <p>{{ d.sku }}</p>
+                        </div>
+                        <div class="item product-name">
+                            <label>{{
+                                d.name.charAt(0).toUpperCase() + d.name.slice(1)
+                                }}</label>
+                            <p [routerLink]="['/user/category']" [queryParams]="{
+                                    id: d.category.id,
+                                    name: d.category.name
+                                }">
+                                {{
+                                d.category.name.charAt(0).toUpperCase() +
+                                d.category.name.slice(1)
+                                }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button *ngIf="api.checkPermission('product-variant-list')" class="secondary sm ml-1" (click)="showVariant(d.id, i)">
+                            <ng-container *ngIf="d.collapse">Hide Variants
+                            </ng-container>
+                            <ng-container *ngIf="!d.collapse">Show Variants
+                            </ng-container>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="product-variants" [class.active]="d.collapse">
+                    <h5>Variants</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Size</th>
+                                <th>Color</th>
+                                <!-- <th>Status</th>-->
+                                <th class="text-center" style="width: 200px">
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <ng-container *ngIf="d.variants && d.variants.length > 0">
+                            <tbody>
+                                <tr style="border-radius: 10px" *ngFor="let v of d.variants; let j = index">
+                                    <td class="serial">{{ j + 1 }}</td>
+                                    <!-- <td class="serial">{{ getSerialNumber(j) }} </td> -->
+                                    <td class="size">{{ v.size }}</td>
+                                    <td>
+                                        <div class="color-block color" [style.background-color]="
+                                                v.color_code
+                                            "></div>
+                                    </td>
+                                    <td class="
+                                            d-flex
+                                            justify-content-end
+                                            align-items-center
+                                        ">
+                                        <button type="button" class="sm primary" (click)="addVariant({}, v, i, j)" style="width: 110px">
+                                            Add To Po
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </ng-container>
+                        <ng-container *ngIf="dataStatusInner == 'fetching'">
+                            <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                        </ng-container>
+                        <tbody *ngIf="
+                                d.variants &&
+                                d.variants.length == 0 &&
+                                dataStatusInner == 'done'
+                            ">
+                            <tr>
+                                <td colspan="4">
+                                    <app-no-data-found></app-no-data-found>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 mb-1 p-0 footer-section">
+            <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+                <ul class="pagination justify-content-left m-0">
+                    <li class="page-item">
+                        <small *ngIf="page < 10">Current page: 0{{ page }}</small>
+                        <small *ngIf="page >= 10">Current page: {{ page }}</small>
+                    </li>
+                </ul>
+                <ul class="pagination justify-content-left m-0">
+                    <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page - 1)">Previous</a>
+                    </li>
+                    <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                    </li>
+                    <ng-container *ngIf="pagination.last_page <= 6">
+                        <ng-container *ngFor="
+                                let p of [].constructor(pagination.last_page);
+                                let i = index
+                            ">
+                            <li [class]="
+                                    page == i + 1
+                                        ? 'page-item active'
+                                        : 'page-item'
+                                ">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i + 1)">{{ i + 1 }}</a>
+                            </li>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="pagination.last_page >= 7">
+                        <ng-container *ngFor="
+                                let p of [].constructor(pagination.last_page);
+                                let i = index
+                            ">
+                            <li *ngIf="i < 4" [class]="
+                                    page == i + 1
+                                        ? 'page-item active'
+                                        : 'page-item'
+                                ">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i + 1)">{{ i + 1 }}</a>
+                            </li>
+                            <li *ngIf="pagination.last_page - i == 3" [class]="
+                                    page == i + 1
+                                        ? 'page-item active'
+                                        : 'page-item'
+                                ">
+                                <a class="page-link">...</a>
+                            </li>
+                            <li *ngIf="
+                                    pagination.last_page - i == 1 ||
+                                    pagination.last_page - i == 2
+                                " [class]="
+                                    page == i + 1
+                                        ? 'page-item active'
+                                        : 'page-item'
+                                ">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i + 1)">{{ i + 1 }}</a>
+                            </li>
+                        </ng-container>
+                    </ng-container>
+                    <li class="page-item" *ngIf="pagination.next_page_url != null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page + 1)">Next</a>
+                    </li>
+                    <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</ng-template>
+
+<!-- <ng-template #addForm>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modalTitle}}</h4>
+        <button type="button" class="close pull-right" (click)="modalRef.hide()"><span><i class="fas fa-times"></i></span></button>
+    </div>
+    <div class="modal-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>SKU</th>
+                    <th>Size </th>
+                    <th>Color </th>
+                    <th>Qty.</th>
+                    <th class="actions">Action </th>
+                </tr>
+            </thead>
+            <ng-container *ngIf="variantList.length> 0">
+                <tbody>
+                    <tr style="border-radius: 10px;" *ngFor="let v of variantList;let i = index">
+                        <td>{{v.sku}}</td>
+                        <td>{{v.size}}</td>
+                        <td>
+                            <div class="color-block color" [style.background-color]="v.color_code"></div>
+                        </td>
+                        <td>{{v.quantity}}</td>
+                        <td>
+                            <button type="button" *ngIf=" api.checkPermission('add-po-request')" (click)="addVariant({},v)" class="primary sm ml-1">Add to PO</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </ng-container>
+            <ng-container *ngIf="dataStatusInner == 'fetching'">
+                <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+            </ng-container>
+            <tbody *ngIf="variantList.length == 0 && dataStatusInner == 'done'">
+                <tr>
+                    <td colspan="3">
+                        <app-no-data-found></app-no-data-found>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</ng-template> -->
+
+<ng-template #opItemConfirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete this Product Item?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="delete()" [disabled]="loading" [ngClass]="loading ? 'in-progress' : ''">
+            <div class="loading-dots">
+                Yes <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>

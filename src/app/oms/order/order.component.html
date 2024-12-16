@@ -1,0 +1,438 @@
+<div class="row no-gutters main-row">
+    <!-- <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto mb-1">
+                <h2 class="primary">Orders</h2>
+            </div>
+
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="row no-gutters d-flex justify-content-between align-items-start">
+            <div class="search m-0 mb-2">
+                <div class="input-group">
+                    <div class="group">
+                        <div class="pre">
+                            <button class="secondary">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="post" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Orders Here" />
+                        <div class="post">
+                            <button class="secondary">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)" class="w-25 m-0 mb-2">
+                <option value="" [disabled]="true">Select per page</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15" [selected]="true">15</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="75">75</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+    </div> -->
+    <div class="col-md-12 header-section">
+        <div class="row no-gutters heading">
+            <div class="col-md-auto">
+                <h1>Orders</h1>
+            </div>
+            <div class="col-md-auto">
+                <div class="im-export-order-container">
+                    <div class="im-export-content" (click)="exportCsv()" *ngIf="api.checkPermission('export-order')">
+                        <div class="im-export-img-wrapper"><img src="assets/img/sign-in.png" alt="Sign In Icon"></div>
+                        <div class="im-export-text">Export Orders</div>
+                    </div>
+                    <div class="im-export-content">
+                        <div class="im-export-img-wrapper"><img src="assets/img/sign-in.png" alt="Sign In Icon"></div>
+                        <div class="im-export-text">Import Orders</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row no-gutters search">
+            <div class="col-md-6">
+                <div class="input-group m-0 p-0">
+                    <input type="text" class="post search-input" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Order Here" />
+                </div>
+            </div>
+        </div>
+        <!-- <app-breadcrums [data]="breadCrum"></app-breadcrums> -->
+        <div class="row no-gutters filters">
+            <div class="filter col-md-3">
+                <div class="input-group">
+                    <input type="search" class="post search-input" placeholder="Select Date Here" bsDaterangepicker [(ngModel)]="bsRangeValue" (ngModelChange)="rangeDate()" [bsConfig]="{ rangeInputFormat : 'DD-MM-YYYY', dateInputFormat: 'DD-MM-YYYY', adaptivePosition: true }">
+                </div>
+            </div>
+            <div class="filter col-md-3">
+                <div class="input-group">
+                    <ng-select [multiple]="true" [(ngModel)]="selectStatuses" [ngModelOptions]="{ standalone: true }" (change)="selectedStatus()" placeholder="All Statuses">
+                        <ng-option *ngFor="let status of statusesList" [value]="status.value">{{ status.name }}</ng-option>
+                    </ng-select>
+                </div>
+            </div>
+            <div class="filter col-md-3">
+                <div class="input-group">
+                    <ng-select [multiple]="true" [(ngModel)]="selectStores" [ngModelOptions]="{ standalone: true }" (change)="selectedStore()" placeholder="All Stores">
+                        <ng-option *ngFor="let store of storeList" [value]="store.id">{{ store.store_name }}</ng-option>
+                    </ng-select>
+                </div>
+            </div>
+            <div class="filter col-md-3">
+                <div class="input-group">
+                    <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)">
+                        <option value="" [disabled]="true">Per pages</option>
+                        <option value="5">5 per page</option>
+                        <option value="10">10 per page</option>
+                        <option value="15" [selected]="true">15 per page</option>
+                        <option value="20">20 per page</option>
+                        <option value="50">50 per page</option>
+                        <option value="75">75 per page</option>
+                        <option value="100">100 per page</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-12 mb-1">
+        <div class="product-wrapper">
+            <div class="mb-1 results-section">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 20px;">
+                                    <label class="checkbox primary">
+                                        <input type="checkbox" [checked]="allSelector" (change)="selectAllOrders()">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </th>
+                                <th>Store</th>
+                                <th>Order </th>
+                                <th>Date </th>
+                                <th>Customer </th>
+                                <th>Status </th>
+                                <th class="text-right">Items </th>
+                                <th class="text-right">Total </th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let d of dataList; let i= index">
+                                <td>
+                                    <label class="checkbox primary">
+                                        <input type="checkbox" (change)="selectOrder(d.id)" [checked]="checkOrder(d.id)">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </td>
+                                <td class="technology-img-wrapper" [routerLink]="[this.api.checkUser() + '/my-order-detail']" [queryParams]="{id:d.id}">
+                                    <span [tooltip]="d.store.store_name"><img [src]="builtInTechnology[d.store.builtin_technology]"></span>
+                                </td>
+                                <td [routerLink]="[this.api.checkUser() + '/my-order-detail']" [queryParams]="{id:d.id}">{{ d.order_no }}</td>
+                                <td [routerLink]="[this.api.checkUser() + '/my-order-detail']" [queryParams]="{id:d.id}">{{ d.order_date | date:'MMM d, h:mm a' }}</td>
+                                <td [routerLink]="[this.api.checkUser() + '/my-order-detail']" [queryParams]="{id:d.id}">
+                                    {{ d.shipment? d.shipment.full_name: '--' }}
+                                </td>
+                                <td [routerLink]="[this.api.checkUser() + '/my-order-detail']" [queryParams]="{id:d.id}">
+                                    <p class="text-status">{{ d.order_status | titlecase }}</p>
+                                </td>
+                                <td [routerLink]="[this.api.checkUser() + '/my-order-detail']" [queryParams]="{id:d.id}" class="text-right">{{ d.total_items }}</td>
+                                <td [routerLink]="[this.api.checkUser() + '/my-order-detail']" [queryParams]="{id:d.id}" class="text-right">{{cs.defaultCurrency}} {{ d?.total_amount | number }}</td>
+                                <td>
+                                    <ng-container *ngIf="api.checkPermission('orders-change-status')">
+                                        <ng-container *ngIf="d.order_status != 'delivered'">
+                                            <button type="button" class="primary sm" type="button" *ngIf=" d.order_status != 'rejected'" (click)="confirmingModal(responseModal, d.id,i)">Change Status</button>
+                                        </ng-container>
+                                    </ng-container>
+
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                        <tbody *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                            <tr>
+                                <td colspan="8">
+                                    <app-no-data-found></app-no-data-found>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <ng-container *ngIf="dataStatus == 'fetching'">
+                            <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                        </ng-container>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <div class="col-md-12 footer-section">
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <!-- <ul class="pagination justify-content-left m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul> -->
+            <ul class="pagination justify-content-center m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+
+
+
+<ng-template #changeStatusCancel>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Are you sure that you want change the status to canceled?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="primary ml-1" (click)="changeStatuscancel()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Yes
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</ng-template>
+<ng-template #responseModal>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Change Status</h4>
+        <button type="button" class="close pull-right" (click)="modalRef.hide()">
+            <span><i class="fas fa-times"></i></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <label class="mb-0">Change Status<span class="mendatory">*</span></label>
+                <select class="form-control mb-2" (change)="checkStatus($event)">
+                    <!-- <select class="form-control"> -->
+                    <option value="" selected>Select Status</option>
+                    <!-- <option value="received">Received</option> -->
+                    <option value="in_factory">In Factory</option>
+                    <option value="in_packing">In Packing</option>
+                    <option value="dispatched">Dispatched</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="rejected">Rejected</option>
+                    <!-- <option value="canceled_by_client">Canceled by Client</option>
+                    <option value="canceled_by_SEPOD">Canceled by SEPOD</option> -->
+                    <option value="returned">Returned</option>
+                    <option value="returned_received">Returned Received</option>
+                </select>
+                <ng-container *ngIf="changeStatusValue == 'received' || changeStatusValue == 'in_factory' || changeStatusValue == 'in_packing'">
+                    <div class="row">
+                        <form [formGroup]="normalForm" (ngSubmit)="SaveResponse(normalForm, d)" #d="ngForm">
+                            <div class="col-md-12 mb-2 d-flex">
+                                <button type="submit" class="primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Save
+                                    <span></span><span></span><span></span>
+                                </button>
+                                <button type="button" class="dark ml-1" (click)="closeModal(d)">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="changeStatusValue == 'dispatched'">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form [formGroup]="dispatchedForm" (ngSubmit)="SaveResponse(dispatchedForm, d)" #d="ngForm">
+                                <!-- <div class="col-md-12 p-0 mb-1">
+                                <label class="mb-0">Courier Service ID<span class="mendatory">*</span></label>
+                                <input class="form-control" formControlName="courier_service_id" type="text" [disabled]="true">
+                                <div *ngIf="ui.checkErrors(g1.courier_service_id, d)" class="errors">
+                                    <p *ngIf="g1.courier_service_id.errors.required">Courier Service ID is required</p>
+                                </div>
+                            </div> -->
+                                <!-- <div class="col-md-12 p-0 mb-1">
+                                <label class="mb-0">Dispatch Time<span class="mendatory">*</span></label>
+                                <input class="form-control" formControlName="dispatch_time" type="text">
+                                <div *ngIf="ui.checkErrors(g1.dispatch_time, d)" class="errors">
+                                    <p *ngIf="g1.dispatch_time.errors.required">Dispatch Time is required</p>
+                                </div>
+                            </div> -->
+                                <div class="col-md-12 p-0 mb-1">
+                                    <label class="mb-0">DT Number<span class="mendatory">*</span></label>
+                                    <input class="form-control" formControlName="dt_number" type="text">
+                                    <div *ngIf="ui.checkErrors(g1.dt_number, d)" class="errors">
+                                        <p *ngIf="g1.dt_number.errors.required">DT Number is required</p>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 d-flex p-0">
+                                    <button type="submit" class="primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Save
+                                        <span></span><span></span><span></span>
+                                    </button>
+                                    <button type="button" class="dark ml-1" (click)="closeModal(d)">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="changeStatusValue == 'delivered'">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form [formGroup]="deliveredForm" (ngSubmit)="SaveResponse(deliveredForm, d)" #d="ngForm">
+                                <!-- <div class="col-md-12 p-0 mb-1">
+                                <label class="mb-0">Received Time<span class="mendatory">*</span></label>
+                                <input class="form-control" formControlName="received_time" type="text">
+                                <div *ngIf="ui.checkErrors(g1.received_time, d)" class="errors">
+                                    <p *ngIf="g1.received_time.errors.required">Received Time is required</p>
+                                </div>
+                            </div> -->
+
+                                <div class="col-md-12 d-flex p-0">
+                                    <button type="submit" class="primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Save
+                                        <span></span><span></span><span></span>
+                                    </button>
+                                    <button type="button" class="dark ml-1" (click)="closeModal(d)">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="changeStatusValue == 'rejected'">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form [formGroup]="cancelForm" (ngSubmit)="SaveResponse(cancelForm, d)" #d="ngForm">
+                                <!-- <div class="col-md-12 p-0 mb-1">
+                                <label class="mb-0">Cancel Date Time<span class="mendatory">*</span></label>
+                                <input class="form-control" formControlName="cancel_date_time" type="text">
+                                <div *ngIf="ui.checkErrors(g3.cancel_date_time, d)" class="errors">
+                                    <p *ngIf="g3.cancel_date_time.errors.required">Cancel Date Time is required</p>
+                                </div>
+                            </div> -->
+                                <div class="col-md-12 mb-1 p-0">
+                                    <label class="mb-0">Rejected Reason<span class="mendatory">*</span></label>
+                                    <select class="form-control" formControlName="reason_id">
+                                        <option selected>Select Rejected Reason</option>
+                                        <option *ngFor="let reason of reasonList" value="{{ reason.id }}">{{ reason.name }}</option>
+                                    </select>
+                                    <div *ngIf="ui.checkErrors(g3.reason_id, d)" class="errors">
+                                        <p *ngIf="g3.reason_id.errors.required">Rejected Reason is required</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 p-0 mb-1">
+                                    <label class="mb-0">Description</label>
+                                    <textarea rows="5" formControlName="description" class="form-control" [ngClass]="{'form-submitted': d.submitted}"></textarea>
+                                    <!-- <div *ngIf="ui.checkErrors(g1.cancel_date_time, d)" class="errors">
+                                    <p *ngIf="g1.cancel_date_time.errors.required">Cancel Date Time is required</p>
+                                </div> -->
+                                </div>
+
+                                <div class="col-md-12 d-flex p-0">
+                                    <button type="submit" class="primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Save
+                                        <span></span><span></span><span></span>
+                                    </button>
+                                    <button type="button" class="dark ml-1" (click)="closeModal(d)">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="changeStatusValue == 'returned'">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form [formGroup]="returnedForm" (ngSubmit)="SaveResponse(returnedForm, d)" #d="ngForm">
+                                <div class="col-md-12 p-0 mb-1">
+                                    <label class="mb-0">Returned Date<span class="mendatory">*</span></label>
+                                    <input class="form-control" type="text" formControlName="returned_date" bsDatepicker [bsConfig]="{dateInputFormat: 'MMMM Do YYYY', adaptivePosition: true }" placeholder="Select Return Date" [ngClass]="{ 'form-submitted': d.submitted }" />
+                                    <!-- <input class="form-control" formControlName="returned_date" type="date"> -->
+                                    <div *ngIf="ui.checkErrors(g4.returned_date, d)" class="errors">
+                                        <p *ngIf="g4.returned_date.errors.required">Cancel Date Time is required</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-1 p-0">
+                                    <label class="mb-0">Returned Reason<span class="mendatory">*</span></label>
+                                    <select class="form-control" formControlName="reason_id">
+                                        <option value="" selected>Select Returned Reason</option>
+                                        <option *ngFor="let reason of reasonList" value="{{ reason.id }}">{{ reason.name }}</option>
+                                    </select>
+                                    <div *ngIf="ui.checkErrors(g4.reason_id, d)" class="errors">
+                                        <p *ngIf="g4.reason_id.errors.required">Returned Reason is required</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 p-0 mb-1">
+                                    <label class="mb-0">Description</label>
+                                    <textarea rows="5" formControlName="description" class="form-control" [ngClass]="{'form-submitted': d.submitted}"></textarea>
+                                    <!-- <div *ngIf="ui.checkErrors(g1.cancel_date_time, d)" class="errors">
+                                        <p *ngIf="g1.cancel_date_time.errors.required">Cancel Date Time is required</p>
+                                    </div> -->
+                                </div>
+
+                                <div class="col-md-12 d-flex p-0">
+                                    <button type="submit" class="primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Save
+                                        <span></span><span></span><span></span>
+                                    </button>
+                                    <button type="button" class="dark ml-1" (click)="closeModal(d)">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="changeStatusValue == 'returned_received'">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form [formGroup]="returnedReceivedForm" (ngSubmit)="SaveResponse(returnedReceivedForm, d)" #d="ngForm">
+                                <div class="col-md-12 p-0 mb-1">
+                                    <label class="mb-0">Returned Received Date<span class="mendatory">*</span></label>
+                                    <input class="form-control mt-0" type="text" formControlName="returned_received_date" bsDatepicker [bsConfig]="{dateInputFormat: 'MMMM Do YYYY', adaptivePosition: true }" placeholder="Select Returned Received Date" [ngClass]="{ 'form-submitted': d.submitted }" />
+                                    <!-- <input class="form-control" formControlName="returned_received_date" type="date"> -->
+                                    <div *ngIf="ui.checkErrors(g5.returned_received_date, d)" class="errors">
+                                        <p *ngIf="g5.returned_received_date.errors.required">Returned Received Date is required</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 p-0 mb-1">
+                                    <label class="mb-0">Description</label>
+                                    <textarea rows="5" formControlName="description" class="form-control" [ngClass]="{'form-submitted': d.submitted}"></textarea>
+                                    <!-- <div *ngIf="ui.checkErrors(g1.cancel_date_time, d)" class="errors">
+                                        <p *ngIf="g1.cancel_date_time.errors.required">Cancel Date Time is required</p>
+                                    </div> -->
+                                </div>
+
+                                <div class="col-md-12 d-flex p-0">
+                                    <button type="submit" class="primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Save
+                                        <span></span><span></span><span></span>
+                                    </button>
+                                    <button type="button" class="dark ml-1" (click)="closeModal(d)">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</ng-template>

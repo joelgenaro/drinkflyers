@@ -1,0 +1,96 @@
+.headbar {
+    overflow: hidden;
+    background-color: rgb(189 189 189 / 50%);
+    /* margin: -10px -15px 40px -15px; */
+    margin-bottom: 40px;
+    border-radius: 10px 10px 0 0;
+}
+
+ul#progressbar {
+    padding-inline-start: 0;
+    margin-left: 30px;
+}
+
+#progressbar li {
+    width: 132px;
+    height: 85px;
+    line-height: 45px;
+    display: block;
+    font-size: 20px;
+    color: #ffffff;
+    background: var(--ap-primary);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    margin: 0 10px 0px 10px;
+    padding: 2px 0 0 0;
+    cursor: pointer;
+    float: left;
+    text-align: center;
+    list-style-type: none;
+}
+#progressbar li p {
+    color: #ffffff;
+    font-size: 15px;
+    margin: -2px 0 0 0;
+    line-height: 1;
+}
+#progressbar li i {
+    color: #ffffff;
+}
+
+#progressbar li.active {
+    color: var(--ap-primary);
+    background: #ffffff;
+}
+#progressbar li.active p,
+#progressbar li.active i {
+    color: var(--ap-primary);
+}
+
+#progressbar #detail:before {
+    font-family: FontAwesome;
+    content: "\f46d";
+    font-size: 27px;
+}
+
+#progressbar #states:before {
+    font-family: FontAwesome;
+    content: "\f64f";
+    font-size: 27px;
+}
+
+#progressbar #countries:before {
+    font-family: FontAwesome;
+    content: "\f024";
+    font-size: 27px;
+}
+
+#progressbar #roles:before {
+    font-family: FontAwesome;
+    content: "\f15c";
+    font-size: 27px;
+}
+
+#progressbar #addendumDocument:before {
+    font-family: FontAwesome;
+    content: "\f574";
+    font-size: 27px;
+}
+
+#progressbar #otherDocument:before {
+    font-family: FontAwesome;
+    content: "\f574";
+    font-size: 27px;
+}
+
+#progressbar #qtoDocument:before {
+    font-family: FontAwesome;
+    content: "\f0ae";
+    font-size: 27px;
+}
+@media only screen and (max-width: 1024px) {
+    #progressbar li {
+        width: 135px;
+        margin: 3px 3px;
+    }
+}

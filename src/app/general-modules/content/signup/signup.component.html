@@ -1,0 +1,79 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-2 mt-3 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Signup Content</h2>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+    </div>
+    <div class="col-md-12 mb-1 results-section">
+        <div class="product-box">
+            <ng-container *ngIf="dataStatus == 'fetching'">
+                <div class="img-wrapper">
+                    <img src="assets/images/rolling-main.svg" alt="">
+                </div>
+            </ng-container>
+            <ng-container *ngIf="dataStatus=='done'">
+                <form [formGroup]="dataForm" (ngSubmit)="update()" #f="ngForm">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
+                                    <label class="mb-0 mt-0">Title</label>
+                                    <input type="text" formControlName="title1" class="form-control mt-0" placeholder="Enter Title" [ngClass]="{'form-submitted': f.submitted}">
+                                    <!-- <div *ngIf="ui.checkErrors(g.title1, f)" class="errors">
+                                        <p *ngIf="g.title1.errors.required">Title is required</p>
+                                    </div> -->
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="mb-0 mt-0">Link</label>
+                                    <input type="text" pattern="[hH]ttps?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)" formControlName="link" class="form-control mt-0" placeholder="Enter Link" [ngClass]="{'form-submitted': f.submitted}">
+                                    <div *ngIf="ui.checkErrors(g.link, f)" class="errors">
+                                        <!-- <p *ngIf="g.link.errors.required">Link is required</p> -->
+                                        <p *ngIf="g.link.errors.pattern">Provided link is not valid, you must add http:// or https:// before link.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="mb-0 mt-0">Button Text</label>
+                                    <input type="text" formControlName="btn_text" class="form-control mt-0" placeholder="Enter Title" [ngClass]="{'form-submitted': f.submitted}">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="mb-0 mt-0">Button Color</label>
+                                    <input type="color" formControlName="btn_color" class="form-control mt-0" placeholder="Enter Title" [ngClass]="{'form-submitted': f.submitted}">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="mb-0 mt-0">Button Text Color</label>
+                                    <input type="color" formControlName="btn_text_color" class="form-control mt-0" placeholder="Enter Title" [ngClass]="{'form-submitted': f.submitted}">
+                                </div>
+                                <div class="col-md-12 mb-2">
+                                    <label class="mb-0 mt-0">Content</label>
+                                    <div>
+                                        <angular-editor formControlName="content" [config]="editorConfig" [ngClass]="{'form-submitted': f.submitted}"></angular-editor>
+                                    </div>
+                                    <!-- <div *ngIf="ui.checkErrors(g.content, f)" class="errors">
+                                        <p *ngIf="g.content.errors.required">Content is required</p>
+                                    </div> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="img-content">
+                                <div>
+                                    <img [defaultImage]="spinnerSVG" [lazyLoad]="thumbnail" id="img" class="w-100">
+                                </div>
+                                <input type="file" style="display: none;" id="thumbnail-image" (change)="onThumbnailChange($event)">
+                                <div class="text-center mt-2 mb-2">
+                                    <button type="button" class="sm success" (click)="browseThumbnail($event)" style="min-width: 140px">Browse Picture</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="primary" *ngIf="api.checkPermission('login-page-content-add-update')" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Update
+                        <span></span><span></span><span></span>
+                    </button>
+                </form>
+            </ng-container>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,123 @@
+.sub-container {
+    margin: 30px 40px;
+}
+.details-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.thumbnail-container {
+    width: 70%;
+    height: 30%;
+    padding: 10px;
+}
+.image-thumbnail {
+    width: 100%;
+}
+.image-thumbnail img {
+    width: 100%;
+}
+.flex-md-between,
+.flex-row-col {
+    display: flex;
+    justify-content: space-between;
+}
+.flex-row-col {
+    flex-wrap: wrap;
+}
+.flex-md-between {
+    margin-top: 30px;
+}
+.tut-pro-content {
+    width: 73%;
+}
+.tut-pro-photo {
+    width: 25%;
+    text-align: center;
+}
+.tut-pro-photo img {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    margin: 0 auto;
+}
+.half-width {
+    width: 48%;
+    margin-bottom: 20px;
+}
+.full-width {
+    width: 100%;
+    margin-bottom: 20px;
+}
+.button-box {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.form-control {
+    /* height: 48px; */
+    border-radius: 6px;
+    background-color: #fff;
+}
+select option:checked {
+    background: var(--ap-primary);
+    color: #fff;
+}
+.bottom-btn {
+    border-top: 1.5px solid #d7d7d7 !important;
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px 0 0 0;
+    margin: 30px 0 0 0;
+}
+button.main-color.mt-2.mb-2 {
+    display: flex;
+}
+p.next-btn {
+    margin: 0;
+    padding: 10px 30px 10px 20px;
+}
+.next-arrow-icon {
+    padding: 10px 15px 10px 15px;
+    border-left: 1.5px solid #fff !important;
+    margin: 0 0 0 10px;
+}
+.back-arrow-icon {
+    padding: 10px 15px 10px 15px;
+    border-right: 1.5px solid #fff !important;
+    margin: 0 10px 0 0;
+}
+
+@media only screen and (max-width: 768px) {
+    .flex-row-col {
+        flex-direction: column;
+    }
+    .half-width {
+        width: 98%;
+    }
+}
+@media only screen and (max-width: 767px) {
+    .flex-md-between {
+        flex-wrap: wrap;
+    }
+    .tut-pro-photo {
+        width: 90%;
+        max-width: 320px;
+        height: auto;
+        margin: auto;
+        order: 1;
+    }
+    .tut-pro-content {
+        order: 2;
+        width: 98%;
+    }
+}
+@media only screen and (max-width: 425px) {
+    .bottom-btn {
+        flex-direction: column;
+    }
+    button.main-color.mt-2.mb-2 {
+        justify-content: center;
+    }
+}

@@ -1,0 +1,38 @@
+version: 2.1
+
+orbs:
+  aws-s3: circleci/aws-s3@3.0
+
+jobs:
+  build_and_deploy:
+    docker:
+      - image: cimg/node:16.14.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - node_modules-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - node_modules-
+      - run: |
+          npm i
+          npx ng build --configuration $(echo ${CIRCLE_BRANCH} | sed -e 's/\(.*\)/\L\1/')
+      - save_cache:
+          key: node_modules-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - aws-s3/copy:
+          arguments: --recursive
+          from: dist/SEPOD_Angular
+          to: s3://sepod-frontend-$(echo ${CIRCLE_BRANCH} | sed -e 's/\(.*\)/\L\1/')
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build_and_deploy:
+          filters:
+            branches:
+              only:
+                - Development
+                - Staging

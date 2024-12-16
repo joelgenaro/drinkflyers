@@ -1,0 +1,196 @@
+.main-background {
+    background: #fff;
+}
+.header-section {
+    position: sticky;
+    top: 65px;
+    padding-left: 60px !important;
+    padding-right: 60px !important;
+    padding-top: 40px !important;
+}
+
+.main-row {
+    margin: 10px;
+}
+h6.sort {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #484848;
+}
+.faq {
+    color: #1a73e8;
+}
+.info {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    flex-direction: column;
+}
+.info img {
+    width: 120px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+.info button {
+    color: #222;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+
+.form-control {
+    height: 40px !important;
+}
+.info-wrapper img {
+    width: 13px;
+}
+.font-14 {
+    font-size: 14px !important;
+}
+.font-22 {
+    font-size: 22px !important;
+}
+.detail {
+    display: flex; 
+    width: 100%; 
+    margin: auto; 
+    flex-wrap: wrap; 
+    justify-content: space-evenly;
+}
+.detail-items {
+    display: flex; 
+    justify-content: space-between; 
+    width: 47%; 
+    margin-bottom:20px;
+}
+.item-left {
+    width: 20%;
+}
+.item-right {
+    width: 80%;
+}
+
+.detail-box {
+    display: flex; 
+    width: 100%; 
+    margin: auto; 
+    flex-wrap: wrap; 
+    justify-content: space-evenly;
+}
+.detail-box-items {
+    display: flex; 
+    justify-content: space-between; 
+    width: 99%; 
+    margin-bottom:20px;
+    border-radius: 5px;
+    border: solid 1px #CCC;
+    flex-wrap: wrap;
+}
+.detail-box-item-inner {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: solid 1px #CCC;
+    padding: 12px 10px 12px 10px;
+    align-items: center;
+    font-weight: 400;
+}
+.detail-box-item-inner-heading {
+    color:#888; 
+    display: flex; 
+    align-items: center;
+}
+
+.detail-box-wallet {
+    width: 100%; 
+    padding: 15px; 
+    align-items: center; 
+    display: flex; 
+    flex-wrap: wrap;
+}
+.detail-box-amount {
+    font-weight: 600; 
+    color: #888; 
+    margin-bottom: 5px; 
+    font-size: 22px;
+}
+label {
+    font-weight: 400 !important;
+    color: #222 !important;
+}
+.currency-btn {
+    color: #888 !important;
+    border: solid 1px #CCC  !important;
+    padding: 4.5px 10px  !important;
+}
+.add-money-heading {
+    display: flex; 
+    margin-bottom: 10px;
+}
+.add-amount {
+    display: flex; 
+    flex-wrap: wrap;
+}
+.add-amount-width {
+    width: 100%;
+}
+.current-method {
+    display: flex; 
+    width: 100%; 
+    align-items: center; 
+    padding: 10px; 
+    border: solid 2px #CCC; 
+    border-radius: 3px; 
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+.current-method-left {
+    width: 40%;
+}
+.current-method-left img {
+    width: 31px; 
+    margin-right: 10px; 
+    border: solid 1px #ccc; 
+    padding: 4px;
+    border-radius: 2px;
+}
+.current-method-center {
+    width: 30%;
+    text-align: center;
+}
+.current-method-right {
+    width: 30%;
+    text-align: right;
+}
+.method {
+    display: flex; 
+    cursor: pointer; 
+    width: 100%; 
+    align-items: center; 
+    padding: 10px; 
+    border: solid 1px #CCC; 
+    border-radius: 3px; 
+    margin-bottom: 5px;
+}
+.method-left {
+    width: 40%;
+}
+.method-left i {
+    width: 31px;
+    margin-right: 10px;
+    border: solid 1px #ccc;
+    align-items: center;
+    padding-left: 7px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    color:#04A28C;
+    border-radius: 2px;
+}
+.method-left span {
+    font-weight: 400;
+}
+.add-money-footer {
+    display: flex; 
+    margin-top: 10px;
+}

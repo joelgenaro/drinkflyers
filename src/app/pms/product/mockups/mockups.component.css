@@ -1,0 +1,154 @@
+.sub-container {
+    margin: 15px 40px;
+}
+
+.info {
+    display: flex; 
+    width: 90%; 
+    padding: 20px; 
+    margin: auto; 
+    border: solid 1px #DFEDF6; 
+    background-color: #D3E6EE; 
+    color: #5D8C9E; 
+    font-size: 12px; 
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.info span {
+    font-weight: 600;
+}
+.info div {
+    width: 100%;
+}
+.main-frame {
+    display: flex; 
+    width: 90%; 
+    margin: auto; 
+    color: #000000; 
+    font-size: 12px; 
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.main-frame-items {
+    width: 22%;
+    position: relative;
+    border: solid 1px #CCC;
+    margin-right: 1%;
+    display: flex;
+    justify-content: center;
+    border-radius: 5%;
+    flex-wrap: wrap;
+    background-color: #fff;
+    min-height: 250px;
+    margin-bottom: 1%;
+}
+.main-frame-items img {
+    max-width: 90%;
+    max-height: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-self: center;
+}
+.checkbox-position {
+    position: relative;
+}
+.checkbox-position-setting {
+    position: absolute !important;
+    top: 0;
+    left: 10px;
+    width: 15px;   
+}
+
+.mockup-frame {
+    display: flex; 
+    width: 90%; 
+    margin: auto; 
+    color: #000000; 
+    font-size: 12px; 
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+}
+.mockup-frame-items {
+    width: 13%;
+    position: relative;
+    border: solid 1px #CCC;
+    margin-right: 0.5%;
+    display: flex;
+    justify-content: center;
+    border-radius: 5%;
+    flex-wrap: wrap;
+    background-color: #fff;
+    min-height: 150px;
+    margin-bottom: 1%;
+}
+.mockup-frame-items img {
+    max-width: 90%;
+    max-height: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-self: center;
+}
+.mockup-frame-items-title {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+    font-weight: 600;
+}    
+.mockup-checkbox {
+    width: 15px;   
+    margin-right: 5px;
+}
+.mockup-frame-heading {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.button-frame {
+    display: flex; 
+    width: 100%; 
+    margin: auto; 
+    display: flex;
+    flex-wrap: wrap;
+    border-top: solid 1px #ccc;
+    padding-top: 10px;
+}
+.mockup-style {
+    display: flex; 
+    width: 100%; 
+    margin: auto; 
+    flex-wrap: wrap;
+    border-bottom: solid 1px #ccc;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+@media only screen and (max-width: 757px) {
+    .mockup-frame-items {
+        width: 24%;
+    }
+    .main-frame-items {
+        width: 24%
+    }
+}
+@media only screen and (max-width: 527px) {
+    .mockup-frame-items {
+        width: 100%;
+        margin-bottom: 5%;
+    }
+    .main-frame-items {
+        width: 100%;
+        margin-bottom: 5%;
+    }
+    .mockup-frame-heading {
+        font-size: 9px;
+    }
+    .sub-container {
+        margin: 15px 10px;
+    }
+}

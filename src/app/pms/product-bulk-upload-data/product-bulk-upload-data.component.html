@@ -1,0 +1,314 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Product Bulk Upload Data</h2>
+            </div>
+            <div class="col-md-3 d-flex justify-content-between">
+                <h6 class="col-md-4 pt-0 m-0 sort">Sort</h6>
+                <select class="col-md-8 m-0 pl-2 sort-select" (change)="doSort($event, 'asc')">
+                    <option value="">Select Sort</option>
+                    <option value="name">Name</option>
+                    <option value="sku">SKU</option>
+                </select>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="row no-gutters d-flex justify-content-between align-items-start">
+            <div class="search">
+                <div class="input-group">
+                    <div class="group">
+                        <div class="pre">
+                            <button class="secondary">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="post" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Product Here" />
+                        <div class="post">
+                            <button class="secondary">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)" class="col-md-2 m-0 mb-3 pl-2">
+                <option value="" [disabled]="true">Select per page</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15" [selected]="true">15</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="75">75</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+    </div>
+    <ng-container *ngIf="!insertion">
+
+        <div class="col-md-12 mb-1 results-section">
+            <div class="table-responsive product-box">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                <label class="checkbox primary">
+                                    <input type="checkbox" (click)="checkAllProducts()" />
+                                    <span class="checkmark"></span>
+                                </label>
+                            </th>
+                            <th>Product Name</th>
+                            <th>Product Sku</th>
+                            <th>Last Child Category</th>
+                            <th>Status</th>
+                            <th>Insertation Status</th>
+                            <th>Reason</th>
+                            <th class="text-center" style="width: 85px;">Action</th>
+                        </tr>
+                    </thead>
+
+                    <ng-container>
+                        <tbody>
+                            <tr *ngFor="let d of dataList | filter:searchKeyword; let i= index">
+                                <td [ngClass]="{'border-row': !d.status}">
+                                    <ng-container *ngIf="d.insertation != 'successed'">
+                                        <label class="checkbox primary">
+                                            <input type="checkbox" (click)="addProduct(d.id, i)" [checked]="checkProductId(d.id)" />
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </ng-container>
+                                </td>
+                                <td>{{ d.name }}</td>
+                                <td>{{ d.sku }}</td>
+                                <td>{{ d.category}}</td>
+                                <td>
+                                    <p [ngClass]="{'secondary': d.insertation == 'successed', 'danger': d.insertation == 'failed'}">{{ d.insertation | titlecase }}</p>
+                                </td>
+                                <td [ngClass]="{'insert-fail': d.insertation != 'successed', 'insert-success': d.insertation == 'successed'}">{{ d.insertation == 'successed'? 'inserted': 'failed' | titlecase }}</td>
+                                <td>{{ d.failed_reason}}</td>
+                                <td class="d-flex justify-content-center">
+                                    <div class="ml-1">
+                                        <button *ngIf="d.insertation != 'successed'" type="button" (click)="openFormModal(editProduct,i,d)" class="sm secondary"><i class="fa fa-edit"></i></button>
+                                    </div>
+
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </ng-container>
+
+                    <ng-container *ngIf="dataStatus == 'fetching'">
+                        <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                    </ng-container>
+
+                    <tbody *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                        <tr>
+                            <td colspan="7">
+                                <app-no-data-found></app-no-data-found>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="bottom-btn" *ngIf="productIds.length > 0">
+            <div class="d-flex justify-content-end flex-wrap mb-2">
+                <div class="button-group mb-2 ml-2">
+                    <button type="button" class="primary lg" (click)="addBulkProducts()">Proceed</button>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+    <div class="col-md-12 results-section" *ngIf="insertion">
+        <div class="row no-gutters mt-2 result-data" *ngIf="resultStatus == true">
+            <div class="col-md-4">
+                <h4>Total Product: {{ totalProduct }}</h4>
+            </div>
+            <div class="col-md-4">
+                <h4 class="success-color">Total Success Products: {{ totalSuccess }}</h4>
+            </div>
+            <div class="col-md-4">
+                <h4 class="duplicate-color">Total Failed Products: {{ totalFailed }}</h4>
+            </div>
+        </div>
+
+        <div class="col-md-12 mt-2 m-0 p-0" *ngIf="dataList.length > 0">
+            <h2 class="primary">Existing Products</h2>
+            <div class="table-responsive product-box">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                <label class="checkbox primary">
+                                    <input type="checkbox" (click)="checkAllProducts()" />
+                                    <span class="checkmark"></span>
+                                </label>
+                            </th>
+                            <th>Product Name</th>
+                            <th>SKU</th>
+                            <th>Tag</th>
+                            <th>Last Child Category</th>
+                            <th>Status</th>
+                            <th>Insertation Status</th>
+                            <th>Failed Reason</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let d of dataList; let i = index">
+                            <td [ngClass]="{'border-row': !d.status}">
+                                <ng-container *ngIf="d.insertation != 'successed'">
+                                    <label class="checkbox primary">
+                                        <input type="checkbox" (click)="addProduct(d.id, i)" [checked]="checkProductId(d.id)" />
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </ng-container>
+                            </td>
+                            <td>{{ d.name }}</td>
+                            <td>{{ d.sku }}</td>
+                            <td>{{ d.tag }}</td>
+                            <td>{{ d.category }}</td>
+                            <td [ngClass]="{'insert-fail': d.status == false, 'insert-success': d.status == true}">{{ d.status? 'valid': 'invalid' | titlecase }}</td>
+                            <td [ngClass]="{'insert-fail': d.insertation != 'successed', 'insert-success': d.insertation == true}">{{ d.insertation == 'successed'? 'inserted': 'failed' | titlecase }}</td>
+                            <td [ngClass]="{'fail-reason': d.insertation !== null }">{{ d.failed_reason }}</td>
+                            <td class="d-flex justify-content-center">
+                                <!-- <button class="secondary mt-1 mr-2 mb-1" type="button" (click)="openProductModal(editProduct, i)">Edit</button> -->
+                                <div class="ml-1 mb-1" *ngIf="d.insertation != 'successed'" (click)="openFormModal(editProduct,i,d)">
+                                    <button type="button" class="sm secondary"><i class="fa fa-edit"></i></button>
+                                </div>
+                                <!-- <div class="ml-1 mb-1" *ngIf="d.insertation != 'successed'" (click)="confirmingModal(confirming, d.id, i)">
+                                    <button type="button" class="sm danger"><i class="fa fa-trash"></i></button>
+                                </div> -->
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="bottom-btn" *ngIf="productIds.length > 0">
+            <div class="d-flex justify-content-end flex-wrap mb-2">
+                <div class="button-group mb-2 ml-2">
+                    <button type="button" class="primary lg" (click)="addBulkProducts()">Proceed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12 footer-section">
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <ul class="pagination justify-content-left  m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul>
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<ng-template #editProduct>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modalTitle}}</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="dataForm" (ngSubmit)="save(dataForm, f)" #f="ngForm">
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Product Name <span class="mendatory">*</span></label>
+                    <input formControlName="name" class="form-control mt-0" placeholder="Enter Product Name" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.name, f)" class="errors">
+                        <p *ngIf="g.name.errors.required">Product Name is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">SKU <span class="mendatory">*</span></label>
+                    <input formControlName="sku" class="form-control mt-0" placeholder="Enter SKU" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.sku, f)" class="errors">
+                        <p *ngIf="g.sku.errors.required">SKU is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Base Product <span class="mendatory">*</span></label>
+                    <div class="mb-2">
+                        <select class="form-control" formControlName="base_product_sku" [ngClass]="{ 'form-submitted': f.submitted }">
+                            <option *ngFor="let pro of baseProductList" [value]="pro.sku">
+                                {{ pro.name }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Child Category <span class="mendatory">*</span></label>
+                    <!-- <input formControlName="category" class="form-control mt-0" placeholder="Enter Child Category" [ngClass]="{'form-submitted': f.submitted}"> -->
+                    <select formControlName="category" [ngClass]="{'form-submitted': f.submitted}">
+                        <option *ngFor="let c of childCategories" [value]="c.id">{{c.name}}</option>
+                    </select>
+                    <div *ngIf="ui.checkErrors(g.category, f)" class="errors">
+                        <p *ngIf="g.category.errors.required">Child Category is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label>Tags <span class="mendatory">*</span></label>
+                    <ng-select [multiple]="true" [ngClass]="{'form-submitted': f.submitted}" formControlName="tag">
+                        <ng-option *ngFor="let tag of tagList" [value]="tag.id">{{ tag.full_name}}</ng-option>
+                    </ng-select>
+                </div>
+            </div>
+
+            <button type="submit" class="primary" [ngClass]="Loading?'in-progress':''">
+                <div class="loading-dots">Save
+                    <span></span><span></span><span></span>
+                </div>
+            </button>
+            <button type="button" class="dark ml-1" (click)="cancelButton(f)">Cancel</button>
+        </form>
+    </div>
+</ng-template>
+
+
+
+
+<ng-template #deleteConfirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="DeleteModalRef.hide()" (click)="resetIndex()">No</button>
+        <button type="button" class="danger ml-1">
+            <div class="loading-dots" [ngClass]="documentLoading?'in-progress':''">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>

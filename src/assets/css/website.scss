@@ -1,0 +1,94 @@
+.website {
+    html {
+        scroll-behavior: smooth;
+    }
+    * {
+        font-family: "Poppins", sans-serif;
+        font-weight: inherit;
+        // font-weight: 300;
+    }
+    .mendatory {
+        color: red;
+    }
+    .loader-row {
+        width: 100%;
+        text-align: center;
+        min-height: 200px;
+    }
+    .data-loader {
+        width: 70px;
+        margin-top: 20vh;
+    }
+    .in-progress span {
+        animation-name: blink;
+        animation-duration: 1.4s;
+        animation-iteration-count: infinite;
+        animation-fill-mode: both;
+        border-radius: 50%;
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: #fff;
+        margin: 0 3px;
+    }
+
+    .in-progress span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .in-progress span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+}
+@keyframes blink {
+    0% {
+        opacity: 0.2;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.2;
+    }
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .print-content {
+        visibility: visible;
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        width: calc(100% - 100px);
+    }
+
+    .print-content * {
+        visibility: visible;
+    }
+    .print-content .print-content-logo {
+        display: flex;
+        justify-content: center;
+    }
+}
+.print-content-logo {
+    display: none;
+}
+
+/* Calendar */
+.theme-green .bs-datepicker-head,
+.theme-green .bs-datepicker-body table td span.selected,
+.theme-green .bs-datepicker-body table td.selected span,
+.theme-green .bs-datepicker-body table td span[class*="select-"]:after,
+.theme-green .bs-datepicker-body table td[class*="select-"] span:after {
+    background-color: #f3585f;
+}
+
+.theme-green .bs-datepicker-body table td.week span {
+    color: #f3585f;
+    font-weight: 600;
+}

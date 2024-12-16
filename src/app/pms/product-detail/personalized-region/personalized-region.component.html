@@ -1,0 +1,107 @@
+<div class="row mt-5 no-gutters justify-content-center">
+    <div class="col-md-11">
+        <div class="personalize-container">
+            <div class="personalize-item-img mb-4">
+                <div class="img-container content">
+                    <div class="shirt-front">
+                        <img src="assets/img/t-shirt-front.png" alt="">
+                    </div>
+                    <div class="shirt-back">
+                        <img src="assets/img/t-shirt-back.png" alt="">
+                        <img class="pencil-icon" src="assets/img/pencil-icon.png" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="personalize-item-edit-preview mb-4">
+                <div class="edit-preview-container">
+                    <div class="editor-container">
+                        <div class="plus-btn"><i class="fas fa-plus"></i></div>
+                        <div class="editor-item">
+                            <div class="editor-rectangle">
+                                <img src="assets/img/rectangle.png" alt="">
+                            </div>
+                            <div class="editor-circle">
+                                <img src="assets/img/ellipse.png" alt="">
+                            </div>
+                            <div class="editor-type">
+                                <img src="assets/img/t-type.png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="main-img-container">
+                        <!-- <img src="assets/img/t-shirt-front-preview.png" alt=""> -->
+                        <canvas id="preview-canvas" class="preview-canvas" width="320" height="320">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="personalize-item-attributes mb-4">
+                <div class="attributes-container">
+                    <form [formGroup]="dataForm">
+                        <h4 class="mb-3 attribute">Attributes</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label class="mb-2">Width <span class="mendatory">*</span></label>
+                                <div class="mb-2">
+                                    <input formControlName="width" type="number" step="0.1" class="form-control mt-0" placeholder="Width">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="mb-2">Height <span class="mendatory">*</span></label>
+                                <div class="mb-2">
+                                    <input formControlName="height" type="number" step="0.1" class="form-control mt-0" placeholder="Height">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="mb-2">X Coordinate <span class="mendatory">*</span></label>
+                                <div class="mb-2">
+                                    <input formControlName="x_coordinate" type="number" step="0.1" class="form-control mt-0" placeholder="X Coordinate">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="mb-2">Y Coordinate <span class="mendatory">*</span></label>
+                                <div class="mb-2">
+                                    <input formControlName="y_coordinate" type="number" step="0.1" class="form-control mt-0" placeholder="Y Coordinate">
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-4">
+                                <label class="mb-2">Image</label>
+                                <div class="mb-2 add-images">
+                                    <i class="fas fa-image"></i>
+                                    <p>Click to add image</p>
+                                    <!-- <input formControlName="y_coordinate" type="number" step="0.1" class="form-control mt-0" placeholder="Y Coordinate" [ngClass]="{'form-submitted': f.submitted}">
+                                        <div *ngIf="ui.checkErrors(g.y_coordinate, f)" class="errors">
+                                            <p *ngIf="g.y_coordinate.errors.required">Y Coordinate is required</p>
+                                        </div> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-4 ">
+                            <div class="row attribute-btn">
+                                <div class="col-md-6 mb-4">
+                                    <button class="attribute-cancel-btn">Cancel</button>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <button class="attribute-next-btn">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-btn">
+            <button [routerLink]="[this.api.checkUser() + '/products/variants']" [queryParams]="{id: ds.productId}" class="skip-btn m-0 mr-2">Skip </button>
+            <div class="button-group">
+                <button type="submit" class="post primary lg" [routerLink]="[this.api.checkUser() + '/products/variants']" [queryParams]="{id: ds.productId}" [disabled]="Loading" [ngClass]="Loading?'in-progress':''">
+                    <div class="loading-dots">Next
+                        <span></span><span></span><span></span>
+                    </div>
+                </button>
+                <div class="icon post primary">
+                    <i class="fa fa-angle-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+.wrapper {
+    width: 400px;
+    box-shadow: inset 0px 0px 18px 0px #ccc;
+    border-radius: 13px;
+    padding: 15px;
+    /* margin: 20px auto; */
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+}
+
+.wrapper .image-wrapper img {
+    width: 100px;
+}
+
+.body h2 {
+    font-weight: 600 !important;
+    font-size: 17px;
+}
+
+.body {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.image-wrapper {
+    margin-top: 28px;
+}

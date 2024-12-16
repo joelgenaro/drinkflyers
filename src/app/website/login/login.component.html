@@ -1,0 +1,72 @@
+<div class="signin-container">
+    <div class="box-container">
+        <div class="left-box">
+            <div>
+                <img src="assets/images/logo.jpg">
+            </div>
+            <div style="width: 100%; display: flex; justify-content: center;">
+                <form [formGroup]="loginForm" (ngSubmit)="login(loginForm)" #f="ngForm" style="width: 57%;">
+                    <div class="input-container">
+                        <h4>Sign in to Star Dropship</h4>
+                    </div>
+                    <div class="input-container">
+                        <label>Email:</label>
+                        <div class="email-wrapper">
+                            <input type="text" formControlName="youremail" class="email" placeholder="Enter Email" [ngClass]="{'form-submitted': f.submitted}">
+                        </div>
+                        <div *ngIf="ui.checkErrors(g.youremail, f)" class="errors">
+                            <p *ngIf="g.youremail.errors.required">Email is required</p>
+                            <p *ngIf="g.youremail.errors.email">Please enter valid email</p>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <label>Password:</label>
+                        <div class="input-group">
+                            <div class="group">
+                                <input [type]="isActive ? 'password' : 'text'" class="post" autofill="false" formControlName="yourpassword" class="password" placeholder="Enter Password" [ngClass]="{'form-submitted': f.submitted}" name="yourword" style="border-right: 0px !important;" />
+                                <div class="post">
+                                    <button type="button" class="primary login-btn" (click)="setType()"><input type="checkbox" [checked]="!isActive" class="login-checkbox">Show</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="ui.checkErrors(g.yourpassword, f)" class="errors">
+                            <p *ngIf="g.yourpassword.errors.required">Password is required</p>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <button [disabled]="loginLoading" class="login" [ngClass]="loginLoading?'in-progress':''">Sign in
+                            <span></span><span></span><span></span>
+                        </button>
+                    </div>
+                    <div class="input-container" style="border-bottom: solid 1px #ccc;"></div>
+                    <div class="input-container">
+                        <span><a [routerLink]="['/sign-up']">Sign up</a> - <a [routerLink]="['/forgot-password']">Forgot password?</a></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="right-box">
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%;">
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <div class="img-wrapper">
+                        <img src="assets/images/rolling-main.svg" alt="">
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="dataStatus == 'done'">
+                    <img [defaultImage]="spinnerSVG" [lazyLoad]="thumbnail">
+                    <div style="width: 95%; text-align: center;">
+                        <h2 *ngIf="loginContent.title1 !== null">{{loginContent.title1}}</h2>
+                    </div>
+                    <div style="width: 95%; text-align: center; font-size: 13px;">
+                        <div *ngIf="loginContent.content !== null" class="ql-container ql-snow" style="border-width: 0;">
+                            <div class="ql-editor" [innerHTML]="transformHtml(loginContent.content)"></div>
+                        </div>
+                    </div>
+                    <div style="width: 95%; text-align: center;" *ngIf="loginContent.link !== null && loginContent.btn_text !== null">
+                        <button class="deadlines" (click)="goToUrl()" [ngStyle]="{'background-color':loginContent.btn_color ? loginContent.btn_color : '#fff', 'color':loginContent.btn_text_color ? loginContent.btn_text_color : '#000' }">{{loginContent.btn_text}}</button>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,18 @@
+<div class="wrapper">
+    <div class="image-wrapper">
+        <img src="assets/img/Amazon.png">
+    </div>
+
+    <div class="body">
+        <h2>Amazon Store Connection</h2>
+        <ng-container *ngIf="connection === 'connecting'">
+            <p>Please wait, we're verifying your identity and connecting your store.</p>
+        </ng-container>
+        <ng-container *ngIf="connection === 'success'">
+            <p>Store connected successfully, <a [routerLink]="[this.api.checkUser() + '/store-products']" [queryParams]="{store_id: storeData.id}">Click here.</a></p>
+        </ng-container>
+        <ng-container *ngIf="connection === 'error'">
+            <p>Store connection failed, <a [routerLink]="[this.api.checkUser() + '/store']">click here to connect again.</a> </p>
+        </ng-container>
+    </div>
+</div>

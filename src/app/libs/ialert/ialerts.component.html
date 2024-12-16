@@ -1,0 +1,11 @@
+<div class="i-alerts-container">
+    <ng-container *ngFor="let alert of alerts">
+        <div [class]="alert.type" *ngIf="alert.status" [@ialert] (click)="alert.status=false">
+            <div class="d-flex justify-content-between">
+                <h5 class="title">{{alert.title}}</h5>
+                <div class="cross"><a href="javascript(0): void">x</a></div>   
+            </div>
+            <p class="message">{{alert.message}}</p>
+        </div>
+    </ng-container>
+</div>

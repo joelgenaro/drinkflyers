@@ -1,0 +1,283 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 header-section">
+        <div class="header-section-heading">
+            <h1>Product Manager</h1>
+        </div>
+        <div class="header-section-content row no-gutters d-flex justify-content-between align-items-center">
+            <!-- <div class="col-md-2 select-all">
+                <div class="checkbox-container text-right">
+                    <label class="checkbox primary">
+                        <input type="checkbox" [checked]="allSelector" (change)="selectAllProducts()">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span class="text">Select All</span>
+                </div>
+            </div> -->
+            <div class="col-md-5 search">
+                <div class="input-group m-0">
+                    <div class="group">
+                        <div class="pre">
+                            <button class="primary">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <input type="text" placeholder="Search Product Here" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 per-page">
+                <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)">
+                    <option value="" [disabled]="true">Select per page</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15" [selected]="true">15</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="75">75</option>
+                    <option value="100">100</option>
+                </select>
+            </div>
+            <div class="col-md-2 sorting">
+                <select class="col" (change)="doSort($event, 'asc')" [(ngModel)]="filters.sortBy">
+                    <option value="">Select Sort</option>
+                    <option value="nameAsc">Name A-Z</option>
+                    <option value="nameDesc">Name Z-A</option>
+                    <option value="skuAsc">SKU A-Z</option>
+                    <option value="skuDesc">SKU Z-A</option>
+                    <option value="idDesc">Created at newest</option>
+                    <option value="idAsc">Created at oldest</option>
+                    <option value="updatedAt">Recently updated</option>                
+                </select>
+            </div>
+        </div>
+        <div class="add-new-product-buttn">
+            <div class="add-new" *ngIf="api.checkPermission('add-product')" [routerLink]="[ api.checkUser()+'/product/create-virtual-product']" [queryParams]="{id: -1}">
+                <i class="fas fa-plus add-new-icon"></i><span>Create new product</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12 mb-1 results-section">
+        <div class="table-responsive product-box">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <!-- <th></th> -->
+                        <th>Product</th>
+                        <th>Base SKU</th>
+                        <!-- <th>Status </th> -->
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <ng-container *ngIf="dataList.length> 0">
+                    <tbody>
+                        <ng-container *ngFor="let d of dataList | filter:searchKeyword; let i= index">
+                            <tr>
+                                <!-- <td>
+                                        <label class="checkbox primary">
+                                            <input type="checkbox" [checked]="allSelector">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </td> -->
+                                <td>
+                                    <div class="product-container">
+                                        <div class="product-img-wrapper">
+                                            <img [defaultImage]="spinnerSVG" [lazyLoad]="api.virtualProductImageUrl(d.product_images[0]? d.product_images[0].id: '0')">
+                                        </div>
+                                        <div class="product-name">
+                                            <p class="name">{{d.name.charAt(0).toUpperCase() + d.name.slice(1)}}</p>
+                                            <p class="sku">{{ d.id }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="sku">{{ d.sku }}</p>
+                                </td>
+                                <!-- <td>
+                                    <p *ngIf="d.status == 'active'" class="product-status"><i class="fas fa-dot-circle"></i> {{ d.status | titlecase }}</p>
+                                    <p *ngIf="d.status == 'inactive'" class="product-status"><i class="fas fa-dot-circle gray"></i> {{ d.status | titlecase }}</p>
+                                </td> -->
+                                <td>
+                                    <div class="action-btns d-flex justify-content-center align-items-center">
+                                        <i class="fas fa-pencil-alt edit-product" *ngIf="api.checkPermission('update-product')" [routerLink]="[ api.checkUser()+'/product/personalized-region']" [queryParams]="{ id: d.id, base_id: d.base_product_id }"></i>
+                                        <i class="fas fa-clone clone-product"></i>
+                                        <div class="dropdown-container">
+                                            <div class="dropdown">
+                                                <h4 class="drop-text"><i class="fas fa-ellipsis-v product-actions"></i></h4>
+                                                <div class="dropdown-content" *ngIf="api.checkPermissions(['update-product'])">
+                                                    <ul>
+                                                        <li *ngIf="api.checkPermission('product-variant-list')" (click)="showVariant(i)">
+                                                            <ng-container *ngIf="d.collapse">Hide product data
+                                                            </ng-container>
+                                                            <ng-container *ngIf="!d.collapse">Show product data
+                                                            </ng-container>
+                                                        </li>
+                                                        <li *ngIf="api.checkPermission('update-product')" [routerLink]="[ api.checkUser()+'/product/product-detail']" [queryParams]="{ id: d.id }">Edit product</li>
+                                                        <li>Duplicate</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="d.collapse">
+                                <td colspan="4">
+                                    <div class="product-variants" [class.active]="d.collapse">
+                                        <h5>Product Data</h5>
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sr. #</th>
+                                                    <th>Title </th>
+                                                    <th>SKU </th>
+                                                    <!-- <th>Color </th>
+                                                    <th class="variant-quantity">Qty</th> -->
+                                                    <th class="price">RP <span title="Retail Price" class="info-wrapper"><img src="assets/images/info.svg"></span></th>
+                                                    <!-- <th class="price">AC <span tooltip="Additional Cost" class="info-wrapper"><img src="assets/images/info.svg"></span></th> -->
+                                                    <!-- <th>Status</th>
+                                                    <th class="text-center" style="width: 170px;">Action</th> -->
+                                                </tr>
+                                            </thead>
+                                            <ng-container *ngIf="d.variants && d.variants.length> 0">
+                                                <tbody>
+                                                    <tr style="border-radius: 10px;" *ngFor="let v of d.variants; let j= index">
+                                                        <td class="serial">{{ j+1 }}</td>
+                                                        <!-- <td class="serial">{{ getSerialNumber(j) }} </td> -->
+                                                        <td class="size">{{v.base_product_variants.title}}</td>
+                                                        <td class="size">{{v.base_product_variants.sku}}</td>
+                                                        <!-- <td>
+                                                            <div class="color-block color" [style.background-color]="v.base_product_variants.color_code"></div>
+                                                        </td>
+                                                        <td class="variant-quantity">
+                                                            <div>{{v.quantity | number: '3.0-0'}}</div>
+                                                        </td> -->
+                                                        <td class="price">{{cs.defaultCurrency}} {{v.rp | number}}</td>
+                                                        <!-- <td>
+                                                            <p *ngIf="v.status == 'active'"><i class="fas fa-dot-circle"></i> {{ v.status | titlecase }}</p>
+                                                            <p *ngIf="v.status == 'inactive'"><i class="fas fa-dot-circle gray"></i> {{ v.status | titlecase }}</p>
+                                                        </td> -->
+                                                        <!-- <td class="d-flex justify-content-end align-items-center">
+                                                            <div class="px-3" *ngIf="api.checkPermissions(['activate-product-variant', 'deactivate-product-variant'])">
+                                                                <button *ngIf="v.status == 'inactive'" type="button" class="sm success" (click)="statusConfirmingModal(changeStatusActive,v.id,i,j,'active')" style="width: 110px;">Activate</button>
+                                                                <button *ngIf="v.status == 'active'" type="button" class="sm danger" (click)="statusConfirmingModal(changeStatusDeactive,v.id,i,j,'inactive')" style="width: 110px;">Deactivate</button>
+                                                            </div>
+                                                            <div *ngIf="api.checkPermission('update-product-variant')">
+                                                                <button class="ml-1 secondary sm" type="button" (click)="openModal(addForm,d.id,i,v.id,j)">
+                                                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td> -->
+                                                    </tr>
+                                                </tbody>
+                                            </ng-container>
+                                            <ng-container *ngIf="dataStatusInner == 'fetching'">
+                                                <tbody [appSkeletonTabelLoader]="loaderOptionsInner"></tbody>
+                                            </ng-container>
+                                            <tbody *ngIf="d.variants && d.variants.length == 0 && dataStatusInner == 'done'">
+                                                <tr>
+                                                    <td colspan="4">
+                                                        <app-no-data-found></app-no-data-found>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </ng-container>
+
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                </ng-container>
+
+                <tbody *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                    <tr>
+                        <td colspan="3">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-12 mb-1 footer-section">
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <ul class="pagination justify-content-left  m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul>
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<ng-template #designationConfirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark mt-3" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1 mt-3" (click)="delete()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Yes
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #changeStatusActive>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Are you sure that you want change the status to active?</p>
+        <button type="button" class="dark mt-3" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1 mt-3" (click)="changeStatusAct()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Yes
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #changeStatusDeactive>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Are you sure that you want change the status to inactive?</p>
+        <button type="button" class="dark mt-3" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1 mt-3" (click)="changeStatusInact()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Yes
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</ng-template>

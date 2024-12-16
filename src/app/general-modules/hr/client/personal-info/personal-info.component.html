@@ -1,0 +1,114 @@
+<app-steps-template [step]="'personal-info'"></app-steps-template>
+<div class="sub-container">
+    <form [formGroup]="formFG" (ngSubmit)="save(formFG)" #f="ngForm" *ngIf="employeeForm">
+        <div class="row">
+            <!-- <div class="col-md-4 mb-2">
+                <label>Title <span class="mendatory">*</span></label>
+                <select class="form-control" formControlName="title" [ngClass]="{'form-submitted': f.submitted}">
+                    <option value="null">Select Title</option>
+                    <option value="Mr">Mr</option>
+                    <option value="Ms">Ms</option>
+                </select>
+                <div *ngIf="ui.checkErrors(g.title, f)" class="errors">
+                    <p *ngIf="g.title.errors.required">Title is required</p>
+                </div>
+            </div> -->
+            <div class="col-md-4 mb-2">
+                <label>E-mail <span class="mendatory">*</span></label>
+                <input formControlName="email" class="form-control mt-0" placeholder="Enter E-mail" [ngClass]="{'form-submitted': f.submitted}">
+                <div *ngIf="ui.checkErrors(g.email, f)" class="errors">
+                    <p *ngIf="g.email.errors.required">E-mail is required</p>
+                    <p *ngIf="g.email.errors.email">E-mail is invalid!</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-2">
+                <label>First Name <span class="mendatory">*</span> </label>
+                <input formControlName="first_name" class="form-control mt-0" placeholder="Enter First Name" [ngClass]="{'form-submitted': f.submitted}">
+                <div *ngIf="ui.checkErrors(g.first_name, f)" class="errors">
+                    <p *ngIf="g.first_name.errors.required">First Name is required</p>
+                    <p *ngIf="g.first_name.errors.maxlength">First Name should not exceed {{ g.first_name.errors.maxlength.requiredLength }} characters</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-2">
+                <label>Last Name</label>
+                <input formControlName="last_name" class="form-control mt-0" placeholder="Enter Last Name" [ngClass]="{'form-submitted': f.submitted}">
+                <div *ngIf="ui.checkErrors(g.last_name, f)" class="errors">
+
+                    <p *ngIf="g.last_name.errors.maxlength">Last Name should not exceed {{ g.last_name.errors.maxlength.requiredLength }} characters</p>
+                </div>
+            </div>
+            <!-- <div class="col-md-4 mb-2">
+                <label>Gender <span class="mendatory">*</span></label>
+                <select class="form-control" formControlName="gender" [ngClass]="{'form-submitted': f.submitted}">
+                    <option value="null">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+                <div *ngIf="ui.checkErrors(g.gender, f)" class="errors">
+                    <p *ngIf="g.gender.errors.required">Gender is required</p>
+                </div>
+            </div> -->
+            <!-- <div class="col-md-4 mb-2">
+                <label>Date of birth</label>
+                <input type="text" class="form-control" bsDatepicker [bsConfig]="{ dateInputFormat: 'MMMM Do YYYY',adaptivePosition: true }" formControlName="dob" placeholder="Enter Date of birth" [ngClass]="{'form-submitted': f.submitted}" />
+                <div *ngIf="ui.checkErrors(g.dob, f)" class="errors">
+                    <p *ngIf="g.dob.errors.required">Gender is required</p>
+                </div>
+            </div> -->
+            <div class="col-md-4 mb-2">
+                <label>Mobile No</label>
+                <input formControlName="contact_1" class="form-control mt-0" placeholder="Enter Mobile No." [ngClass]="{'form-submitted': f.submitted}">
+                <div *ngIf="ui.checkErrors(g.contact_1, f)" class="errors">
+
+                    <p *ngIf="g.contact_1.errors.maxlength">Mobile no. should not exceed {{ g.mobile.errors.maxlength.requiredLength }} characters</p>
+                </div>
+            </div>
+            <!-- <div class="col-md-4 mb-2">
+                <label>Office No. <span class="mendatory">*</span></label>
+                <input formControlName="contact_2" class="form-control mt-0" placeholder="Enter Office No." [ngClass]="{'form-submitted': f.submitted}">
+                <div *ngIf="ui.checkErrors(g.contact_2, f)" class="errors">
+                    <p *ngIf="g.contact_2.errors.required">Office no. is required</p>
+                    <p *ngIf="g.contact_2.errors.maxlength">Office no. should not exceed {{ g.phone_office.errors.maxlength.requiredLength }} characters</p>
+                </div>
+            </div> -->
+            <!-- <div class="col-md-4 mb-2">
+                <label>Address <span class="mendatory">*</span></label>
+                <input formControlName="address" class="form-control mt-0" placeholder="Enter Address" [ngClass]="{'form-submitted': f.submitted}">
+                <div *ngIf="ui.checkErrors(g.address, f)" class="errors">
+                    <p *ngIf="g.address.errors.required">Address is required</p>
+                    <p *ngIf="g.address.errors.maxlength">Address should not exceed {{ g.address.errors.maxlength.requiredLength }} characters</p>
+                </div>
+            </div> -->
+            <!-- <div class="col-md-12 mb-3">
+                    <label>Description </label>
+                    <textarea rows="5" class="form-control" formControlName="description" placeholder="Enter Description" [ngClass]="{'form-submitted': f.submitted}"></textarea>
+                    <div *ngIf="ui.checkErrors(g.description, f)" class="errors">
+                        <p *ngIf="g.description.errors.required">Description is required</p>
+                        <p *ngIf="g.description.errors.maxlength">Description should not exceeds {{ g.description.errors.maxlength.requiredLength }} characters</p>
+                    </div>
+                </div> -->
+        </div>
+        <div class="bottom-btn">
+            <div class="d-flex justify-content-end flex-wrap mb-2">
+                <div class="button-group mb-2 ml-2">
+                    <div class="icon primary pre">
+                        <i class="fa fa-angle-left"></i>
+                    </div>
+                    <button type="submit" class="primary lg" [routerLink]="['/user/client/list']" routerLinkActive="router-link-active">Back</button>
+                </div>
+
+                <div class="button-group mb-2 ml-2">
+                    <button type="submit" class="post primary lg" [ngClass]="loginLoading?'in-progress':''">Save & Next
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="icon post primary">
+                        <i class="fa fa-angle-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="details-container" *ngIf="!employeeForm">
+        <img src="assets/images/rolling-main.svg" style="width: 70px; margin-top: 5%;">
+    </div>
+</div>

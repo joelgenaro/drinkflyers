@@ -1,0 +1,32 @@
+<div class="sub-container">
+    <div class="mockup-style">
+        <span class="mb-2">Artwork</span>
+        <!-- <button (click)="artwork()">Artwork</button> -->
+    </div>
+    <div class="personalize-mid-centent-container">
+        <div class="pmc-left content-left">
+            <div class="pmc-labels">
+                <div [class]="activeElevation === i? 'front': 'back'" *ngFor="let img of productImages; let i = index" (click)="changeElevation(i); getElevation(img)">{{img.elevation.title}}</div>
+            </div>
+        </div>
+
+    </div>
+    <div class="mockup-frame" style="justify-content:center" *ngIf="loadArtwork">
+        <img [src]="spinnerSVG"  alt="" style="width: 60px;"/>
+    </div>
+    <div class="mockup-frame" *ngIf="fileTypes.png">
+        <b>Artwork format</b>
+        <!-- <div class="mockup-frame-heading">
+            <input type="radio" name="format" class="mockup-checkbox" [value]="preview" checked (click)="preview='jpg'"> <b>JPG</b>
+        </div> -->
+        <div class="mockup-frame-heading">
+            <input type="radio" name="format" class="mockup-checkbox" (click)="preview='png'"> <b>PNG</b>
+        </div>
+        <div class="mockup-frame-heading">
+            <input type="radio" name="format" class="mockup-checkbox" (click)="preview='pdf'"> <b>PDF</b>
+        </div>
+        <div class="mockup-frame-heading">
+            <button type="button" class="primary sm mt-2 mr-2" (click)="download()">Preview</button>
+        </div>
+    </div>
+</div>

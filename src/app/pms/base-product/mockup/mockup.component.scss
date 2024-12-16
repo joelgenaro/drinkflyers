@@ -1,0 +1,230 @@
+.add-new {
+    display: flex;
+    justify-content: center;
+    border: dashed 1px #b8b8b8;
+    padding: 20px;
+    width: 65%;
+    margin: auto;
+    margin-top: 20px;
+    border-radius: 4px;
+    align-items: center;
+    cursor: pointer;
+}
+.add-new:hover{
+    background-color: #FAFAFA;
+    box-shadow: 0px 0px 2px 1px #999;
+}
+
+
+
+.add-new span {
+    font-size: 12px;
+    font-weight: 600;
+}
+.add-new-icon {
+    font-size: 12px;
+    margin-right: 5px;
+    background: var(--ap-primary);
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: inline-block;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:hover {
+        opacity: 0.6;
+    }
+
+    i {
+        font-size: 14px;
+        color: #fff;
+    }
+    color: #fff;
+}
+.table-borderless th{
+    border: none !important;
+}
+.table-borderless td{
+    border: none !important;
+}
+.input-group-append {
+    font-weight: 300;
+    border-radius: 4px;
+    height: 32px;
+    font-size: 14px;
+    margin: 0;
+}
+.product-info {
+    display: flex;
+    justify-content: space-between;
+    background: var(--ap-primary);
+    padding: 5px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: #fff;
+}
+
+.main {
+    padding: 12px 15px 0;
+    .header {
+        position: sticky;
+        // top: 190px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        // margin-right: 6px;
+
+        h1 {
+            font-size: 21px;
+        }
+    }
+
+    .mockups-table-wrapper {
+        background-color: #fff;
+        padding: 5px 10px;
+        padding-top: 0;
+        border-radius: 5px;
+        margin: 10px 0;
+        height: calc(100vh - 185px);
+        overflow: auto;
+
+        table {
+            width: 100%;
+
+            thead th {
+                color: var(--ap-secondary);
+                font-weight: 600;
+                font-size: 14px;
+                text-align: center;
+                position: sticky;
+                top: 0;
+                background: #fff;
+                z-index: 99;
+                padding: 10px 15px;
+                box-shadow: inset 0px -3px 0px 0px var(--ap-secondary);
+
+                .edit-icon {
+                    margin-left: 5px;
+                    background: var(--ap-secondary);
+                    width: 22px;
+                    height: 22px;
+                    border-radius: 50%;
+                    display: inline-block;
+                    text-align: center;
+                    cursor: pointer;
+
+                    &:hover {
+                        cursor: pointer;
+                        opacity: 0.6;
+                    }
+
+                    i {
+                        font-size: 11px;
+                        color: #fff;
+                    }
+                }
+            }
+
+            tbody {
+                td {
+                    font-size: 14px;
+                    padding: 0.2rem 0.7rem !important;
+                    border: 1px solid #ccc;
+                    text-align: center;
+
+                    .mockup-wrapper {
+                        display: flex;
+                        // justify-content: center;
+                        align-items: center;
+                        // flex-direction: column;
+
+                        .image-wrapper {
+                            width: 180px;
+                            height: 180px;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            // background: #fafafa;
+                            // border-radius: 50%;
+                            margin-top: 10px;
+                            margin-bottom: 10px;
+                            margin-right: 20px;
+                            overflow: hidden;
+                        }
+
+                        .actions {
+                            cursor: pointer;
+                            display: flex;
+                            .icon {
+                                margin-left: 5px;
+                                background: var(--ap-primary);
+                                width: 30px;
+                                height: 30px;
+                                border-radius: 50%;
+                                display: inline-block;
+                                text-align: center;
+                                cursor: pointer;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+
+                                &:hover {
+                                    opacity: 0.6;
+                                }
+
+                                i {
+                                    font-size: 14px;
+                                    color: #fff;
+                                }
+                            }
+                        }
+                    }
+                }
+                .elevation-col {
+                    width: 150px;
+                    background-color: #f6ecff;
+                    border-top: 5px solid #0ba48f;
+
+                    .title {
+                        font-weight: 600;
+                        text-transform: uppercase;
+                        font-size: 16px;
+                        color: var(--ap-secondary);
+                    }
+
+                    .edit-icon {
+                        margin-left: 5px;
+                        background: var(--ap-secondary);
+                        width: 22px;
+                        height: 22px;
+                        border-radius: 50%;
+                        display: inline-block;
+                        text-align: center;
+                        cursor: pointer;
+
+                        &:hover {
+                            cursor: pointer;
+                            opacity: 0.8;
+                        }
+
+                        i {
+                            font-size: 11px;
+                            color: #fff;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+button.close {
+    color: #000;
+    font-size: 26px;
+    font-weight: 500;
+    padding: 12px 20px !important;
+}
+.print-areas td{
+    text-align: left!important;
+}

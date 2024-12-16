@@ -1,0 +1,167 @@
+<div class="row no-gutters main-background">
+    <div class="col-md-12 mb-1 header-section p-4">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-12 mb-5">
+                <div class="header-heading">
+                    <h1>Settings: Users</h1>
+                    <button type="button" class="btn-bold" (click)="openModal(viewModalTemplete); showUser = false; showStores = false;">Invite others</button>
+                </div>
+            </div>
+            <div class="col-md-12 mb-5">
+                <div class="header-search">
+
+                    <div class="input-group filter-left">
+                        <div class="group">
+                            <div class="pre">
+                                <button class="search-btn">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                            <input type="text" placeholder="Search"/>
+                        </div>
+                    </div>
+
+                    <div class="filter-right">
+                        <div class="filter-right-dropdown" (click)="showUser = !showUser">
+                            <span>All users</span>
+                            <i *ngIf="!showUser" class="fa fa-angle-down"></i>
+                            <i *ngIf="showUser" class="fa fa-angle-up"></i>
+                        </div>
+                        <div class="active-data" [class.show]="showUser">
+                            <div class="filter-content">
+                                <div class="filter-content-heading1">Role</div>
+                                <div class="filter-row">
+                                    <input type="checkbox">Admin/Owner
+                                </div>
+                                <div class="filter-row">
+                                    <input type="checkbox">Admin
+                                </div>
+                                <div class="filter-row">
+                                    <input type="checkbox">Manager
+                                </div>
+                                <div class="filter-row">
+                                    <input type="checkbox">Designer
+                                </div>
+                                <div class="filter-content-heading2">Store access</div>
+                                <div class="filter-row">
+                                    <input type="checkbox">
+                                    <img src="assets/images/shopify-icon.svg">
+                                    Fresh New SE Testing site
+                                </div>
+                                <div class="filter-row">
+                                    <input type="checkbox">
+                                    <img src="assets/images/shopify-icon.svg">
+                                    SE Systems Testing site
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-left">
+                        <button class="danger filter-btn" (click)="showUser = false">Search</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 mb-1">
+                <div class="product-variants">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr style="border-bottom: solid 2px #CCC !important;">
+                                <th class="font-14">User</th>
+                                <th class="font-14">Role</th>
+                                <th class="font-14">Store access</th>
+                                <th class="font-14">Last login</th>
+                            </tr>
+                            <tr style="border-bottom: solid 1px #CCC;">
+                                <td class="font-14">
+                                    Robin O'List <br>
+                                    <span class="font-12">robin@stareditions.com</span>
+                                </td>
+                                <td class="font-14">Admin/Owner</td>
+                                <td class="font-14">
+                                    All Stores
+                                </td>
+                                <td class="font-14">
+                                    3 secs ago
+                                </td>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #viewModalTemplete>
+    <div class="modal-body">
+        <div class="modal-heading">
+            <h2 class="modal-title pull-left">Invite user</h2>
+            <i class="fas fa-times" (click)="modalRef.hide(); showStores = false;"></i>
+        </div>
+        <div class="info">
+            <div class="info-items">
+                Enter the email of the person you want to invite to join your Star Dropship account. Before you send the invite, please get to know the permissions that each role has:
+            </div>
+            <div class="info-items">
+                <span>Admin:</span> Full accss to all stores, Dashboard ections, and adding/modifying/removing other roles, except Admin/Owner.
+            </div>
+            <div class="info-items">
+                <span>Manager:</span> Limited access to Settings, No access to Billing and Statistics. Can view other Manager accounts, but can't add/modify/remove other Manager roles.
+            </div>
+            <div class="info-items">
+                <span>Designer:</span> Full access to Product templates and File library. Limited access to Store.
+            </div>
+        </div>
+        <div style="display: flex; margin-top: 10px ; flex-wrap: wrap;">
+            <div style="width: 100%;">
+                <input type="text" class="form-control" placeholder="Email">
+            </div>
+            <div style="display: flex; margin-top: 10px ; flex-wrap: wrap; width: 100%; justify-content: space-between;">
+                <div class="store-left">
+                    <div class="filter-content">
+                        <select class="form-control" (click)="showStores = false">
+                            <option value="admin">Admin</option>
+                            <option value="manager" selected>Manager</option>
+                            <option value="designer">Designer</option>
+                        </select>
+
+                    </div>
+                </div>
+                <div class="store-right">
+                    <div class="store-right-dropdown" (click)="showStores = !showStores">
+                        <span>All stores</span>
+                        <i *ngIf="!showStores" class="fa fa-angle-down"></i>
+                        <i *ngIf="showStores" class="fa fa-angle-up"></i>
+                    </div>
+                    <div class="store-data" [class.show]="showStores">
+                        <div class="filter-content">
+                            <div class="filter-row">
+                                <input type="checkbox">
+                                All stores
+                            </div>
+                            <div class="filter-row">
+                                <input type="checkbox">
+                                <img src="assets/images/shopify-icon.svg">
+                                Fresh New SE Testing site
+                            </div>
+                            <div class="filter-row">
+                                <input type="checkbox">
+                                <img src="assets/images/shopify-icon.svg">
+                                SE Systems Testing site
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="invitation-footer">
+            <button type="button" class="primary mr-2">Send Invite</button>
+        </div>
+    </div>
+</ng-template>

@@ -1,0 +1,190 @@
+<div class="row no-gutters main-background">
+    <div class="col-md-12 mb-1 header-section p-4">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-12 mb-4">
+                <h1>Billing: Payments</h1>
+            </div>
+        </div>
+        <form>
+            <div class="row no-gutters d-flex justify-content-between align-items-center">
+                <div class="col-md-12 mb-2">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <div class="group">
+                                        <div class="pre">
+                                            <button style="background-color: #fff !important;
+                                            border: solid 1px #e0e0db;
+                                            border-right: none; padding: 4.5px 10px; height: 50px;">
+                                                <i class="fa fa-search" aria-hidden="true" style="color: #CCC;"></i>
+                                            </button>
+                                        </div>
+                                        <input type="text" placeholder="Order no.:#PF765431">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <input type="text" [ngModelOptions]="{standalone: true}" placeholder="Select Date Here" bsDaterangepicker [(ngModel)]="bsRangeValue" [bsConfig]="{ rangeInputFormat : 'MMM DD,YYYY', dateInputFormat: 'DD-MM-YYYY', adaptivePosition: true }" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <ng-select [multiple]="true" placeholder="Payment status">  
+                                    <ng-option value="completed">Completed</ng-option>
+                                    <ng-option value="failed">Failed</ng-option>
+                                    <ng-option value="pending">Pending</ng-option>
+                                </ng-select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <ng-select [multiple]="true" placeholder="All stores">  
+                                    <ng-option value="store1">Store 1</ng-option>
+                                    <ng-option value="store2">Store 2</ng-option>
+                                </ng-select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3" style="display: flex; align-items: center;">
+                                Download report <i class="fas fa-download ml-2 mr-2"></i> <span class="csv">CSV</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <button type="button" class="sm danger">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <form>
+            <div class="row no-gutters d-flex justify-content-between align-items-center">
+                <div class="col-md-12 mb-2">
+                    <div class="row">
+                        <div class="col-md-12 mb-1">
+                            <div class="product-variants">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr style="border-bottom: solid 2px #CCC !important;">
+                                            <th class="font-14">Payment</th>
+                                            <th class="font-14">Status</th>
+                                            <th class="font-14">Amount</th>
+                                            <th class="font-14">Date</th>
+                                            <th class="font-14">ID</th>
+                                            <th class="font-14">Documents</th>
+                                        </tr>
+                                        <tr style="border-bottom: solid 1px #CCC;">
+                                            <td class="font-14">Order #18123</td>
+                                            <td class="font-14"><button class="success sm">Completed</button></td>
+                                            <td class="font-14">$14.12</td>
+                                            <td class="font-14">Dec 16, 2021</td>
+                                            <td>52932244</td>
+                                            <td><span style="cursor: pointer;"><i class="fas fa-file-invoice" style="color: #CCC;"></i> Invoice</span></td>
+                                        </tr>
+                                        <tr style="border-bottom: solid 1px #CCC;">
+                                            <td class="font-14">Order #18123</td>
+                                            <td class="font-14"><button class="danger sm">Failed</button></td>
+                                            <td class="font-14">$14.12</td>
+                                            <td class="font-14">Dec 16, 2021</td>
+                                            <td>52932244</td>
+                                            <td></td>
+                                        </tr>
+
+                                        <tr style="border-bottom: solid 1px #CCC;">
+                                            <td class="font-14">Order #18123</td>
+                                            <td class="font-14"><button class="warning sm">Pending</button></td>
+                                            <td class="font-14">$14.12</td>
+                                            <td class="font-14">Dec 16, 2021</td>
+                                            <td>52932244</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr style="border-bottom: solid 1px #CCC;">
+                                            <td class="font-14">Order #18123</td>
+                                            <td class="font-14"><button class="success sm">Completed</button></td>
+                                            <td class="font-14">$14.12</td>
+                                            <td class="font-14">Dec 16, 2021</td>
+                                            <td>52932244</td>
+                                            <td><span style="cursor: pointer;"><i class="fas fa-file-invoice" style="color: #CCC;"></i> Invoice</span></td>
+                                        </tr>
+                                        <tr style="border-bottom: solid 1px #CCC;">
+                                            <td class="font-14">Order #18123</td>
+                                            <td class="font-14"><button class="success sm">Completed</button></td>
+                                            <td class="font-14">$14.12</td>
+                                            <td class="font-14">Dec 16, 2021</td>
+                                            <td>52932244</td>
+                                            <td><span style="cursor: pointer;"><i class="fas fa-file-invoice" style="color: #CCC;"></i> Invoice</span></td>
+                                        </tr>
+                                        <tr style="border-bottom: solid 1px #CCC;">
+                                            <td class="font-14">Order #18123</td>
+                                            <td class="font-14"><button class="success sm">Completed</button></td>
+                                            <td class="font-14">$14.12</td>
+                                            <td class="font-14">Dec 16, 2021</td>
+                                            <td>52932244</td>
+                                            <td><span style="cursor: pointer;"><i class="fas fa-file-invoice" style="color: #CCC;"></i> Invoice</span></td>
+                                        </tr>
+                                        <tr style="border-bottom: solid 1px #CCC;">
+                                            <td class="font-14">Order #18123</td>
+                                            <td class="font-14"><button class="success sm">Completed</button></td>
+                                            <td class="font-14">$14.12</td>
+                                            <td class="font-14">Dec 16, 2021</td>
+                                            <td>52932244</td>
+                                            <td><span style="cursor: pointer;"><i class="fas fa-file-invoice" style="color: #CCC;"></i> Invoice</span></td>
+                                        </tr>
+                                        <tr style="border-bottom: solid 1px #CCC;">
+                                            <td class="font-14">Order #18123</td>
+                                            <td class="font-14"><button class="success sm">Completed</button></td>
+                                            <td class="font-14">$14.12</td>
+                                            <td class="font-14">Dec 16, 2021</td>
+                                            <td>52932244</td>
+                                            <td><span style="cursor: pointer;"><i class="fas fa-file-invoice" style="color: #CCC;"></i> Invoice</span></td>
+                                        </tr>
+                                        <tr style="border-bottom: solid 1px #CCC;">
+                                            <td class="font-14">Order #18123</td>
+                                            <td class="font-14"><button class="success sm">Completed</button></td>
+                                            <td class="font-14">$14.12</td>
+                                            <td class="font-14">Dec 16, 2021</td>
+                                            <td>52932244</td>
+                                            <td><span style="cursor: pointer;"><i class="fas fa-file-invoice" style="color: #CCC;"></i> Invoice</span></td>
+                                        </tr>
+                                        <tr style="border-bottom: solid 1px #CCC;">
+                                            <td class="font-14">Order #18123</td>
+                                            <td class="font-14"><button class="success sm">Completed</button></td>
+                                            <td class="font-14">$14.12</td>
+                                            <td class="font-14">Dec 16, 2021</td>
+                                            <td>52932244</td>
+                                            <td><span style="cursor: pointer;"><i class="fas fa-file-invoice" style="color: #CCC;"></i> Invoice</span></td>
+                                        </tr>
+
+                                    </thead>
+                                </table>
+                            </div>
+                            <div style="display: flex; margin-left: 30px; align-items: center;">
+                                Item per page:
+                                <select style="width: 55px; border: none;">
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+        </form>
+
+    </div>
+
+
+</div>

@@ -1,0 +1,135 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Order Details</h2>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+    </div>
+
+    <div class="col-md-12 mb-1 results-section">
+        <div class="product-wrapper">
+            <ng-container *ngIf="orderDetailObj > 0">
+                <div class="product-box">
+                    <div class="product-info">
+                        <div class="product-info-left">
+                            <div class="item">
+                                <label>Order No.</label>
+                                <p>{{ dataList.order_no }} </p>
+                            </div>
+                            <div class="item">
+                                <label>Order Date</label>
+                                <p>{{moment(dataList.created_at).format(cs.DATE_TIME_FORMAT.SHORT_DATE)}}</p>
+                            </div>
+                            <div class="item">
+                                <label>Status</label>
+                                <p>{{ getStatusFormat(dataList.order_status) }}</p>
+                            </div>
+                        </div>
+                        <div class="product-info-right">
+                            <div class="item">
+                                <label>Billing Address</label>
+                                <p>{{ dataList.shipment.billing_address }}</p>
+                            </div>
+                            <div class="item">
+                                <label>Shipping Address</label>
+                                <p>{{ dataList.shipment.shipping_address }}</p>
+                            </div>
+                            <div class="item">
+                                <label>Shipping Method</label>
+                                <p>{{ dataList.shipment.courier_service.name }}</p>
+                            </div>
+                        </div>
+                        <!-- <div class="item col-md-12 d-flex justify-content-start">
+                            <label>Total Item</label>
+                            <p>{{dataList.total_items}}</p>
+                        </div>
+                        <div class="item col-md-12 d-flex justify-content-start">
+                            <label>T.Price</label>
+                            <p>{{dataList.total_amount}}</p>
+                        </div> -->
+                    </div>
+
+                    <div class="order-items-data">
+                        <h5>Order Items</h5>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Quantity </th>
+                                    <th>Retail Price </th>
+                                    <th>Total Price</th>
+                                    <th>Total Amount </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-radius: 10px;" *ngFor="let v of dataList.order_items; let j= index">
+                                    <td class="size">
+                                        <ng-container *ngIf="api.checkPermission('product-detail')">
+                                            <a class="text-link" [routerLink]="['/user/products/product-info']" [queryParams]="{ id: v.product_id }">
+                                                {{v.name}}
+                                            </a>
+                                        </ng-container>
+                                        <ng-container *ngIf="!api.checkPermission('product-detail')">
+                                            {{v.name}}
+                                        </ng-container>
+                                    </td>
+                                    <td class="size">{{v.quantity}}</td>
+                                    <td class="size">{{cs.defaultCurrency}} {{ v.rp | number }}</td>
+                                    <td class="size">{{cs.defaultCurrency}} {{ v.tp | number }}</td>
+                                    <td class="size">{{cs.defaultCurrency}} {{ v.total_amount | number }} </td>
+                                </tr>
+                                <tr class="border-top">
+                                    <td>Total Items Amount</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="bold-text">{{cs.defaultCurrency}} {{ dataList.total_items_amount | number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Discount</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="bold-text">- {{cs.defaultCurrency}} {{ dataList.store_discount_amount | number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Delivery Charges</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="bold-text">{{cs.defaultCurrency}} {{ dataList.delivery_charges | number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Tax Amount</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="bold-text">{{cs.defaultCurrency}} {{ dataList.tax_amount | number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Total Amount</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="bold-text">{{cs.defaultCurrency}} {{ dataList.total_amount | number }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="dataStatus == 'fetching'">
+                <div class="img-wrapper">
+                    <img src="assets/images/rolling-main.svg" alt="">
+                </div>
+            </ng-container>
+            <ng-container *ngIf="orderDetailObj == 0 && dataStatus == 'done'">
+                <div class="product-box">
+                    <app-no-data-found></app-no-data-found>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>

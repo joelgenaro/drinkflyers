@@ -1,0 +1,71 @@
+<app-steps-template [step]="'discount-compaign-info'"></app-steps-template>
+<div class="row mt-4 no-gutters justify-content-center">
+    <div class="col-md-10">
+        <form [formGroup]="formFG" (ngSubmit)="save(formFG)" #f="ngForm" *ngIf="employeeForm">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <label>Name <span class="mendatory">*</span></label>
+                            <input formControlName="name" class="form-control mt-0" placeholder="Enter Compaign Name" [ngClass]="{'form-submitted': f.submitted}">
+                            <div *ngIf="ui.checkErrors(g.name, f)" class="errors">
+                                <p *ngIf="g.name.errors.required">Compaign Name is required</p>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label>Start Date <span class="mendatory">*</span> </label>
+                            <input formControlName="start_date" class="form-control mt-0" bsDatepicker [bsConfig]="{dateInputFormat: 'MMMM Do YYYY', adaptivePosition: true }" placeholder="Enter Start Date" [ngClass]="{'form-submitted': f.submitted}">
+                            <div *ngIf="ui.checkErrors(g.start_date, f)" class="errors">
+                                <p *ngIf="g.start_date.errors.required">Start Date is required</p>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label>End Date <span class="mendatory">*</span></label>
+                            <input formControlName="end_date" class="form-control mt-0" bsDatepicker [bsConfig]="{dateInputFormat: 'MMMM Do YYYY', adaptivePosition: true }" placeholder="Enter End Date" [ngClass]="{'form-submitted': f.submitted}">
+                            <div *ngIf="ui.checkErrors(g.end_date, f)" class="errors">
+                                <p *ngIf="g.end_date.errors.required">End Date is required</p>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label>Description </label>
+                            <textarea rows="5" class="form-control" formControlName="description" placeholder="Enter Description" [ngClass]="{'form-submitted': f.submitted}"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="tut-pro-photo">
+                        <div>
+                            <img [src]="thumbnail" id="img" class="w-100">
+                        </div>
+                        <input type="file" style="display: none;" id="thumbnail-image" (change)="onThumbnailChange($event)">
+                        <div class="text-center mt-2 mb-2">
+                            <button type="button" class="sm success" (click)="browseThumbnail($event)" style="min-width: 140px">Browse Picture</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end mb-4">
+                <div class="button-group mr-2">
+                    <div class="icon primary pre">
+                        <i class="fa fa-angle-left"></i>
+                    </div>
+                    <button type="submit" class="primary" [routerLink]="['/user/discount-compaign/list']" [queryParams]="{store_id:storeId}" routerLinkActive="router-link-active">Back</button>
+
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="post primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Save & Next
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="icon post primary">
+                        <i class="fa fa-angle-right"></i>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+        <div class="details-container" *ngIf="!employeeForm">
+            <img src="assets/images/rolling-main.svg" style="width: 70px; margin-top: 5%;">
+        </div>
+    </div>
+</div>

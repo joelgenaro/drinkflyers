@@ -1,0 +1,79 @@
+<div class="sub-container">
+    <form [formGroup]="dataForm" (ngSubmit)="addInfo(dataForm, f)" #f="ngForm">
+        <div class="row">
+
+            <!-- <div class="col-md-4 mb-2" formArrayName="categories">
+                <label>Category <span class="mendatory">*</span></label>
+                <div class="mb-2" *ngFor="let cat of categories.controls; let i = index">
+                    <div [formGroupName]="i">
+                        <select [attr.disabled]="true" (change)="selectCategory($event, i)" class="form-control" formControlName="category_id" [ngClass]="{'form-submitted': f.submitted}">
+                            <option *ngFor="let category of categoriesList[i]" [value]="category.id">{{category.name}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div> -->
+
+            <div class="col-md-4 mb-2">
+                <label>Product Name <span class="mendatory">*</span></label>
+                <input formControlName="name" [attr.disabled]="true" class="form-control mt-0" placeholder="Enter Product Name" [ngClass]="{'form-submitted': f.submitted}">
+                <div *ngIf="ui.checkErrors(g.name, f)" class="errors">
+                    <p *ngIf="g.name.errors.required">Product Name is required</p>
+                    <p *ngIf="g.name.errors.maxlength">Product Name should not exceed {{ g.name.errors.maxlength.requiredLength }} characters</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-2">
+                <label>SKU <span class="mendatory">*</span></label>
+                <input formControlName="sku" [attr.disabled]="true" class="form-control mt-0" placeholder="Enter SKU" [ngClass]="{'form-submitted': f.submitted}">
+                <div *ngIf="ui.checkErrors(g.sku, f)" class="errors">
+                    <p *ngIf="g.sku.errors.required">SKU is required</p>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="row" *ngIf="fetchingCategories === true">
+            <div class="col-md-4 mb-2">
+                <div class="img-wrapper text-center">
+                    <img src="assets/images/rolling-main.svg" alt="" />
+                </div>
+            </div>
+        </div> -->
+        <div class="row">
+            <!-- <div class="col-md-4 mb-2">
+                <label>Type <span class="mendatory">*</span></label>
+                <select class="form-control" [attr.disabled]="true" formControlName="type" [ngClass]="{'form-submitted': f.submitted}">
+                    <option value="null">Select Type</option>
+                    <option value="stock">Stock</option>
+                    <option value="virtual_product">Virtual Product</option>
+                    <option value="base_product">Base Product</option>
+                </select>
+                <div *ngIf="ui.checkErrors(g.type, f)" class="errors">
+                    <p *ngIf="g.type.errors.required">Type is required</p>
+                </div>
+            </div> -->
+
+            <div class="col-md-4 mb-2">
+                <label>Is it Personalized Product?<span class="mendatory">*</span></label>
+                <div class="personalize-wrapper">
+                    <label class="switch">
+                        <input type="checkbox" [attr.disabled]="true" formControlName="personalize" [ngClass]="{'form-submitted': f.submitted}">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4 mb-2">
+                <label>Tags <span class="mendatory">*</span></label>
+                <ng-select [disabled]="true" [multiple]="true" [(ngModel)]="selectedTags" [ngModelOptions]="{standalone: true}">
+                    <ng-option *ngFor="let tag of tagsList" [value]="tag.id">{{tag.full_name}}</ng-option>
+                </ng-select>
+            </div>
+        </div>
+        <div class="bottom-btn">
+            <div class="button-group">
+                <button type="submit" class="post primary lg">Next</button>
+                <div class="icon post primary">
+                    <i class="fa fa-angle-right"></i>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

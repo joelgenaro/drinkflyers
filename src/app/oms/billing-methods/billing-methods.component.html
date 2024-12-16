@@ -1,0 +1,66 @@
+<div class="row no-gutters main-background">
+    <div class="col-md-12 mb-1 header-section p-4">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-12 mb-4">
+                <h1>Billing: Billing Methods</h1>
+            </div>
+            <div class="col-md-12 mb-2">
+                <h2 class="mb-2">Primary account billing method</h2>
+                <span class="font-14">This is the primary billing method for your account. <br>It'll be the default we use to charge you for future transactions.</span>
+            </div>
+        </div>
+        <div class="info">
+            <div><img src="assets/images/card.png"></div>
+            <div class="font-14"><span>No Billing methods have been added</span></div>
+            <div><button class="font-14" [routerLink]="[ api.checkUser()+'/add-billing-methods']">Add a billing method</button></div>
+        </div>
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+
+            <div class="col-md-12 mb-2 mt-2">
+                <h2 class="mb-2">Store billing settings</h2>
+                <span class="font-14">Set a different billing methid for each. <br>Well automatically use your account's oprimary billing methods unless otherwise specified.</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mb-1  p-4">
+                <div class="product-variants">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr style="border-bottom: solid 2px #CCC !important;">
+                                <th class="font-14">Store</th>
+                                <th class="font-14">Billing method</th>
+                                <th class="font-14" style="width: 300px;">Select currency <span [tooltip]="popTemplate" class="info-wrapper"><img src="assets/images/info.svg" /></span>
+                                    <ng-template #popTemplate><b>Top tips:</b> select currency for your store.</ng-template>
+                                </th>
+                            </tr>
+                            <tr style="border-bottom: solid 1px #CCC;">
+                                <td class="font-14"><img src="assets/images/shopify-icon.svg" style="width: 30px;"> Fresh New SE Testing Site</td>
+                                <td class="font-14">
+                                    <a [routerLink]="[ api.checkUser()+'/add-billing-methods']"><i class="fas fa-plus plus-color"></i> <span class="add-billing">Add a billing method</span></a>
+                                </td>
+                                <td class="font-14">
+                                    <select class="form-control font-14">
+                                        <option>British Pound Sterling (GBP)</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr style="border-bottom: solid 1px #CCC;">
+                                <td class="font-14"><img src="assets/images/shopify-icon.svg" style="width: 30px;"> Freshs New SE Testing Site</td>
+                                <td class="font-14">
+                                    <a [routerLink]="[ api.checkUser()+'/add-billing-methods']"><i class="fas fa-plus plus-color"></i> <span class="add-billing">Add a billing method</span></a>
+                                </td>
+                                <td class="font-14">
+                                    <select class="form-control font-14">
+                                        <option>British Pound Sterling (GBP)</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>

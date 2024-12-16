@@ -1,0 +1,141 @@
+<div class="row no-gutters main-background">
+    <div class="col-md-12 mb-1 header-section p-4">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-12 mb-4">
+                <h1>Billing: Star Dropship Wallet</h1>
+            </div>
+            <div class="col-md-12 mb-2">
+                <span class="font-14">Each Wallet can only be used to pay for orders in the same currency (e.g. you can't pay for an order in GBP from your EUR Wallet). It's not possible to transfer money from one wallet to another. More on Star Dropship Wallets in our <a class="faq">FAQ</a>.</span>
+            </div>
+        </div>
+        <div class="info mt-4 mb-4">
+
+            <div>
+                <h2>Benefits of using a Star Dropship Wallet</h2>
+            </div>
+
+        </div>
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+
+            <div class="col-md-12 mb-2 mt-2">
+                <div class="detail">
+                    <div class="detail-items">
+                        <div class="item-left"><img src="assets/images/padlock.svg"></div>
+                        <div class="item-right">
+                            <b>Secure payments and deceased fall rate.</b>
+                            Adding moneny to your is safe and easy.
+                            Plus, by having funds in your Wallet,
+                            <b>you'll avoid the risk of failed orders</b>
+                            due to insufficent funds.
+                        </div>
+                    </div>
+                    <div class="detail-items">
+                        <div class="item-left"><img src="assets/images/icon_piggy-bank.svg"></div>
+                        <div class="item-right">
+                            <b>Fewer transactions, lower costs!</b>
+                            Depending on your payment method and bank, yo may get charged a
+                            transaction fee each time you get charged an order.
+                            By keeping money in your Star Dropship Wallet, <b>you'll save up on those extra transaction fees.</b>
+                        </div>
+                    </div>
+                    <div class="detail-items">
+                        <div class="item-left"><img src="assets/images/icon_secure_payments.svg"></div>
+                        <div class="item-right">
+                            <b>Fewer pending payments on your credit card.</b>
+                            Too many small charges and pending payments <b>can be seen as fraudulent activity</b>
+                            by some credit card providers which causes your card to be blocked.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex; justify-content:  center;">
+
+            <div class="col-lg-4 col-md-6 col-sm-12  mb-2 mt-2">
+                <div class="detail-box">
+                    <div class="detail-box-items">
+                        <div class="detail-box-item-inner">
+                            <div class="detail-box-item-inner-heading">
+                                GBP Wallet <i class="fas fa-angle-right ml-2"></i>
+                            </div>
+                            <button class="primary" (click)="openModal(viewModalTemplete,'GBP')">Add Money</button>
+                        </div>
+                        <div class="detail-box-wallet">
+                            <div class="detail-box-amount">&pound;0.00</div>
+                            <div class="w-100">Auto recharge</div>
+                            <div class="w-100">Off</div>
+                        </div>
+
+                    </div>
+
+                    <!-- <div class="detail-box-items">
+                        <div class="detail-box-item-inner">
+                            <div class="detail-box-item-inner-heading">
+                                EUR Wallet <i class="fas fa-angle-right ml-2"></i>
+                            </div>
+                            <button class="primary" (click)="openModal(viewModalTemplete,'EUR')">Add Money</button>
+                        </div>
+                        <div class="detail-box-wallet">
+                            <div class="detail-box-amount">&euro; 0.00</div>
+                            <div class="w-100">Auto recharge</div>
+                            <div class="w-100">Off</div>
+                        </div>
+
+                    </div>
+                    <div class="detail-box-items">
+                        <div class="detail-box-item-inner">
+                            <div class="detail-box-item-inner-heading">
+                                USD Wallet <i class="fas fa-angle-right ml-2"></i>
+                            </div>
+                            <button class="primary" (click)="openModal(viewModalTemplete,'USD')">Add Money</button>
+                        </div>
+                        <div class="detail-box-wallet">
+                            <div class="detail-box-amount">$0.00</div>
+                            <div class="w-100">Auto recharge</div>
+                            <div class="w-100">Off</div>
+                        </div>
+
+                    </div> -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<ng-template #viewModalTemplete>
+    <div class="modal-body">
+        <div class="add-money-heading">
+            <h2 class="modal-title pull-left">Add Money to your {{currencyType}} Wallet</h2>
+        </div>
+        <div class="add-amount">
+            <div class="add-amount-width">
+                <div class="input-group"><label>Amount</label>
+                    <div class="group">
+                        <div class="pre"><button class="currency-btn">{{currencyType}}</button></div>
+                        <input type="number" min="1" value="20" style="width: 200px;">
+                    </div>
+                </div>
+            </div>
+            <div class="current-method">
+                <div class="current-method-left">
+                    <img src="assets/images/paypal-wallet.png">
+                    email@emailaddress.com
+                </div>
+                <div class="current-method-center">Multicurrency</div>
+                <div class="current-method-right">Default</div>
+            </div>
+            <div class="method" [routerLink]="[ api.checkUser()+'/add-billing-methods']" (click)="closeModal()">
+                <div class="method-left">
+                    <i class="fa fa-plus-circle"></i>
+                    <span>Add new method</span>
+                </div>
+                
+            </div>
+        </div>
+        <div class="add-money-footer">
+            <button type="button" class="primary mr-2">Add Money</button>
+            <button type="button" class="secondary" (click)="modalRef.hide()">Cancel</button>
+        </div>
+    </div>
+</ng-template>

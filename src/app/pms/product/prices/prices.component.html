@@ -1,0 +1,148 @@
+<div class="main-container-prices">
+    <div class="sub-container">
+        <h2>Prices</h2>
+        <div class="info">
+            <div class="info-left">
+                <p>Set your desired profit, and we'll configure the retail price for you. Alternatively, feel free to set the retail price to anything you want.</p>
+                <p>The retail price is the amount you charge your customer for your product. The difference between your retail price and Star Dropship's price is your profit. So, if Star Dropship charges you £12 for fulfillmont and your retail price is £22. your profit is £10.</p>
+
+            </div>
+            <div class="info-center"></div>
+            <div class="info-right">
+                <div class="w-100"><i class="fa fa-sticky-note-o mr-1" aria-hidden="true"></i> <b>Notes</b></div>
+                <p>Star Dropship's product price depends on production technique, print placement, product color size, and fulfillment location</p>
+                <p><b>Shipping and taxes are extra!</b></p>
+            </div>
+        </div>
+        <div class="reset-prices" *ngIf="productNewPrices.length > 0">
+            <span (click)="resetPrices()">Reset Prices</span>
+        </div>
+        <div class="prices">
+            <table class="table table-striped">
+                <thead>
+                    <tr class="top-heading">
+                        <td>Size</td>
+                        <td width="300">SKU</td>
+                        <td class="text-center">STAR DROPSHIP PRICE</td>
+                        <td class="text-center">RETAIL PRICE</td>
+                        <ng-template #popTemplate><b>Top tips:</b> adjust yor profit to balanace out the amount of money that goes towards taxes and shipping costs.</ng-template>
+                        <td width="250" class="text-center">PROFIT <span [tooltip]="popTemplate" class="info-wrapper"><img src="assets/images/info.svg" /></span></td>
+                    </tr>
+                    <tr class="middle-heading" *ngIf="productNewPrices.length > 0">
+
+                        <td></td>
+                        <td>
+                            <div style="display: flex; align-items: center;">
+                                Create a custom SKU
+                                <input type="checkbox" style="width: 20px; margin-left: 5px;" [(ngModel)]="skuEdit" (click)="setSKU()">
+                            </div>
+                        </td>
+                        <td class="text-center">{{minMaxTrade(productNewPrices)}}</td>
+                        <td class="text-center">{{minMaxRetail(productNewPrices)}}</td>
+                        <td>
+                            <div class="price-action">
+                                <select class="form-control descrease" [(ngModel)]="actions.aBy" (change)="calucateVales()">
+                                    <option value="increase">Increase by</option>
+                                    <option value="decrease">Decrease by</option>
+                                </select>
+                                <select class="form-control percentage-value" [(ngModel)]="actions.aCurrency" (change)="calucateVales()">
+                                    <option value="pound">&pound;</option>
+                                    <option value="percent">%</option>
+                                </select>
+                                <input class="form-control percentage-value" type="number" min="0" value="0" [(ngModel)]="actions.aValue" (keyup)="calucateVales()" (change)="calucateVales()">
+                            </div>
+                        </td>
+                    </tr>
+                    <ng-container *ngIf="productNewPrices.length > 0">
+                        <tr class="top-heading" *ngFor="let d of productNewPrices; let i = index">
+                            <td>
+                                <b *ngIf="d.name==null">One Size</b>
+                                <b *ngIf="d.name!=null">{{d.size}}</b>
+                            </td>
+                            <td>
+                                <ng-container *ngIf="!skuEdit">
+                                    {{d.sku}}
+                                </ng-container>
+                                <ng-container *ngIf="skuEdit">
+                                    <input class="sku" [(ngModel)]="d.sku" [value]="d.sku">
+                                </ng-container>
+                            </td>
+                            <td class="text-center">&pound;{{d.tp}}</td>
+                            <td class="text-center">&pound;<input type="number" min="1" class="rrp" [(ngModel)]="d.rp" [value]="d.rp"></td>
+                            <td class="text-center">
+                                {{(d.rp-d.tp) | number}}
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" colspan="10">
+                                <div style="display: flex; justify-content: end;">
+                                    <div class="button-group" style="justify-content: end;">
+                                        <button type="button" (click)="openModal(viewModalTemplete)" class="post secondary lg">
+                                            Publish to store <span></span><span></span><span></span>
+                                        </button>
+                                        <div class="icon post secondary">
+                                            <i class="fa fa-angle-right"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="button-group ml-2" style="justify-content: end;">
+                                        <button type="button" (click)="save()" class="post primary lg" [disabled]="priceLoading" [ngClass]="priceLoading ? 'in-progress' : ''">
+                                            Save <span></span><span></span><span></span>
+                                        </button>
+                                        <div class="icon post primary">
+                                            <i class="fa fa-angle-right"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <ng-container>
+                        <tr class="top-heading">
+                            <td colspan="20" class="text-center" *ngIf="priceLoad">
+                                
+                                    <img src="assets/images/rolling-main.svg" width="90" alt="">
+                                
+                            </td>
+                        </tr>    
+                    </ng-container>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<ng-template #viewModalTemplete>
+    <div class="modal-body">
+        <div class="add-money-heading">
+            <h2 class="modal-title pull-left">Stores</h2>
+        </div>
+        <ng-container *ngIf="dataStatus=='done' && dataList.length > 0">
+
+            <div class="add-amount" *ngFor="let d of dataList; let i = index">
+
+                <div class="current-method">
+                    <div class="current-method-left">
+                        <img *ngIf="d.builtin_technology === 'shopify'" src="/assets/img/Shopify.png" alt="Shopify Logo">
+                        <img *ngIf="d.builtin_technology === 'woocommerce'" src="/assets/img/WooCommerce.png" alt="WooCommerce Logo">
+                        <img *ngIf="d.builtin_technology === 'wordpress'" src="/assets/img/WordPress.png" alt="WordPress Logo">
+                        <img *ngIf="d.builtin_technology === 'API'" src="/assets/img/application-programming-interface.png" alt="API Logo">
+                        <img *ngIf="d.builtin_technology === 'etsy'" src="/assets/img/Etsy.png" alt="Etsy Logo">
+                        <img *ngIf="d.builtin_technology === 'amazon'" src="/assets/img/Amazon.png" alt="Amazon Logo">
+                    </div>
+                    <div class="current-method-center">{{ d.store_name }}</div>
+                    <div class="current-method-right"><button (click)="publish(d.id)" class="primary">Publish</button></div>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="dataStatus=='done' && dataList.length == 0">
+            <div class="current-method" style="text-align: center;">
+                No Store Found
+            </div>
+        </ng-container>
+        <div class="add-money-footer">
+            <button type="button" class="secondary" (click)="modalRef.hide()">Cancel</button>
+        </div>
+    </div>
+</ng-template>

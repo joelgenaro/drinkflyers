@@ -1,0 +1,14 @@
+.ng-autocomplete .autocomplete-container {
+    box-shadow: none !important;
+    border: 1px solid #e0e0db !important;
+    height: auto !important;
+    border-radius: 4px !important;
+}
+.ng-autocomplete .autocomplete-container .input-container input {
+    line-height: 30px !important;
+    height: 30px !important;
+    padding: 2px 6px !important;
+}
+.autocomplete-container .suggestions-container ul li a {
+    padding: 10px 6px !important;
+}

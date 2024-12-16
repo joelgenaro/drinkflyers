@@ -1,0 +1,14 @@
+<fieldset [class]="readonly ? 'i-rating' : 'i-rating rw'">
+    <ng-container *ngFor="let choice of choices">
+        <input 
+            type="radio"
+            [id]="name+choice"
+            [name]="name"
+            [value]="choice"
+            [checked]="choice == roundoff(value)"
+            (click)="choose($event['target']['value'])"
+            [disabled]="readonly"
+        />
+        <label [class]="choice%1==0 ? 'full' : 'half'" [for]="name+choice"></label>
+    </ng-container>
+</fieldset>

@@ -1,0 +1,44 @@
+<app-steps-template [step]="'detail'"></app-steps-template>
+<div class="sub-container">
+    <form [formGroup]="dataForm" (ngSubmit)="save(dataForm)" #f="ngForm" *ngIf="zoneForm">
+        <div class="row">
+            <div class="col-md-4 mb-2">
+                <label class="mb-0 mt-0">Zone Name <span class="mendatory">*</span></label>
+                <input formControlName="name" class="form-control mt-0" placeholder="Enter Zone Name" [ngClass]="{'form-submitted': f.submitted}">
+                <div *ngIf="ui.checkErrors(g.name, f)" class="errors">
+                    <p *ngIf="g.name.errors.required">Name is required</p>
+                    <p *ngIf="g.name.errors.maxlength">Name should not exceed {{ g.name.errors.maxlength.requiredLength }} characters</p>
+                </div>
+            </div>
+            <!-- <div class="col-md-4 mb-2">
+                <label class="mb-0 mt-0">Code <span class="mendatory">*</span></label>
+                <input formControlName="code" class="form-control mt-0" placeholder="Enter Code" [ngClass]="{'form-submitted': f.submitted}">
+                <div *ngIf="ui.checkErrors(g.code, f)" class="errors">
+                    <p *ngIf="g.code.errors.required">Code is required</p>
+                    <p *ngIf="g.code.errors.maxlength">Code should not exceed {{ g.code.errors.maxlength.requiredLength }} characters</p>
+                </div>
+            </div> -->
+        </div>
+        <div class="bottom-btn">
+            <div class="d-flex justify-content-end flex-wrap mb-2">
+                <div class="button-group mb-2 ml-2">
+                    <div class="icon primary pre">
+                        <i class="fa fa-angle-left"></i>
+                    </div>
+                    <button type="submit" class="primary lg" [routerLink]="['/user/zone/list']" routerLinkActive="router-link-active">Back</button>
+                </div>
+                <div class="button-group mb-2 ml-2">
+                    <button type="submit" class="post primary lg" [ngClass]="loginLoading?'in-progress':''">Save & Next
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="icon post primary">
+                        <i class="fa fa-angle-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="details-container" *ngIf="!zoneForm">
+        <img src="assets/images/rolling-main.svg" style="width: 70px; margin-top: 5%;">
+    </div>
+</div>

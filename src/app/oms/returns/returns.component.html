@@ -1,0 +1,86 @@
+<div class="row no-gutters main-background">
+    <form>
+        <div class="col-md-12 mb-1 header-section p-4">
+            <div class="row no-gutters d-flex justify-content-between align-items-center">
+                <div class="col-md-12 mb-4">
+                    <h1>Settings: Returns</h1>
+                </div>
+
+
+
+
+                <div class="col-md-6">
+                    <label>Choose store</label>
+                    <ng-select bindLabel="name" placeholder="Select Store" [searchable]="true" multiple="true">
+                        <ng-option [value]="item.id" *ngFor="let item of items">
+                            <img *ngIf="item.image" src="./assets/{{item.image}}" width="20px" height="20px" style="padding: 1px;" />
+                            {{item.name}}
+                        </ng-option>
+                    </ng-select>
+                </div>
+                <div class="col-md-12 mb-3 mt-3">
+                    <h2>Return address</h2>
+                    <hr>
+                    <p>All sent products are marked with your return address. As the retailer, you are fully responsible for all returned orders.</p>
+                </div>
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Company</label>
+                            <div class="mb-3"><input type="text" value="Fresh New SE Testing site" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-md-8"></div>
+
+                        
+                        <div class="col-md-4">
+                            <label>Address line 1</label>
+                            <div class="mb-3"><input type="text" value="" autocomplete="off"></div>
+                        </div>
+                        <div class="col-md-8"></div>
+
+                        <div class="col-md-4">
+                            <label>Address line 2 (optional)</label>
+                            <div class="mb-3"><input type="text" value="" autocomplete="off"></div>
+                        </div>
+                        <div class="col-md-8"></div>
+
+                        <div class="col-md-4">
+                            <label>City</label>
+                            <div class="mb-3"><input type="text" value="" autocomplete="off"></div>
+                        </div>
+                        <div class="col-md-8"></div>
+
+                        <div class="col-md-4">
+                            <label>Postal/Zip code</label>
+                            <div class="mb-3"><input type="text" value="" autocomplete="off"></div>
+                        </div>
+                        <div class="col-md-8"></div>
+
+                        <div class="col-md-4">
+                            <label>Phone (optional)</label>
+                            <div class="mb-3"><input type="text" value="" autocomplete="off"></div>
+                        </div>
+                        <div class="col-md-8"></div>
+
+                        <div class="col-md-4">
+                            <label>Country</label>
+                            <div class="mb-3"><input type="text" value="United Kingdom" autocomplete="off"></div>
+                        </div>
+                        <div class="col-md-8"></div>
+
+                        <div class="col-md-4">
+                            <button type="button" class="save-btn danger mb-3 mr-2">Save</button>
+                            <button type="button" class="cancel-btn mb-3">Cancel</button>
+                        </div>
+                        <div class="col-md-8"></div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </form>
+
+
+</div>

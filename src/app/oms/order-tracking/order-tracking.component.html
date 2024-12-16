@@ -1,0 +1,67 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Order Tracking</h2>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+    </div>
+    <div class="col-md-12 mb-1 pt-3 results-section">
+        <div class="product-wrapper">
+            <div class="product-box" *ngIf="orderObj > 0">
+                <div class="product-info row m-0" *ngIf=" orderTrackingData">
+                    <div class="item col-md-1 col-12">
+                        <label>Order#</label>
+                        <p>{{ orderTrackingData.order_no }} </p>
+                    </div>
+                    <div class="item col-md-3 col-12">
+                        <label>Billing Address</label>
+                        <p>{{ orderTrackingData.shipment.billing_address }}</p>
+                    </div>
+                    <div class="item col-md-3 col-12">
+                        <label>Shipping Address</label>
+                        <p>{{ orderTrackingData.shipment.shipping_address }}</p>
+                    </div>
+                    <div class="item col-md-2 col-12">
+                        <label>Shipping Method</label>
+                        <p>{{ orderTrackingData.shipment.courier_service.name }}</p>
+                    </div>
+                    <div class="item col-md-2 col-12">
+                        <label>Status</label>
+                        <p>{{ getStatusFormat( orderTrackingData.order_status) }}</p>
+                    </div>
+                    <div class="item col-md-1 col-12">
+                        <label>Current Location</label>
+                        <p style="cursor: pointer;">
+                            <a class="marker" (click)="getLocation()"><i class="fas fa-map-marker-alt address"></i></a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <ng-container *ngIf="dataStatus == 'fetching'">
+                <div class="product-box">
+                    <div class="img-wrapper">
+                        <img src="assets/images/rolling-main.svg" alt="">
+                    </div>
+                </div>
+            </ng-container>
+            <div *ngIf="orderObj == 0 && dataStatus == 'done'">
+                <div class="product-box">
+                    <app-no-data-found></app-no-data-found>
+                </div>
+            </div>
+        </div>
+        <div class="product-wrapper">
+            <div class="product-box row">
+                <div class="item col-md-12">
+                    <agm-map [latitude]="location.latitude" [longitude]="location.longitude" [zoom]="location.zoom">
+                        <!-- <agm-marker [latitude]="location.marker.lat" [longitude]="location.marker.lng"></agm-marker> -->
+                        <agm-direction [origin]="origin" [destination]="destination"></agm-direction>
+                    </agm-map>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 footer-section"></div>
+</div>

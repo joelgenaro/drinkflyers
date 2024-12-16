@@ -1,0 +1,42 @@
+.home-content {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+    padding: 75px 0 0 0;
+}
+.home-content img {
+    width: 20%;
+    height: auto;
+    padding: 0 0 10px 0;
+}
+.btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.login-btn {
+    cursor: pointer;
+    padding: 6px 16px;
+    border: 1px solid var(--ap-secondary);
+    color: var(--ap-secondary);
+    border-radius: 5px;
+    margin-left: 5px;
+}
+.login-btn a {
+    margin: 0;
+    text-decoration: none;
+    color: var(--ap-secondary);
+}
+.portal-btn {
+    cursor: pointer;
+    padding: 6px 16px;
+    border: 1px solid var(--ap-primary);
+    color: var(--ap-primary);
+    border-radius: 5px;
+    margin-left: 5px;
+}
+.portal-btn a {
+    margin: 0;
+    text-decoration: none;
+    color: var(--ap-primary);
+}

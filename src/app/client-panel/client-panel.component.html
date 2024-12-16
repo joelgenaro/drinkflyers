@@ -1,0 +1,86 @@
+<link rel="stylesheet" href="//cdn.quilljs.com/1.3.6/quill.bubble.css">
+<link rel="stylesheet" href="//cdn.quilljs.com/1.3.6/quill.snow.css">
+<div class="admin-panel">
+    <div class="page-wrapper" [ngClass]="{'toggled' : getSideBarState()}">
+        <app-client-sidebar></app-client-sidebar>
+        <main class="page-content">
+            <ialerts></ialerts>
+            <nav class="navbar navbar-dark stick-top" *ngIf="api.isfullScreen===false">
+                <button type="button" class="sidebar-toggler" (click)="toggleSidebar()">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                </button>
+                <!-- <h4 style="color: #fafafa; margin: 0; font-size: 18px;">Couries Express</h4> -->
+                <div class="dropdown-container">
+                    <div class="global-menu">
+
+                        <div class="global-notifications-items">
+                            <div class="show-class" (click)="displayNotifications = !displayNotifications; displayUser = false">
+                                <i class="fas fa-bell"></i> Notifications
+                            </div>
+
+                            <div class="global-notifications-items-rows" *ngIf="displayNotifications">
+                                
+                                <div style="display: flex; justify-content: space-between; padding: 15px; flex-wrap: wrap; border-top: solid 1px #e5e5e5; height: 80px;">
+                                    <div style="display: flex; align-items: center; font-weight: 600;"><span class="dot"></span> Order 1868-32424 Payment failed</div>
+                                    <div>1 month ago</div>
+                                    <div style="width: 100%; padding-top: 5px;">Please update your payment method to process the order</div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 15px; flex-wrap: wrap; border-top: solid 1px #e5e5e5; height: 80px;">
+                                    <div style="display: flex; align-items: center; font-weight: 600;"><span class="dot"></span> Order 1868-32424 Payment failed</div>
+                                    <div>1 month ago</div>
+                                    <div style="width: 100%; padding-top: 5px;">Please update your payment method to process the order</div>
+                                </div>
+                                <div style="display: flex; justify-content:end; padding: 15px; flex-wrap: wrap; border-top: solid 1px #e5e5e5; align-items: center;">
+                                    <a href="#">See all notifications</a>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="global-menu-items">
+                            <div class="show-class" style="" (click)="displayUser = !displayUser; displayNotifications = false;">
+                                <i class="fas fa-user"></i> {{ firstName | titlecase }} {{ lastName | titlecase}}
+                                <i class="fa fa-angle-down show-class"   *ngIf="!displayUser"></i>
+                                <i class="fa fa-angle-up show-class"  *ngIf="displayUser"></i>
+                            </div>
+
+                            <div class="global-menu-items-content" *ngIf="displayUser">
+                                <div class="global-menu-items-content-links" [routerLink]="[ '/']" (click)="displayUser = !displayUser; displayNotifications = !displayNotifications;">
+                                    Go to home page
+                                </div>
+                                <div class="global-menu-items-content-links" style="border-top: solid 1px #e5e5e5;" (click)='logOut(); displayUser = !displayUser; displayNotifications = !displayNotifications;'>
+                                    Logout
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="global-menu-items">
+                            <button type="button" class="info">New Order</button>
+
+                        </div>
+                    </div>
+
+                    <div class="dropdown" style="display: none;">
+                        <h4 class="drop-text"><i class="fas fa-user"></i> {{ firstName | titlecase }} {{ lastName | titlecase}}
+                            <i class="fa fa-angle-down angle-down"></i>
+                            <i class="fa fa-angle-up angle-up"></i>
+                        </h4>
+                        <div class="dropdown-content">
+                            <a [routerLink]="[ '/client/change-password']"><i class="fas fa-key"></i> Change Password</a>
+                            <hr style="margin: 0;">
+                            <a href="javascript: void(0);" (click)='logOut()'><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+
+                </div>
+            </nav>
+
+            <div class="main-container2">
+                <router-outlet></router-outlet>
+            </div>
+            <div class="overlay" (click)="toggleSidebar()" [ngClass]="{'show' : !getSideBarState()}"></div>
+        </main>
+    </div>
+</div>

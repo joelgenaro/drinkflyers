@@ -1,0 +1,48 @@
+<div class="row mt-5 no-gutters justify-content-center">
+    <div class="col-md-10">
+        <div class="artwork-container">
+            <div class="artwork-heading-sec">
+                <div class="artwork-heading">Artworks</div>
+            </div>
+        </div>
+        <div class="artwork-content-sec">
+            <ng-container *ngIf="productArtworkList.length == 0 && artworkLoading == false">
+                <div class="artwork-content-item">
+                    <h1>No Artwork Available</h1>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="artworkLoading == true">
+                <div class="artwork-content-item">
+                    <div class="loading">
+                        <img [src]="spinnerSVG" alt="">
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="productArtworkList.length > 0">
+                <div class="artwork-content-item">
+                    <div class="artwork-item" *ngFor="let art of productArtworkList; let i = index">
+                        <div class="artwork-main-img">
+                            <img [defaultImage]="spinnerSVG" [lazyLoad]="api.artworkImage(art.artwork_id)">
+                        </div>
+                        <!-- <div class="artwork-cross-img">
+                            <img src="assets/img/empty-icon.png" alt="">
+                        </div> -->
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+
+        <div class="bottom-btn">
+            <div class="button-group">
+                <button type="submit" class="post primary lg" [routerLink]="[this.api.checkUser() + '/products/font']" [queryParams]="{id: ds.productId}" [disabled]="Loading" [ngClass]="Loading?'in-progress':''">
+                    <div class="loading-dots">Next
+                        <span></span><span></span><span></span>
+                    </div>
+                </button>
+                <div class="icon post primary">
+                    <i class="fa fa-angle-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

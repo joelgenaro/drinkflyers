@@ -1,0 +1,10 @@
+<div class="range-slider-container">
+    <div class="bar" #bar></div>
+    <div class="selected-bar" #selectedBar></div>
+    <div class="slider s1" (dblclick)="killEvent($event)" (click)="killEvent($event)" (mousedown)="initS1($event)" (touchstart)="initS1($event)" #s1>
+        <p>{{ values.min }}</p>
+    </div>
+    <div class="slider s2" (dblclick)="killEvent($event)" (click)="killEvent($event)" (mousedown)="initS2($event)" (touchstart)="initS2($event)" #s2>
+        <p>{{ values.max }}</p>
+    </div>
+</div>

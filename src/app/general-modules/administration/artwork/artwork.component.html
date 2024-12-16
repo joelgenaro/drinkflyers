@@ -1,0 +1,194 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Artworks</h2>
+            </div>
+            <!-- <div class="col-md-3 d-flex justify-content-between">
+                <h6 class="col-md-4 pt-0 m-0 sort">Sort</h6>
+                <select class="col-md-8 m-0 pl-2 sort-select" (change)="doSort($event, 'asc')">
+                    <option value="">Select Sort</option>
+                    <option value="full_name">Full Name</option>
+                    <option value="short_name">Short Name</option>
+                    <option value="status">Status</option>
+                </select>
+            </div> -->
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="row no-gutters d-flex justify-content-between align-items-start">
+            <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)" class="m-0 mb-2 w-25">
+                <option value="" [disabled]="true">Select per page</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15" [selected]="true">15</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="75">75</option>
+                <option value="100">100</option>
+            </select>
+
+            <button type="button" class="primary" *ngIf="api.checkPermission('add-artwork')" (click)="openModal(form,-1,-1)">Add New Artwork</button>
+
+        </div>
+    </div>
+    <div class="col-md-12 mb-1 mt-1 results-section">
+        <div class="results product-box">
+            <div class="artwork-box" *ngFor="let d of dataList | filter:searchKeyword; let i= index">
+                <div class="image-wrapper" [class.public]="d.public=='1'">
+                    <img [src]="getArtworkUrl(d.id,d.thumbnailTime)" alt="" />
+                </div>
+                <div class="footer">
+                    <div class="action">
+                        <span class="footer-edit" *ngIf="api.checkPermission('update-artwork')">
+                            <i class="fa fa-edit" (click)="openModal(form,i,d.id)"></i>
+                        </span>
+                        <span class="footer-trash" *ngIf="api.checkPermission('delete-artwork')">
+                            <i class="fa fa-trash" (click)="confirmingModal(deleteConfirming, d.id,i)"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <ng-container *ngIf="dataStatus == 'fetching'">
+                <div class="results">
+                    <div class="img-wrapper">
+                        <img src="assets/images/rolling-main.svg" alt="">
+                    </div>
+                </div>
+            </ng-container>
+            <div *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                <div class="results">
+                    <app-no-data-found></app-no-data-found>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 footer-section">
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <ul class="pagination m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul>
+            <ul class="pagination m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+
+<ng-template #form>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{formName}}</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="dataForm" (ngSubmit)="saveForm(dataForm, f)" #f="ngForm">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class=" col-md-12 mb-3">
+                            <div class="d-flex justify-content-center">
+                                <div class="col-md-8">
+                                    <div class="tut-pro-photo">
+                                        <div>
+                                            <img [src]="thumbnail" id="img" class="w-100">
+                                        </div>
+                                        <input type="file" style="display: none;" id="thumbnail-image" (change)="onThumbnailChange($event, cropperModal)">
+                                        <div class="text-center mt-2">
+                                            <button type="button" class="sm success" (click)="browseThumbnail($event)" style="min-width: 140px">Browse Picture</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <label class="mb-0">Show as Public<span class="mendatory">*</span></label>
+                                <div class="personalize-wrapper d-flex justify-content-center">
+                                    <label class="switch">
+                                        <input type="checkbox" formControlName="public">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="primary mt-2 mb-2 ml-0" [disabled]="documentLoading" [ngClass]="documentLoading?'in-progress':''">Save
+                        <span></span><span></span><span></span>
+                    </button>
+                    <button type="button" class="dark ml-1" (click)="cancelButton(f)">Cancel</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #deleteConfirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()" (click)="resetIndex()">No</button>
+        <button type="button" class="danger ml-1" (click)="deleteFile()" [disabled]="documentLoading" [ngClass]="documentLoading?'in-progress':''">
+            <div class="loading-dots">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #cropperModal>
+    <div class="modal-body">
+        <ng-scrollbar class="modal-scrollbar">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="title-wrapper">
+                        <h2 class="title" style="font-size: 20px;">Adjust Image</h2>
+                        <div>
+                            <button type="button" class="sm logo-red">Done</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="150/150" [onlyScaleDown]="true" [roundCropper]="false" format="png" outputType="base64" [alignImage]="'center'">
+                    </image-cropper>
+                </div>
+            </div>
+        </ng-scrollbar>
+    </div>
+</ng-template>

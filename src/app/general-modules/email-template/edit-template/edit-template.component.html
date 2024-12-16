@@ -1,0 +1,57 @@
+<div class="modal-header">
+    <h4 class="modal-title pull-left">Edit Template</h4>
+    <div class="button-group">
+        <button class="post secondary sm" >Super Seeder</button>
+        <label>
+            <div class="icon secondary post">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <input type="checkbox">
+            <div class="button-menu secondary align-right">
+                <ul >
+
+                    <li *ngFor="let d of superSeeder | keyvalue" class="primary sm p-0" type="button" (click)="setSuperSeeder(d.key)">{{d.value}}</li>
+
+                </ul>
+            </div>
+        </label>
+    </div>
+</div>
+
+<div class="modal-body">
+    <form [formGroup]="dataForm" #f="ngForm">
+        <div class="row">
+            <div class="col-md-12 mb-2">
+                <label class="mb-0 mt-0">Title <span class="mendatory">*</span></label>
+                <input formControlName="title" readonly class="form-control mt-0" placeholder="Enter Title" [ngClass]="{'form-submitted': f.submitted}">
+                <div *ngIf="ui.checkErrors(g.title, f)" class="errors">
+                    <p *ngIf="g.title.errors.required">Title is required</p>
+                </div>
+            </div>
+            <div class="col-md-12 mb-2">
+                <label class="mb-0 mt-0">Subject <span class="mendatory">*</span></label>
+                <input formControlName="subject" class="form-control mt-0" placeholder="Enter Email Subject" [ngClass]="{'form-submitted': f.submitted}">
+                <div *ngIf="ui.checkErrors(g.subject, f)" class="errors">
+                    <p *ngIf="g.subject.errors.required">Subject is required</p>
+                </div>
+            </div>
+            <div class="col-md-12 mb-2">
+                <label class="mb-0 mt-0">Content <span class="mendatory">*</span></label>
+                <div>
+                    <quill-editor formControlName="content" [modules]="editorConfig" [ngClass]="{'form-submitted': f.submitted}"></quill-editor>
+                </div>
+                <div *ngIf="ui.checkErrors(g.content, f)" class="errors">
+                    <p *ngIf="g.content.errors.required">Content is required</p>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" (click)="save(f)" class="primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Save
+            <span></span><span></span><span></span>
+        </button>
+        <button type="button" class="dark ml-1" (click)="cancelMailModal(f)">Cancel</button>
+    </form>
+
+    <div class="create-content">
+    </div>
+</div>

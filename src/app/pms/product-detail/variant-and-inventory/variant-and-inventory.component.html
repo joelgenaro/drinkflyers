@@ -1,0 +1,154 @@
+<div class="row pt-4 pb-4 no-gutters justify-content-center outer-section">
+    <div class="col-md-10">
+        <div class="variant-container">
+            <div class="variant-heading-sec">
+                <div class="variant-heading">Variants</div>
+                <div class="row no-gutters d-flex justify-content-between">
+                    <div class="form-group has-search col-md-8 m-0">
+                        <span class="fa fa-search form-control-feedback"></span>
+                        <input type="text" style="height: 40px !important;" class="form-control form-control-search " [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Here">
+                        <span class="form-control-feedback1">
+                            <p>Search</p>
+                        </span>
+                    </div>
+                    <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)" class="col-md-3 m-0 pl-2" style="height: 40px !important;">
+                        <option value="" [disabled]="true">Select per page</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15" [selected]="true">15</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="75">75</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="variant-content-sec">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Serial#
+                            <span class="arrows">
+                                <span (click)="doSort('id', 'asc')" [class]="getArrowClass('id', 'asc')"></span>
+                                <span (click)="doSort('id', 'desc')" [class]="getArrowClass('id', 'desc')"></span>
+                            </span>
+                        </th>
+                        <th>Size
+                            <span class="arrows">
+                                <span (click)="doSort('size', 'asc')" [class]="getArrowClass('size', 'asc')"></span>
+                                <span (click)="doSort('size', 'desc')" [class]="getArrowClass('size', 'desc')"></span>
+                            </span>
+                        </th>
+                        <th>Quantity
+                            <span class="arrows">
+                                <span (click)="doSort('quantity', 'asc')" [class]="getArrowClass('quantity', 'asc')"></span>
+                                <span (click)="doSort('quantity', 'desc')" [class]="getArrowClass('quantity', 'desc')"></span>
+                            </span>
+                        </th>
+                        <th>Color
+                            <span class="arrows">
+                                <span (click)="doSort('color_code', 'asc')" [class]="getArrowClass('color_code', 'asc')"></span>
+                                <span (click)="doSort('color_code', 'desc')" [class]="getArrowClass('color_code', 'desc')"></span>
+                            </span>
+                        </th>
+                        <th>TP
+                            <span tooltip="Trade Price" class="info-wrapper"><img src="assets/images/info.svg" /></span>
+                        </th>
+                        <th>RRP
+                            <span tooltip="Recommended Retail Price" class="info-wrapper"><img src="assets/images/info.svg" /></span>
+                        </th>
+                        <th>RP
+                            <span tooltip="Retail Price" class="info-wrapper"><img src="assets/images/info.svg" /></span>
+                            <span class="arrows">
+                                <span (click)="doSort('rp', 'asc')" [class]="getArrowClass('rp', 'asc')"></span>
+                                <span (click)="doSort('rp', 'desc')" [class]="getArrowClass('rp', 'desc')"></span>
+                            </span>
+                        </th>
+                    </tr>
+                </thead>
+                <ng-container *ngIf="dataList.length> 0">
+                    <tbody>
+                        <tr style="border-radius: 10px;" *ngFor="let d of dataList | filter:searchKeyword; let i= index">
+                            <!-- <td class="serial">1</td> -->
+                            <td class="serial">{{ getSerialNumber(i) }} </td>
+                            <td class="size">{{d.base_product_variants.size}}</td>
+                            <td class="size">{{d?.quantity}}</td>
+                            <td>
+                                <div class="color-block color" [style.background-color]="d.base_product_variants.color_code"></div>
+                            </td>
+                            <td class="price">$ {{d.base_product_variants.tp}}</td>
+                            <td class="price">$ {{d.base_product_variants.rrp}}</td>
+                            <td class="price">$ {{d.rp}}</td>
+                        </tr>
+                    </tbody>
+                </ng-container>
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                </ng-container>
+
+                <tbody *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                    <tr>
+                        <td colspan="7">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+                <ul class="pagination justify-content-left  mt-3">
+                    <li class="page-item">
+                        <small *ngIf="page<10">Current page: 0{{page}}</small>
+                        <small *ngIf="page>=10">Current page: {{page}}</small>
+                    </li>
+                </ul>
+                <ul class="pagination justify-content-left">
+                    <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                    </li>
+                    <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                    </li>
+                    <ng-container *ngIf="pagination.last_page <= 6">
+                        <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                            <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                            </li>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="pagination.last_page >= 7">
+                        <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                            <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                            </li>
+                            <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link">...</a>
+                            </li>
+                            <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                            </li>
+                        </ng-container>
+                    </ng-container>
+                    <li class="page-item" *ngIf="pagination.next_page_url != null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                    </li>
+                    <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="bottom-btn">
+            <div class="button-group">
+                <button type="submit" class="post primary lg" [routerLink]="[this.api.checkUser() + '/products-list']" [disabled]="Loading" [ngClass]="Loading?'in-progress':''">
+                    <div class="loading-dots">Goto list
+                        <span></span><span></span><span></span>
+                    </div>
+                </button>
+                <div class="icon post primary">
+                    <i class="fa fa-angle-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

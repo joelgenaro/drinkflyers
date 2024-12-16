@@ -1,0 +1,430 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">SEPOD Store's Products</h2>
+            </div>
+            <!-- <div class="col-md-3 d-flex justify-content-between">
+                <h6 class="col-md-4 pt-0 m-0 sort">Sort</h6>
+                <select class="col-md-8 m-0 pl-2 sort-select" (change)="doSort($event, 'asc')">
+                    <option value="">Select Sort</option>
+                    <option value="name">Product Name</option>
+                    <option value="type">Product Tpye</option>
+                    <option value="sku">SKU</option>
+                </select>
+            </div> -->
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="row no-gutters d-flex justify-content-between align-items-start">
+            <div class="search m-0 mb-2">
+                <div class="input-group">
+                    <div class="group">
+                        <div class="pre">
+                            <button class="secondary">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="post" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Product Here" />
+                        <div class="post">
+                            <button class="secondary">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)" class="m-0 mb-2 w-25">
+                <option value="" [disabled]="true">Select per page</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15" [selected]="true">15</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="75">75</option>
+                <option value="100">100</option>
+            </select>
+            <button class="m-0 mb-2 primary" (click)="openModal(addSupplierProduct)">
+                Add Product
+            </button>
+        </div>
+    </div>
+
+    <div class="col-md-12 mb-1 results-section">
+        <div class="col-md-12 mb-1 p-0">
+            <div class="product-wrapper">
+                <div class="innerBox">
+                    <div class="product-box box-width">
+                        <div class="product-upper-content">
+                            <div class="product-info-upper">
+                                <div class="items pr-3">
+                                    <label>Store Full Name </label>
+                                    <p>{{ storeDataList.full_name }}</p>
+                                </div>
+                                <div class="items pr-3">
+                                    <label>POC Name </label>
+                                    <p>{{ storeDataList.poc_name }}</p>
+                                </div>
+                                <div class="items pr-3">
+                                    <label>POC Contact</label>
+                                    <p>{{ storeDataList.poc_contact }}</p>
+                                </div>
+                                <div class="items pr-3">
+                                    <label>Web </label>
+                                    <p>{{ storeDataList.web }}</p>
+                                </div>
+                                <div class="items pr-3">
+                                    <label>Built-in Technology </label>
+                                    <p>{{ storeDataList.builtin_technology }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="product-wrapper">
+            <ng-container *ngIf="dataStatus == 'fetching'">
+                <div class="img-wrapper">
+                    <img src="assets/images/rolling-main.svg" alt="" />
+                </div>
+            </ng-container>
+            <ng-container *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                <div class="product-box width-class">
+                    <app-no-data-found></app-no-data-found>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="dataList.length > 0 && dataStatus == 'done'">
+                <div class="innerBox">
+                    <div class="product-box" *ngFor="let d of dataList | filter: searchKeyword; let i = index">
+                        <div class="product-upper-content">
+                            <div class="product-info">
+                                <div class="item pr-3">
+                                    <label>SKU </label>
+                                    <p>{{ d.product.sku }}</p>
+                                </div>
+                                <div class="item pr-3 product-name p-name">
+                                    <label>Product Name</label>
+                                    <ng-container *ngIf="api.checkPermission('product-detail')">
+                                        <p class="link-name" (click)="modalRef.hide()" [routerLink]="['/user/products/product-info']" [queryParams]="{id: d.product.id }">
+                                            {{d.product.name.charAt(0).toUpperCase() + d.product.name.slice(1) }}
+                                        </p>
+                                    </ng-container>
+                                    <ng-container *ngIf="!api.checkPermission('product-detail')">
+                                        <p class="simple-txt">
+                                            {{d.product.name.charAt(0).toUpperCase() + d.product.name.slice(1) }}
+                                        </p>
+                                    </ng-container>
+                                </div>
+                                <!-- <div class="item pr-3 product-name p-name">
+                                    <label>Product Category</label>
+                                    <p class="link-name" [routerLink]="['/user/category']" [queryParams]="{id: d.product.category.id, name: d.product.category.name }">
+                                        {{
+                                        d.product.category.name
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                        d.product.category.name.slice(1)
+                                        }}
+                                    </p>
+                                </div> -->
+                            </div>
+
+                            <div class="action-buttons">
+                                <button *ngIf="d.publish_status == 'UnPublish'" type="button" class="sm success" (click)="statusConfirmingModal(changeStatusPublish,d.id,i,'Publish')" style="width: 110px;">Publish</button>
+                                <button *ngIf="d.publish_status == 'Publish'" type="button" class="sm danger" (click)="statusConfirmingModal(changeStatusUnPublish,d.id,i,'UnPublish')" style="width: 110px;">UnPublish</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+    <div class="col-md-12 mb-1 footer-section">
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item">
+                    <small *ngIf="page < 10">Current page: 0{{ page }}</small>
+                    <small *ngIf="page >= 10">Current page: {{ page }}</small>
+                </li>
+            </ul>
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page - 1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="
+                            let p of [].constructor(pagination.last_page);
+                            let i = index
+                        ">
+                        <li [class]="
+                                page == i + 1 ? 'page-item active' : 'page-item'
+                            ">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i + 1)">{{ i + 1 }}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="
+                            let p of [].constructor(pagination.last_page);
+                            let i = index
+                        ">
+                        <li *ngIf="i < 4" [class]="
+                                page == i + 1 ? 'page-item active' : 'page-item'
+                            ">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i + 1)">{{ i + 1 }}</a>
+                        </li>
+                        <li *ngIf="pagination.last_page - i == 3" [class]="
+                                page == i + 1 ? 'page-item active' : 'page-item'
+                            ">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="
+                                pagination.last_page - i == 1 ||
+                                pagination.last_page - i == 2
+                            " [class]="
+                                page == i + 1 ? 'page-item active' : 'page-item'
+                            ">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i + 1)">{{ i + 1 }}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page + 1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<ng-template #confirming>
+    <div class="modal-body text-center pt-3">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark mt-3" (click)="modalRef.hide()">
+            No
+        </button>
+        <button type="button" class="danger ml-1 mt-3" (click)="delete()" [disabled]="loginLoading" [ngClass]="loginLoading ? 'in-progress' : ''">
+            Yes <span></span><span></span><span></span>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #addSupplierProduct>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Products</h4>
+        <button type="button" class="close pull-right" (click)="modalRef.hide()">
+            <span><i class="fas fa-times"></i></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12 mt-3 mb-2 results-section">
+                <div class="artwork-content-sec-modal">
+                    <ng-container *ngIf="productList.length == 0 && productListLoading == false">
+                        <div class="artwork-content-item text-center">
+                            <h1>No Data Available</h1>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="productListLoading == true">
+                        <div class="img-wrapper">
+                            <img src="assets/images/rolling-main.svg" alt="">
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="productList.length > 0">
+                        <div class="
+                                row
+                                no-gutters
+                                d-flex
+                                justify-content-between
+                                align-items-start
+                            ">
+                            <div class="search m-0 mb-2">
+                                <div class="input-group mb-0">
+                                    <div class="group">
+                                        <div class="pre">
+                                            <button class="secondary">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </div>
+                                        <input type="text" class="post" [(ngModel)]="modalSearchKeyword" (ngModelChange)="
+                                                modalSearchKeywordChange($event)
+                                            " placeholder="Search Product Here" />
+                                        <div class="post">
+                                            <button class="secondary">
+                                                Search
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <select [(ngModel)]="modalFilters.perPage" (change)="modalSelectPerPage($event)" class="m-0 mb-2 w-25">
+                                <option value="" [disabled]="true">
+                                    Select per page
+                                </option>
+                                <option value="5">5</option>
+                                <option value="10" [selected]="true">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="75">75</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+
+                        <div class="product-boxx" *ngFor="let p of productList; let i = index">
+                            <div class="product-upper-content">
+                                <div class="product-info">
+                                    <div class="item pr-3">
+                                        <label>SKU </label>
+                                        <p>{{ p.sku }}</p>
+                                    </div>
+                                    <div class="item pr-3 product-name">
+                                        <label>Product Name</label>
+                                        <ng-container *ngIf="api.checkPermission('product-detail')">
+                                            <p class="link-name" (click)="modalRef.hide()" [routerLink]="['/user/products/product-info']" [queryParams]="{id: p.id }">
+                                                {{p.name.charAt(0).toUpperCase() + p.name.slice(1) }}
+                                            </p>
+                                        </ng-container>
+                                        <ng-container *ngIf="!api.checkPermission('product-detail')">
+                                            <p class="simple-txt">
+                                                {{p.name.charAt(0).toUpperCase() + p.name.slice(1) }}
+                                            </p>
+                                        </ng-container>
+
+                                    </div>
+                                    <div class="item pr-3 product-name">
+                                        <label>Product Category</label>
+                                        <ng-container>
+                                            <p class="link-name" (click)="modalRef.hide()" [routerLink]="['/user/category']" [queryParams]="{id: p.category.id, name: p.category.name }">
+                                                {{ p.category.name.charAt(0).toUpperCase() + p.category.name.slice(1) }}
+                                            </p>
+                                        </ng-container>
+                                    </div>
+                                </div>
+
+                                <div class="action-buttons">
+                                    <label class="checkbox primary">
+                                        <input type="checkbox" (click)="addProduct(p.id, i)" />
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+        <div class="modal-bottom">
+            <div class="pagination">
+                <nav class="paginationCover" aria-label="Page navigation example" *ngIf="modalDataStatus == 'done'">
+                    <ul class="pagination justify-content-left m-0">
+                        <li class="page-item">
+                            <small *ngIf="modalPage < 5">Current page: 0{{ modalPage }}</small>
+                            <small *ngIf="page >= 5">Current page: {{ modalPage }}</small>
+                        </li>
+                    </ul>
+                    <ul class="pagination justify-content-left m-0">
+                        <li class="page-item" *ngIf="modalPagination.prev_page_url != null">
+                            <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setModalPagination(modalPage - 1)">Previous</a>
+                        </li>
+                        <li class="page-item disabled" *ngIf="modalPagination.prev_page_url == null">
+                            <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                        </li>
+                        <ng-container *ngIf="modalPagination.last_page <= 6">
+                            <ng-container *ngFor="
+                                    let p of [].constructor(
+                                        modalPagination.last_page
+                                    );
+                                    let i = index
+                                ">
+                                <li [class]="
+                                        modalPage == i + 1
+                                            ? 'page-item active'
+                                            : 'page-item'
+                                    ">
+                                    <a class="page-link" href="javascript: void(0)" (click)="setModalPagination(i + 1)">{{ i + 1 }}</a>
+                                </li>
+                            </ng-container>
+                        </ng-container>
+                        <ng-container *ngIf="modalPagination.last_page >= 7">
+                            <ng-container *ngFor="
+                                    let p of [].constructor(
+                                        modalPagination.last_page
+                                    );
+                                    let i = index
+                                ">
+                                <li *ngIf="i < 4" [class]="
+                                        modalPage == i + 1
+                                            ? 'page-item active'
+                                            : 'page-item'
+                                    ">
+                                    <a class="page-link" href="javascript: void(0)" (click)="setModalPagination(i + 1)">{{ i + 1 }}</a>
+                                </li>
+                                <li *ngIf="modalPagination.last_page - i == 3" [class]="
+                                        modalPage == i + 1
+                                            ? 'page-item active'
+                                            : 'page-item'
+                                    ">
+                                    <a class="page-link">...</a>
+                                </li>
+                                <li *ngIf="
+                                        modalPagination.last_page - i == 1 ||
+                                        modalPagination.last_page - i == 2
+                                    " [class]="
+                                        modalPage == i + 1
+                                            ? 'page-item active'
+                                            : 'page-item'
+                                    ">
+                                    <a class="page-link" href="javascript: void(0)" (click)="setModalPagination(i + 1)">{{ i + 1 }}</a>
+                                </li>
+                            </ng-container>
+                        </ng-container>
+                        <li class="page-item" *ngIf="modalPagination.next_page_url != null">
+                            <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setModalPagination(+page + 1)">Next</a>
+                        </li>
+                        <li class="page-item disabled" *ngIf="modalPagination.next_page_url == null">
+                            <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="modal-button">
+                <button class="primary mt-2" [disabled]="Loading" [ngClass]="Loading ? 'in-progress' : ''" (click)="save()">
+                    Publish <span></span><span></span><span></span>
+                </button>
+                <button type="button" class="dark ml-1" (click)="cancelButton()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #changeStatusPublish>
+    <div class="modal-body text-center mt-2">
+        <h2 class="primary">Confirmation</h2>
+        <p>Are you sure that you want change the status to Publish?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="changeStatusPub()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">
+            <div class="loading-dots">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>
+<ng-template #changeStatusUnPublish>
+    <div class="modal-body text-center mt-2">
+        <h2 class="primary">Confirmation</h2>
+        <p>Are you sure that you want change the status to UnPublish?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="changeStatusUnPub()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">
+            <div class="loading-dots">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>

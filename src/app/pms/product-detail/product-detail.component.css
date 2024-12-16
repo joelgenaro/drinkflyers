@@ -1,0 +1,121 @@
+section.navbar {
+    display: block;
+    background-color: #e9f1f3;
+    margin: -10px 0 0 -15px;
+    border-radius: 10px 10px 0 0;
+}
+.navbar-heading {
+    display: flex;
+    justify-content: center;
+}
+.navbar-heading h3 {
+    /* font-weight: 200;
+    padding: 20px 0 25px;
+    color: #484848; */
+
+    font-weight: 300;
+    padding: 15px 0 20px;
+    color: #484848;
+    font-size: 20px;
+}
+.navbar-links {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0 0 22px 0;
+    margin: 0;
+}
+.navbar-links a {
+    text-decoration: none;
+    color: #a7a7a7;
+    font-weight: 300;
+    width: 150px;
+}
+.navbar-items {
+    /* background-color: aquamarine; */
+    position: relative;
+}
+.navbar-items a {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.navbar-items a p {
+    padding: 15px 0 0 0;
+    text-align: center;
+    margin: 0;
+}
+.navbar-items a p.active {
+    color: #307477;
+    font-weight: 400;
+    margin: -3px 0 0 0;
+    border-bottom: 2px solid #307477;
+}
+.navbar-items a p.activated {
+    color: #307477;
+}
+i.fas.fa-circle {
+    color: #a7a7a7;
+    padding: 0;
+    z-index: 1;
+}
+i.fas.fa-circle.active {
+    color: #307477;
+    border: 3px solid #dfa92d;
+    border-radius: 50%;
+    margin: -7px 0 0px 0;
+    padding: 3px;
+}
+i.fas.fa-circle.activated {
+    color: #307477;
+}
+hr {
+    margin: 0px !important;
+    border: 2px solid #307477 !important;
+    width: 100%;
+    position: absolute;
+    top: 5px;
+    right: 49%;
+    display: none;
+}
+/* hr.activated {
+    display: block;
+} */
+hr.line-activated {
+    display: block;
+}
+@media only screen and (max-width: 1024px) {
+    .navbar-links {
+        /* min-width: 240px; */
+        justify-content: flex-start;
+        overflow: auto;
+        padding: 10px 0 0 0;
+    }
+}
+/* @media only screen and (max-width: 768px) {
+    .navbar-links {
+        min-width: 240px;
+        justify-content: flex-start;
+        overflow: auto;
+        padding: 10px 0 0 0;
+    }
+} */
+@media only screen and (max-width: 425px) {
+    .navbar-links {
+        min-width: 350px;
+    }
+    .navbar-links a {
+        width: 100px;
+    }
+}
+@media only screen and (max-width: 375px) {
+    .navbar-links {
+        min-width: 300px;
+    }
+}
+@media only screen and (max-width: 320px) {
+    .navbar-links {
+        min-width: 240px;
+    }
+}

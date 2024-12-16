@@ -1,0 +1,245 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Bulk Uploads</h2>
+            </div>
+
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="product-box">
+            <ng-container *ngIf="dataStatus == 'fetching'">
+                <div class="img-wrapper">
+                    <img src="assets/images/rolling-main.svg" alt="">
+                </div>
+            </ng-container>
+            <ng-container *ngIf="bProduct == null && dataStatus == 'done'">
+                <div class="product-box">
+                    <app-no-data-found></app-no-data-found>
+                </div>
+            </ng-container>
+            <div class="product-upper-content" *ngIf="bProduct != null">
+                <div class="product-info">
+                    <!-- <div class="item">
+                        <label>Sr. # </label>
+                        <p>{{ getSerialNumber(i) }}</p>
+                    </div> -->
+                    <div class="item">
+                        <label>SKU </label>
+                        <p>{{ bProduct.sku }} </p>
+                    </div>
+                    <div class="item">
+                        <label>Base Product Name</label>
+                        <p>{{bProduct.name.charAt(0).toUpperCase() + bProduct.name.slice(1)}}</p>
+                    </div>
+                    <!-- <div class="item product-base-price">
+                        <label>Base Price </label>
+                        <p>{{ d.base_price | number: '3.0-0' }} </p>
+                    </div> -->
+                    <div class="item">
+                        <label>Status </label>
+                        <p *ngIf="bProduct.status == 'active'"><i class="fas fa-dot-circle"></i> {{ bProduct.status | titlecase }}</p>
+                        <p *ngIf="bProduct.status == 'inactive'"><i class="fas fa-dot-circle gray"></i> {{ bProduct.status | titlecase }}</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row no-gutters d-flex justify-content-between align-items-start">
+            <div class="search m-0 mb-2">
+                <input class="d-none" type="file" #f (change)="onFileChange($event)" id="csv-file">
+                <div class="input-group">
+                    <div class="group">
+                        <input type="text" class="post" placeholder="Upload Zip  File" [(ngModel)]="filename" readonly />
+                        <div class="post">
+                            <button class="secondary" type="button" (click)="browseFile($event)">Browse</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" (click)="save()" class="primary mb-2" [disabled]="Loading" [ngClass]="Loading ? 'in-progress' : ''">
+                Submit <span></span><span></span><span></span>
+            </button>
+
+            <select [(ngModel)]="baseProductId" (change)="productDetail($event)" class="m-0 mb-2 col-md-3">
+                <option value=null>Select Base Product</option>
+                <option *ngFor="let bp of baseProductList" value="{{bp.id}}">{{bp.name}}</option>
+
+            </select>
+
+            <button type="button" (click)="downloadZip()" class="secondary mb-2" [disabled]="Loading" [ngClass]="LoadingZip ? 'in-progress' : ''">
+                Download Sample File <span></span><span></span><span></span>
+            </button>
+            <button type="button" class="m-0 mb-2 primary"  [routerLink]="['/user/vp-product-bulk-upload-list']" [queryParams]="{ id: '-1'}">Bulk Upload History</button>
+            <!-- <button class="m-0 mb-2 primary" type="button" (click)="save()">Submit</button> -->
+            <!-- <button type="button" class="m-0 mb-2 primary" *ngIf=" api.checkPermission('add-base-product')" [routerLink]="['/user/base-product/product-detail']" [queryParams]="{ id: '-1'}">Add New Product</button> -->
+            <p *ngIf="totalProduct > 0" class="product-up">Total Record: {{totalProduct}}</p>
+            <p *ngIf="totalSuccess > 0" class="secondary product-up">Success: {{totalSuccess}}</p>
+            <p *ngIf="totalFailed > 0" class="primary product-up">Failed: {{totalFailed}}</p>
+        </div>
+    </div>
+
+    <div class="col-md-12 mb-1 results-section">
+        <div class="product-wrapper">
+
+
+            <!-- <ng-container *ngIf="dataStatus == 'fetching'">
+                <div class="img-wrapper">
+                    <img src="assets/images/rolling-main.svg" alt="">
+                </div>
+            </ng-container> -->
+            <!-- <ng-container *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                <div class="product-box">
+                    <app-no-data-found></app-no-data-found>
+                </div>
+            </ng-container> -->
+            <ng-container *ngFor="let d of dataList;let i= index">
+                <div class="product-box" [class.failed]="d.status == 'Failed'">
+                    <div class="product-upper-content">
+                        <div class="product-info">
+                            <!-- <div class="item">
+                                <label>Sr. # </label>
+                                <p>{{ getSerialNumber(i) }}</p>
+                            </div> -->
+                            <div class="item">
+                                <label>SKU </label>
+                                <p>{{ d.sku }} </p>
+                            </div>
+                            <div class="item">
+                                <label>Product Name</label>
+                                <p>{{d.name.charAt(0).toUpperCase() + d.name.slice(1)}}</p>
+                            </div>
+                            <!-- <div class="item product-base-price">
+                                <label>Base Price </label>
+                                <p>{{ d.base_price | number: '3.0-0' }} </p>
+                            </div> -->
+                            <div class="item">
+                                <label>Status </label>
+                                <p *ngIf="d.status == 'Failed'"><i class="fas fa-dot-circle"></i> {{ d.status | titlecase }}</p>
+                                <p *ngIf="d.status == 'Success'"><i class="fas fa-dot-circle gray"></i> {{ d.status | titlecase }}</p>
+                            </div>
+
+                            <div class="item">
+                                <label>Failed Reason</label>
+                                <p>{{d.failed_reason}}</p>
+                            </div>
+                        </div>
+                        <!-- <div class="action-buttons">
+                            <button type="button" *ngIf="api.checkPermission('update-base-product')" class="primary sm ml-1" [routerLink]="['/user/bulk-uploader']" [queryParams]="{ base_id: d.id }">Bulk Upload</button>
+                            <button type="button" *ngIf="api.checkPermission('update-base-product')" class="secondary sm ml-1" [routerLink]="['/user/base-product/product-detail']" [queryParams]="{ id: d.id }">Edit</button>
+                        </div> -->
+                    </div>
+                    <p style="padding: 10px 0 2px;" class="primary">Images</p>
+                    <hr style="margin-top: 0px; margin-bottom: 6px;">
+                    <div class="d-flex justify-content-between mb-2">
+                        <div class="item">
+                            <label>Image Name</label>
+                        </div>
+                        <div class="item">
+                            <label>Status </label>
+                        </div>
+                        <div class="item">
+                            <label>Failed Reason</label>
+                        </div>
+                    </div>
+                    <ng-container *ngFor="let img of d.images">
+                        <div class="d-flex justify-content-between mb-2">
+                            <!-- <div class="item">
+                                <label>Sr. # </label>
+                                <p>{{ getSerialNumber(i) }}</p>
+                            </div> -->
+                            <div class="item">
+                                <p>{{img.name.charAt(0).toUpperCase() + img.name.slice(1)}}</p>
+                            </div>
+                            <!-- <div class="item product-base-price">
+                                <label>Base Price </label>
+                                <p>{{ d.base_price | number: '3.0-0' }} </p>
+                            </div> -->
+                            <div class="item">
+                                <p *ngIf="img.status == 'Failed'"><i class="fas fa-dot-circle"></i> {{ img.status | titlecase }}</p>
+                                <p *ngIf="img.status == 'Success'"><i class="fas fa-dot-circle gray"></i> {{ img.status | titlecase }}</p>
+                                <p *ngIf="img.status == null">None</p>
+                            </div>
+                            <div class="item">
+                                <p>{{img.failed_reason? img.failed_reason: 'None'}}</p>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <p style="padding: 10px 0 2px;" class="primary">Input Areas</p>
+                    <hr style="margin-top: 0px; margin-bottom: 6px;">
+                    <div class="d-flex justify-content-between mb-2">
+                        <div class="item">
+                            <label>Sample Text</label>
+                        </div>
+                        <div class="item">
+                            <label>Status </label>
+                        </div>
+                        <div class="item">
+                            <label>Failed Reason</label>
+                        </div>
+                    </div>
+                    <ng-container *ngFor="let inp of d.inputs">
+                        <div class="d-flex justify-content-between mb-2">
+                            <div class="item">
+                                <p>{{inp.text.charAt(0).toUpperCase() + inp.text.slice(1)}}</p>
+                            </div>
+                            <div class="item">
+                                <p *ngIf="inp.status == 'Failed'"><i class="fas fa-dot-circle"></i> {{ inp.status | titlecase }}</p>
+                                <p *ngIf="inp.status == 'Success'"><i class="fas fa-dot-circle gray"></i> {{ inp.status | titlecase }}</p>
+                                <p *ngIf="inp.status == null">None</p>
+                            </div>
+                            <div class="item">
+                                <p>{{inp.failed_reason? inp.failed_reason: 'None'}}</p>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+    <!-- <div class="col-md-12 mb-1 footer-section">
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <ul class="pagination justify-content-left  m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul>
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div> -->
+</div>

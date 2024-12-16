@@ -1,0 +1,34 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-2 mt-3 header-section">
+        <mat-horizontal-stepper>
+            <mat-step label="Step 1" state="phone">
+                <p>Put down your phones.</p>
+                <div>
+                    <button mat-button matStepperNext>Next</button>
+                </div>
+            </mat-step>
+
+            <mat-step label="Step 2" state="chat">
+                <p>Socialize with each other.</p>
+                <div>
+                    <button mat-button matStepperPrevious>Back</button>
+                    <button mat-button matStepperNext>Next</button>
+                </div>
+            </mat-step>
+
+            <mat-step label="Step 3">
+                <p>You're welcome.</p>
+            </mat-step>
+
+            <!-- Icon overrides. -->
+            <ng-template matStepperIcon="phone">
+                <mat-icon>call_end</mat-icon>
+            </ng-template>
+
+            <ng-template matStepperIcon="chat">
+                <mat-icon>forum</mat-icon>
+            </ng-template>
+        </mat-horizontal-stepper>
+    </div>
+    <div class="col-md-12 mb-1 results-section"></div>
+</div>

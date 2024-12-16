@@ -1,0 +1,48 @@
+<div class="row mt-5 no-gutters justify-content-center">
+    <div class="col-md-10">
+        <div class="font-container">
+            <div class="font-heading-sec">
+                <div class="font-heading">Fonts</div>
+            </div>
+        </div>
+        <div class="font-content-sec row">
+            <ng-container *ngIf="dataStatus== 'fetching'">
+                <div class="loading">
+                    <img [src]="spinnerSVG" alt="">
+                </div>
+            </ng-container>
+            <ng-container *ngIf="productFontList.length == 0 && dataStatus === 'done'">
+                <div class="col-md-6">
+                    <div class="artwork-content-item">
+                        <h1>No Font Available</h1>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="productFontList.length > 0 && dataStatus === 'done'">
+                <div class="col-md-6" *ngFor="let f of productFontList; let i = index">
+                    <div class="font-content-item">
+                        <div class="font-head">
+                            <p>{{f.font? f.font.name: ''}}</p>
+                        </div>
+                        <div class="font-desc">
+                            <p>This is sample of the {{f.font? f.font.name: ''}} font</p>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+
+        <div class="bottom-btn">
+            <div class="button-group">
+                <button type="button" class="post primary lg" [routerLink]="[this.api.checkUser() + '/products/personalized-region']" [queryParams]="{id: ds.productId}" [disabled]="LoadingNext" [ngClass]="LoadingNext?'in-progress':''">
+                    <div class="loading-dots">Next
+                        <span></span><span></span><span></span>
+                    </div>
+                </button>
+                <div class="icon post primary">
+                    <i class="fa fa-angle-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

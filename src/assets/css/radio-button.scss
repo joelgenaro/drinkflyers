@@ -1,0 +1,112 @@
+.admin-panel {
+    /* Customize the label (the container) */
+    .radio {
+        display: block;
+        position: relative;
+        padding-left: 35px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        font-size: 22px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    /* Hide the browser's default radio button */
+    .radio input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+
+    /* Create a custom radio button */
+    .radio .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 22px;
+        width: 22px;
+        background-color: #eee;
+        border-radius: 50%;
+    }
+
+    /* On mouse-over, add a grey background color */
+    .radio:hover input ~ .checkmark {
+        background-color: #ccc;
+    }
+
+    /* When the radio button is checked, add a blue background
+    .radio input:checked ~ .checkmark {
+        background-color: #2196f3;
+    }
+    */
+
+    /* Create the indicator (the dot/circle - hidden when not checked) */
+    .radio .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    /* Show the indicator (dot/circle) when checked */
+    .radio input:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    /* Style the indicator (dot/circle) */
+    .radio .checkmark:after {
+        top: 7px;
+        left: 7px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: white;
+    }
+
+    .radio-group {
+        display: flex;
+    }
+
+    .radio-group.horizontal {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .radio-group.vertical {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .radio-container {
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .radio.primary input:checked ~ .checkmark {
+        background-color: var(--ap-primary);
+    }
+    .radio.secondary input:checked ~ .checkmark {
+        background-color: var(--ap-secondary);
+    }
+    .radio.success input:checked ~ .checkmark {
+        background-color: var(--ap-success);
+    }
+    .radio.danger input:checked ~ .checkmark {
+        background-color: var(--ap-danger);
+    }
+    .radio.info input:checked ~ .checkmark {
+        background-color: var(--ap-info);
+    }
+    .radio.warning input:checked ~ .checkmark {
+        background-color: var(--ap-warning);
+    }
+    .radio.dark input:checked ~ .checkmark {
+        background-color: var(--ap-dark);
+    }
+    .radio.light input:checked ~ .checkmark {
+        background-color: var(--ap-light);
+    }
+}

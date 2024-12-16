@@ -1,0 +1,46 @@
+#chartSales .apexcharts-series.apexcharts-radial-series path {
+    stroke: #f3585f !important;
+    stroke-linecap: round !important;
+}
+#chartBaseProduct .apexcharts-series.apexcharts-radial-series path {
+    stroke: #317478 !important;
+    stroke-linecap: round !important;
+}
+#chartVirtualProduct .apexcharts-series.apexcharts-radial-series path {
+    stroke: #e6a000 !important;
+    stroke-linecap: round !important;
+}
+
+#chartProdAdd .apexcharts-series.apexcharts-radial-series path {
+    stroke: #ec6666 !important;
+    stroke-linecap: round !important;
+}
+
+#chartSaleByCat .apexcharts-series.apexcharts-radial-series path {
+    fill: #ec6666 !important;
+}
+
+/* g.apexcharts-slices path#SvgjsPath1143 {
+    fill: #317478 !important;
+}
+g.apexcharts-slices path#SvgjsPath1156 {
+    fill: #ec6666 !important;
+}
+g.apexcharts-slices path#SvgjsPath1169 {
+    fill: #dfa92d !important;
+} */
+/* .apexcharts-legend.apexcharts-align-center.position-right {
+    display: none;
+}
+.apexcharts-legend.apexcharts-align-center.position-bottom {
+    display: none;
+} */
+/* foreignObject {
+    width: 240px !important;
+}
+svg#SvgjsSvg1132 {
+    width: 240px !important;
+}
+div#apexchartsekkhqcqu {
+    width: 240px !important;
+} */

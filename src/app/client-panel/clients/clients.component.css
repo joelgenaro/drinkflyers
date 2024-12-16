@@ -1,0 +1,28 @@
+.themeCol2 {
+    color: orange;
+    cursor: pointer;
+}
+
+.themeCol3 {
+    color: blue;
+}
+
+.danger {
+    color: red;
+}
+.danger i {
+    cursor: pointer;
+}
+
+.btnOrange {
+    background-color: orange;
+    /* text-transform: uppercase; */
+}
+.btnRed {
+    background-color: red;
+    /* text-transform: uppercase; */
+}
+.btnGreen {
+    background-color: green;
+    /* text-transform: uppercase; */
+}

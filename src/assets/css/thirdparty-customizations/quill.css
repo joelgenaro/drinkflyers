@@ -1,0 +1,5 @@
+.ql-toolbar.ql-snow + .ql-container.ql-snow {
+    max-height: 235px !important;
+    min-height: 235px !important;
+    overflow: auto;
+}

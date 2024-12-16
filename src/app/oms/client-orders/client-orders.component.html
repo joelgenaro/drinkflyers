@@ -1,0 +1,207 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 header-section">
+        <div class="row no-gutters heading">
+            <div class="col-md-auto">
+                <h1>Orders</h1>
+            </div>
+            <div class="col-md-auto">
+                <div class="im-export-order-container">
+                    <div class="im-export-content" (click)="exportCsv()" *ngIf="api.checkPermission('export-order')">
+                        <div class="im-export-img-wrapper"><img src="assets/img/sign-in.png" alt="Sign In Icon"></div>
+                        <div class="im-export-text">Export Orders</div>
+                    </div>
+                    <div class="im-export-content">
+                        <div class="im-export-img-wrapper"><img src="assets/img/sign-in.png" alt="Sign In Icon"></div>
+                        <div class="im-export-text">Import Orders</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row no-gutters search">
+            <div class="col-md-6">
+                <div class="input-group m-0 p-0">
+                    <input type="text" class="post search-input" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Order Here" />
+                </div>
+            </div>
+        </div>
+        <!-- <app-breadcrums [data]="breadCrum"></app-breadcrums> -->
+        <div class="row no-gutters filters">
+            <div class="filter col-md-3">
+                <div class="input-group">
+                    <input type="search" class="post search-input" placeholder="Select Date Here" bsDaterangepicker [(ngModel)]="bsRangeValue" (ngModelChange)="rangeDate()" [bsConfig]="{ rangeInputFormat : 'DD-MM-YYYY', dateInputFormat: 'DD-MM-YYYY', adaptivePosition: true }">
+                </div>
+            </div>
+            <div class="filter col-md-3">
+                <div class="input-group">
+                    <ng-select [multiple]="true" [(ngModel)]="selectStatuses" [ngModelOptions]="{ standalone: true }" (change)="selectedStatus()" placeholder="All Statuses">
+                        <ng-option *ngFor="let status of statusesList" [value]="status.value">{{ status.name }}</ng-option>
+                    </ng-select>
+                </div>
+            </div>
+            <div class="filter col-md-3">
+                <div class="input-group">
+                    <ng-select [multiple]="true" [(ngModel)]="selectStores" [ngModelOptions]="{ standalone: true }" (change)="selectedStore()" placeholder="All Stores">
+                        <ng-option *ngFor="let store of storeList" [value]="store.id">{{ store.store_name }}</ng-option>
+                    </ng-select>
+                </div>
+            </div>
+            <div class="filter col-md-3">
+                <div class="input-group">
+                    <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)">
+                        <option value="" [disabled]="true">Per pages</option>
+                        <option value="5">5 per page</option>
+                        <option value="10">10 per page</option>
+                        <option value="15" [selected]="true">15 per page</option>
+                        <option value="20">20 per page</option>
+                        <option value="50">50 per page</option>
+                        <option value="75">75 per page</option>
+                        <option value="100">100 per page</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12 tabs-section">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <div class="nav-link" (click)="activeTab = 'all'; getTabData('')" [ngClass]="activeTab === 'all' ? 'active' : ''">
+                    <h5 class="modal-title">All</h5>
+                </div>
+            </li>
+            <li class="nav-item">
+                <div class="nav-link" (click)="activeTab = 'Dispatched'; getTabData('Dispatched') " [ngClass]="activeTab === 'Dispatched' ? 'active' : ''">
+                    <h5 class="modal-title">Dispatched ({{orderCount? orderCount.dispatched: '0'}})</h5>
+                </div>
+            </li>
+            <li class="nav-item">
+                <div class="nav-link" (click)="activeTab = 'Delivered'; getTabData('Delivered') " [ngClass]="activeTab === 'Delivered' ? 'active' : ''">
+                    <h5 class="modal-title">Delivered ({{orderCount? orderCount.delivered: '0'}})</h5>
+                </div>
+            </li>
+            <li class="nav-item">
+                <div class="nav-link" (click)="activeTab = 'Canceled'; getTabData('Canceled') " [ngClass]="activeTab === 'Canceled' ? 'active' : ''">
+                    <h5 class="modal-title">Canceled ({{orderCount? orderCount.canceled: '0'}})</h5>
+                </div>
+            </li>
+            <li class="nav-item">
+                <div class="nav-link" (click)="activeTab = 'Drafts'; getTabData('Drafts') " [ngClass]="activeTab === 'Drafts' ? 'active' : ''">
+                    <h5 class="modal-title">Drafts ({{orderCount? orderCount.drafts: '0'}})</h5>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="col-md-12 mb-1 results-section">
+        <div class="table-responsive product-box">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th style="width: 20px;">
+                            <label class="checkbox primary">
+                                <input type="checkbox" [checked]="allSelector" (change)="selectAllOrders()">
+                                <span class="checkmark"></span>
+                            </label>
+                        </th>
+                        <th>Store</th>
+                        <th>Order </th>
+                        <th>Date </th>
+                        <th>Customer </th>
+                        <th>Status </th>
+                        <th class="text-right">Items </th>
+                        <th class="text-right">Total </th>
+                    </tr>
+                </thead>
+                <ng-container *ngIf="activeTab">
+                    <ng-container *ngIf="dataList.length > 0">
+                        <tbody>
+                            <tr *ngFor="let d of dataList | filter:searchKeyword; let i= index">
+                                <td>
+                                    <label class="checkbox primary">
+                                        <input type="checkbox" (change)="selectOrder(d.id)" [checked]="checkOrder(d.id)">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </td>
+                                <td class="technology-img-wrapper" [routerLink]="[this.api.checkUser() + '/my-order-detail']" [queryParams]="{id:d.id}">
+                                    <span [tooltip]="d.store.store_name" class="info-wrapper"><img [src]="builtInTechnology[d.store.builtin_technology]"></span>
+                                </td>
+                                <td [routerLink]="[this.api.checkUser() + '/my-order-detail']" [queryParams]="{id:d.id}">{{ d.order_no }}</td>
+                                <td [routerLink]="[this.api.checkUser() + '/my-order-detail']" [queryParams]="{id:d.id}">{{ d.order_date | date:'MMM d, h:mm a' }}</td>
+                                <td [routerLink]="[this.api.checkUser() + '/my-order-detail']" [queryParams]="{id:d.id}">{{ d.shipment? d.shipment.full_name: '--' }}</td>
+                                <td [routerLink]="[this.api.checkUser() + '/my-order-detail']" [queryParams]="{id:d.id}">
+                                    <p class="text-status">{{ d.order_status | titlecase }}</p>
+                                </td>
+                                <td [routerLink]="[this.api.checkUser() + '/my-order-detail']" [queryParams]="{id:d.id}" class="text-right">{{ d.total_items }}</td>
+                                <td [routerLink]="[this.api.checkUser() + '/my-order-detail']" [queryParams]="{id:d.id}" class="text-right">{{cs.defaultCurrency}} {{ d?.total_amount | number }}</td>
+                            </tr>
+                        </tbody>
+                    </ng-container>
+                    <tbody *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                        <tr>
+                            <td colspan="8">
+                                <app-no-data-found></app-no-data-found>
+                            </td>
+                        </tr>
+                    </tbody>
+                </ng-container>
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                </ng-container>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-12 footer-section">
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <!-- <ul class="pagination justify-content-left m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul> -->
+            <ul class="pagination justify-content-center m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<ng-template #changeStatusCancel>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Are you sure that you want change the status to canceled?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="primary ml-1" (click)="changeStatuscancel()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Yes
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</ng-template>

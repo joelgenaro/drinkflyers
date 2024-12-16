@@ -1,0 +1,28 @@
+<div class="headbar">
+    <div>
+        <div>
+            <ul id="progressbar" *ngIf="selectedId== -1">
+                <li [ngClass]="{'active': step == 'personal-info'}" id="personalInfo">
+                    <p>Personal Info</p>
+                </li>
+                <li [ngClass]="{'active': step == 'permissions'}" id="permissions" *ngIf="api.checkPermission('permissions')">
+                    <p>Permissions</p>
+                </li>
+                <li [ngClass]="{'active': step == 'roles'}" id="roles" *ngIf="api.checkPermission('roles')">
+                    <p>Roles</p>
+                </li>
+            </ul>
+            <ul id="progressbar" *ngIf="selectedId > -1">
+                <li (click)="ds.navigateWindow({id:selectedId,step : 'personal-info'})" [ngClass]="{'active': step == 'personal-info'}" id="personalInfo">
+                    <p>Personal Info</p>
+                </li>
+                <li (click)="ds.navigateWindow({id:selectedId, step : 'permissions'})" [ngClass]="{'active': step == 'permissions'}" id="permissions" *ngIf="api.checkPermission('permissions')">
+                    <p>Permissions</p>
+                </li>
+                <li (click)="ds.navigateWindow({id:selectedId, step : 'roles'})" [ngClass]="{'active': step == 'roles'}" id="roles" *ngIf="api.checkPermission('roles')">
+                    <p>Roles</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

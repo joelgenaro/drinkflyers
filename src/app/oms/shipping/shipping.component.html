@@ -1,0 +1,51 @@
+<div class="row no-gutters main-background">
+    <div class="col-md-12 mb-1 header-section p-4">
+        <ng-container *ngIf="clientShippingStatus == 'fetching'">
+            <div class="img-wrapper">
+                <img src="assets/images/rolling-main.svg" alt="">
+            </div>
+        </ng-container>
+        <ng-container *ngIf="clientShippingStatus == 'done'">
+            <div class="row no-gutters d-flex justify-content-between align-items-center">
+                <div class="col-md-12 mb-4">
+                    <h1>Settings: Shipping</h1>
+                </div>
+                <div class="col-md-6">
+                    <label>Choose store</label>
+                    <ng-select placeholder="Select Store" [(ngModel)]="selectedStores" [searchable]="true" multiple="true">
+                        <ng-option [value]="item.id" *ngFor="let item of storeList">
+                            <img class="store-img" *ngIf="item.builtin_technology === 'shopify'" src="/assets/img/Shopify.png" alt="Shopify Logo">
+                            <img class="store-img" *ngIf="item.builtin_technology === 'woocommerce'" src="/assets/img/WooCommerce.png" alt="WooCommerce Logo">
+                            <img class="store-img" *ngIf="item.builtin_technology === 'wordpress'" src="/assets/img/WordPress.png" alt="WordPress Logo">
+                            <img class="store-img" *ngIf="item.builtin_technology === 'API'" src="/assets/img/application-programming-interface.png" alt="API Logo">
+                            <img class="store-img" *ngIf="item.builtin_technology === 'etsy'" src="/assets/img/Etsy.png" alt="Etsy Logo">
+                            <img class="store-img" *ngIf="item.builtin_technology === 'amazon'" src="/assets/img/Amazon.png" alt="Amazon Logo">
+                            {{item.store_name}}
+                        </ng-option>
+                    </ng-select>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <h2 class="mb-2">Standard Shipping</h2>
+                    We'll ship out all orders with our fixed-rate Standard shopping. Find out how to <a class="span-color">calculate and set up shipping rates</a> on your storefront.
+                </div>
+                <div class="col-md-12 mt-4">
+                    <div class="shipping">
+                        <div class="shipping-item" *ngFor="let szr of shippingMethodRateList">
+                            <input type="radio" class="mr-1 checkbox-width" name="mail" [(ngModel)]="selectedRate" [value]="szr.id"><span>{{szr.name}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 info">
+                    All international shipments have longer delivery times depending on the domestic postal service.
+                </div>
+                <div class="mt-4 save">
+                    <button type="submit" class="danger lg" (click)="saveClientShipping()" [ngClass]="clientShippingLoading?'in-progress':''">
+                        <div class="loading-dots">Save
+                            <span></span><span></span><span></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>

@@ -1,0 +1,200 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Stores</h2>
+            </div>
+            <div class="col-md-3 d-flex justify-content-between">
+                <h6 class="col-md-4 pt-0 m-0 sort">Sort</h6>
+                <select class="col-md-8 m-0 pl-2 sort-select" (change)="doSort($event, 'asc')">
+                    <option value="">Select Sort</option>
+                    <option value="store_name">Store Name</option>
+                    <!--
+                    <option value="poc_name">POC Name</option>
+                    <option value="poc_contact">POC Contact</option>
+                     -->
+                    <option value="web">URL</option>
+                    <option value="builtin_technology">Connection Type</option>
+                </select>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="row no-gutters d-flex justify-content-between align-items-start">
+            <div class="search m-0 mb-2">
+                <div class="input-group">
+                    <div class="group">
+                        <div class="pre">
+                            <button class="secondary">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="post" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Store Here" />
+                        <div class="post">
+                            <button class="secondary">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)" class="m-0 mb-2 w-25">
+                <option value="" [disabled]="true">Select per page</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15" [selected]="true">15</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="75">75</option>
+                <option value="100">100</option>
+            </select>
+            <!-- <button class="m-0 mb-2 primary" *ngIf="api.checkPermission('add-tag')" (click)="openModal(addForm,-1 ,-1)">Add New Store</button> -->
+            <button type="button" class="m-0 mb-2 primary" *ngIf="api.checkPermission('add-store')" [routerLink]="['/user/sepod-stores/store-detail']" routerLinkActive="router-link-active">Add SEPOD Store</button>
+        </div>
+    </div>
+
+    <div class="col-md-12 mb-1 results-section">
+        <div class="table-responsive product-box">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Sr. # </th>
+                        <th>Store Name </th>
+                        <th>URL</th>
+                        <th>Connection Type </th>
+                        <th class="text-center" style="width: 320px;">Action</th>
+                    </tr>
+                </thead>
+
+                <ng-container *ngIf="dataList.length> 0">
+                    <tbody>
+                        <tr *ngFor="let d of dataList | filter:searchKeyword; let i= index">
+                            <td>{{ getSerialNumber(i) }} </td>
+                            <td>{{ d.store_name }}</td>
+                            <td>{{ d.web }}</td>
+                            <td>{{ d.builtin_technology }}</td>
+                            <td class="d-flex justify-content-end align-items-center">
+                                <ng-container *ngFor="let p of d.user_stores">
+                                    <div class="ml-1 ">
+                                        <button *ngIf="api.checkPermission('store-order-list')" class="primary sm" [routerLink]="['/user/sepod-store-order']" [queryParams]="{ store_id: d.id }" type="button">Order</button>
+                                    </div>
+                                    <div class="ml-1 ">
+                                        <button *ngIf="p.permission.name === 'store-product-list'" class="primary sm" [routerLink]="['/user/sepod-store-products']" [queryParams]="{ store_id: d.id }" type="button">Store Products</button>
+                                    </div>
+                                    <div class="ml-1 " *ngIf="p.permission.name === 'update-store'">
+                                        <button type="button" class="sm secondary m-0" [routerLink]="['/user/sepod-stores/store-detail']" [queryParams]="{id: d.id}"><i class="fa fa-edit"></i></button>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngIf="api.checkRole()">
+                                    <div class="ml-1 ">
+                                        <button class="primary sm" [routerLink]="['/user/sepod-store-order']" [queryParams]="{ store_id: d.id }" type="button">Order</button>
+                                    </div>
+                                    <div class="ml-1 ">
+                                        <button class="primary sm" [routerLink]="['/user/sepod-store-products']" [queryParams]="{ store_id: d.id }" type="button">Store Products</button>
+                                    </div>
+                                    <div class="ml-1 ">
+                                        <button type="button" class="sm secondary m-0" [routerLink]="['/user/sepod-stores/store-detail']" [queryParams]="{id: d.id}"><i class="fa fa-edit"></i></button>
+                                    </div>
+                                </ng-container>
+                            </td>
+                        </tr>
+                    </tbody>
+                </ng-container>
+
+                <ng-container *ngIf="dataStatus == 'fetching'">
+                    <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                </ng-container>
+
+                <tbody *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                    <tr>
+                        <td colspan="7">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-12 mb-1 footer-section">
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <ul class="pagination justify-content-left  m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul>
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+
+
+<ng-template #confirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="delete()">
+            <div class="loading-dots" [ngClass]="loginLoading?'in-progress':''">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>
+
+<!-- <ng-template #changeStatusActive>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Are you sure that you want change the status to active?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="changeStatusAct()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">
+            <div class="loading-dots">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template> -->
+<!-- <ng-template #changeStatusDeactive>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Are you sure that you want change the status to inactive?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="changeStatusInact()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">
+            <div class="loading-dots">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template> -->

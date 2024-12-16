@@ -1,0 +1,22 @@
+<div class="headbar">
+    <div>
+        <div>
+            <ul id="progressbar" *ngIf="selectedId== -1">
+                <li [ngClass]="{'active': step == 'discount-compaign-info'}" id="personalInfo">
+                    <p>Compaign Info</p>
+                </li>
+                <li [ngClass]="{'active': step == 'add-discount-product'}" id="discountProduct" *ngIf="api.checkPermission('permissions')">
+                    <p>Add Product Discount</p>
+                </li>
+            </ul>
+            <ul id="progressbar" *ngIf="selectedId > -1">
+                <li (click)="ds.navigateWindow({id:selectedId,step : 'discount-compaign-info'})" [ngClass]="{'active': step == 'discount-compaign-info'}" id="personalInfo">
+                    <p>Compaign Info</p>
+                </li>
+                <li (click)="ds.navigateWindow({id:selectedId, step : 'add-discount-product'})" [ngClass]="{'active': step == 'add-discount-product'}" id="discountProduct" *ngIf="api.checkPermission('permissions')">
+                    <p>Add Product Discount</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

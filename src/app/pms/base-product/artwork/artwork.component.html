@@ -1,0 +1,127 @@
+<div class="row mt-5 no-gutters justify-content-center">
+    <div class="col-md-10">
+        <div class="artwork-container">
+            <div class="artwork-heading-sec">
+                <div class="artwork-heading">Artworks</div>
+                <div class="artwork-btn" *ngIf="api.checkPermission('add-base-product-artwork')">
+                    <div class="button-group" (click)="openModal(artworkForm)">
+                        <button type="button" class="post primary lg">Add Artwork</button>
+                        <div class="icon post primary">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="artwork-content-sec">
+            <ng-container *ngIf="productArtworkList.length == 0 && artworkLoading == false">
+                <div class="artwork-content-item">
+                    <h1>No Artwork Available</h1>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="artworkLoading == true">
+                <div class="artwork-content-item">
+                    <div class="loading">
+                        <img [src]="spinnerSVG" alt="">
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="productArtworkList.length > 0">
+                <div class="artwork-content-item">
+                    <div class="artwork-item" *ngFor="let art of productArtworkList; let i = index">
+                        <div class="artwork-main-img">
+                            <img [defaultImage]="spinnerSVG" [lazyLoad]="api.artworkImage(art.artwork_id)" />
+                        </div>
+                        <!-- <div class="artwork-cross-img">
+                            <img src="assets/img/empty-icon.png" alt="">
+                        </div> -->
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+
+        <div class="bottom-btn">
+            <div class="button-group">
+                <button type="submit" class="post primary lg" [routerLink]="['/user/base-product/font']" [queryParams]="{ id: ds.productId }" [disabled]="Loading" [ngClass]="Loading ? 'in-progress' : ''">
+                    <div class="loading-dots">
+                        Next <span></span><span></span><span></span>
+                    </div>
+                </button>
+                <div class="icon post primary">
+                    <i class="fa fa-angle-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #artworkForm>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{ modalTitle }}</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="dataForm" (ngSubmit)="save(dataForm, f)" #f="ngForm">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label class="mb-2">Artwork Category List
+                        <span class="mendatory">*</span></label>
+                    <select (change)="selectCategory($event)" formControlName="artwork_cat" class="form-control mt-0" [ngClass]="{ 'form-submitted': f.submitted }">
+                        <option [value]="null">Select Option</option>
+                        <option *ngFor="let d of artworkCategoryList" [value]="d.id">
+                            {{ d.full_name }}
+                        </option>
+                    </select>
+                    <div *ngIf="ui.checkErrors(g.artwork_cat, f)" class="errors">
+                        <p *ngIf="g.artwork_cat.errors.required">
+                            Artwork is required
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-4">
+                    <div class="artwork-content-sec-modal">
+                        <ng-container *ngIf="
+                                artworkList.length == 0 &&
+                                artworkStatus == 'done'
+                            ">
+                            <div class="artwork-content-item text-center">
+                                <h1>No Data Available</h1>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="artworkStatus == 'fetching'">
+                            <div class="artwork-content-item text-center">
+                                <h3>
+                                    Please select a category to see artworks
+                                </h3>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="artworkList.length > 0">
+                            <div class="artwork-content-item">
+                                <div class="artwork-item" *ngFor="
+                                        let art of artworkList;
+                                        let i = index
+                                    ">
+                                    <div class="artwork-main-img">
+                                        <img [defaultImage]="spinnerSVG" [lazyLoad]="
+                                                api.artworkImage(art.id)
+                                            " />
+                                    </div>
+                                    <div class="artwork-cross-img" (click)="
+                                            selectedProductArtwork(art.id, i)
+                                        ">
+                                        <img src="assets/img/cross-icon.png" alt="" />
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="primary mt-2 mb-2" *ngIf="api.checkPermission('add-base-product-artwork')" [disabled]="Loading" [ngClass]="Loading ? 'in-progress' : ''">
+                Save <span></span><span></span><span></span>
+            </button>
+            <button type="button" class="dark ml-1" (click)="cancelButton(f)">
+                Cancel
+            </button>
+        </form>
+    </div>
+</ng-template>

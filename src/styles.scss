@@ -1,0 +1,124 @@
+/* You can add global styles to this file, and also import other style files */
+@import url(https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css);
+@import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+// @import "assets/css/fonts.css";
+@import "assets/css/variables.scss";
+@import "assets/css/admin-panel.scss";
+@import "assets/css/website.scss";
+@import "assets/css/buttons.scss";
+@import "assets/css/input.scss";
+@import "assets/css/select.scss";
+@import "assets/css/checkbox.scss";
+@import "assets/css/radio-button.scss";
+@import "assets/css/badges.css";
+@import "assets/css/ialerts.scss";
+@import "assets/css/on-off-toggle.scss";
+@import "assets/css/typography.scss";
+@import "assets/css/scrollbar.scss";
+@import "assets/css/switch.scss";
+@import "assets/css/table.scss";
+@import "~@ng-select/ng-select/themes/default.theme.css";
+@import "assets/css/thirdparty-customizations/autocomplete.css";
+@import "assets/css/thirdparty-customizations/apexCharts.css";
+@import "assets/css/thirdparty-customizations/quill.css";
+@import "assets/css/thirdparty-customizations/kolkov-editor.css";
+
+body {
+    font-size: 0.9rem;
+}
+.page-wrapper.toggled .sidebar {
+    left: -300px;
+}
+.sidebar .ps.ps--scrolling-y > .ps__rail-y,
+.sidebar > .ps.ps--scrolling-x > .ps__rail-x,
+.ps .ps__rail-x:hover,
+.ps .ps__rail-y:hover,
+.ps .ps__rail-x:focus,
+.ps .ps__rail-y:focus,
+.ps .ps__rail-x.ps--clicking,
+.ps .ps__rail-y.ps--clicking {
+    background-color: transparent !important;
+}
+.sidebar .ps.ps--active-y > .ps__rail-y:hover,
+.sidebar > .ps.ps--active-y > .ps__rail-y.ps--clicking {
+    width: 10px !important;
+}
+
+.ng-value-container {
+    // padding: 13px 8px 4px !important;
+}
+.ng-value {
+    // margin-top: 4px !important;
+    margin-bottom: 0px !important;
+    background: #307477d9 !important;
+    color: #fff !important;
+    border-radius: 5px !important;
+}
+span.ng-value-icon.left {
+    border-right: 1px solid #fff !important;
+    padding: 3px 5px !important;
+}
+span.ng-value-icon:hover {
+    background-color: #307477 !important;
+    border-radius: 5px 0 0 5px !important;
+}
+.ng-value-label {
+    padding: 3px 10px !important;
+}
+.ng-input > input {
+    padding: 3px 6px !important;
+}
+.ng-option.ng-option-selected,
+.ng-option.ng-option-selected.ng-option-marked {
+    background-color: #307477d9 !important;
+    color: #fff !important;
+}
+.ng-option.ng-option-marked {
+    background-color: #30747726 !important;
+    color: #333;
+}
+.ng-select.ng-select-focused:not(.ng-select-opened) > .ng-select-container {
+    border: 2px solid #307477 !important;
+    box-shadow: none;
+}
+.ng-select.ng-select-multiple .ng-select-container .ng-value-container {
+    padding-bottom: 5px;
+    gap: 5px 0;
+}
+.ng-select.ng-select-multiple
+    .ng-select-container
+    .ng-value-container
+    .ng-placeholder {
+    top: 13px !important;
+}
+.ng-select.ng-select-multiple
+    .ng-select-container
+    .ng-value-container
+    .ng-input {
+    padding: 0 !important;
+}
+.ng-select.ng-select-multiple
+    .ng-select-container
+    .ng-value-container
+    .ng-value {
+    white-space: normal !important;
+}
+.ng-select .ng-select-container .ng-value-container .ng-input > input {
+    padding: 0 !important;
+    border: none !important;
+}
+.ng-select .ng-select-container {
+    background-color: #fff;
+    position: initial !important;
+}
+.ng-select .ng-clear-wrapper {
+    display: flex !important;
+}
+.app-color-picker .preview .circle {
+    width: 50px !important;
+    height: 50px !important;
+}
+.product-design .app-color-picker .preview .circle {
+    width: 30px !important;
+    height: 30px !important;
+}

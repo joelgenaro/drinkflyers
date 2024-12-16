@@ -1,0 +1,277 @@
+<app-steps-template [step]="'add-discount-product'"></app-steps-template>
+<div class="row pt-4 pb-4 no-gutters justify-content-center outer-section">
+    <div class="col-md-10">
+        <div class="variant-container">
+            <div class="variant-heading-sec row">
+                <div class="variant-heading col-md-4 col-12">Discout Products</div>
+                <!-- <div class="form-group has-search col-md-4 col-12 m-0">
+                    <span class="fa fa-search form-control-feedback"></span>
+                    <input type="text" style="height: 40px !important" class="form-control form-control-search" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Here" />
+                    <span class="form-control-feedback1">
+                        <p>Search</p>
+                    </span>
+                </div> -->
+                <div class="variant-btn col-md-4 col-12" *ngIf="api.checkPermission('add-discount-campaign-products')">
+                    <div class="button-group" (click)="openModal(addForm, -1)">
+                        <div class="icon primary pre">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <button type="button" class="primary lg">Add  Products</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="variant-content-sec">
+            <form [formGroup]="dataForm" (ngSubmit)="saveForm(dataForm, f)" #f="ngForm">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                Product Name
+                                <!-- <span class="arrows">
+                                    <span (click)="doSort('quantity', 'asc')" [class]="getArrowClass('quantity', 'asc')"></span>
+                                    <span (click)="doSort('quantity', 'desc')" [class]="getArrowClass('quantity', 'desc')"></span>
+                                </span> -->
+                            </th>
+                            <th>
+                                Discount
+                                <!-- <span class="arrows">
+                                    <span (click)="doSort('price', 'asc')" [class]="getArrowClass('price', 'asc')"></span>
+                                    <span (click)="doSort('price', 'desc')" [class]="getArrowClass('price', 'desc')"></span>
+                                </span> -->
+                            </th>
+                            <th>Discoun Type</th>
+
+                            <th class="text-center" style="width: 135px" *ngIf="api.checkPermissions(['add-product-variant','update-product-variant','delete-product-variant'])">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <ng-container>
+                        <tbody formArrayName="products">
+                            <ng-container *ngFor="
+                                    let v of products.controls;
+                                    let i = index
+                                " [formGroupName]="i">
+                                <tr style="border-radius: 10px">
+                                    <!-- <td class="serial">1</td> -->
+
+                                    <td class="size">
+                                        {{v.value.name}}
+                                    </td>
+                                    <td class="size">
+                                        <input [class.dataRow]="v.value.state==false" type="number" min="0" formControlName="discount" class="form-control"  placeholder="Enter discount" />
+                                        <div *ngIf="
+                                                ui.checkErrors(
+                                                    products.controls[i].get(
+                                                        'discount'
+                                                    ),
+                                                    f
+                                                )
+                                            " class="errors">
+                                            <p *ngIf="
+                                                    products.controls[i].get(
+                                                        'discount'
+                                                    ).errors.required
+                                                ">
+                                                 discount is required
+                                            </p>
+                                        </div>
+                                        <ng-container *ngIf="v.value.state==false">{{v.value.discount}}</ng-container>
+                                    </td>
+
+                                    <td>
+                                        <select [class.dataRow]="v.value.state==false" formControlName="discount_type" class="form-control">
+                                            <option value="null">select discount type</option>
+                                            <option *ngFor="let t of types" value="{{t}}" >{{t}}</option>
+
+                                        </select>
+                                        <!-- <input type="number"  min="0"   placeholder="Enter retail Price" /> -->
+                                        <ng-container *ngIf="v.value.state==false">{{v.value.discount_type|titlecase}}</ng-container>
+
+                                    </td>
+                                    <!-- <td>{{v.value.profit_percentage}}</td> -->
+                                    <!-- <td (click) = "deleteVariant(v.value,i)"><i class="danger fa fa-trash"></i> </td> -->
+                                    <td>
+                                        <div class="d-flex justify-content-around align-item-center">
+                                            <button type="button" *ngIf="v.value.state==false" (click)="save(i)" class="primary">Edit</button>
+                                            <button type="button" *ngIf="v.value.state==true" (click)="edit(i)" class="secondary">Save</button>
+                                            <button type="button" (click)="
+                                                confirmingModal(
+                                                    designationConfirming,
+                                                    v.value,
+                                                    i
+                                                )
+                                            " class="danger"><i class="danger fa fa-trash"></i>
+                                            </button>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </ng-container>
+                    <ng-container *ngIf="dataStatus == 'fetching'">
+                        <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                    </ng-container>
+
+                    <tbody *ngIf="
+                            products.controls.length == 0 &&
+                            dataStatus == 'done'
+                        ">
+                        <tr>
+                            <td colspan="6">
+                                <app-no-data-found></app-no-data-found>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <ng-container *ngIf="products.controls.length > 0">
+                    <div class="bottom-btn" *ngIf="
+                            api.checkPermissions([
+                                'add-discount-campaign'
+
+                            ])
+                        ">
+                        <button type="submit" class="primary lg" [disabled]="Loading" [ngClass]="Loading ? 'in-progress' : ''">
+                            Save<span></span><span></span><span></span>
+                        </button>
+                    </div>
+                </ng-container>
+            </form>
+            <!-- <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+                <ul class="pagination justify-content-left  mt-3">
+                    <li class="page-item">
+                        <small *ngIf="page<10">Current page: 0{{page}}</small>
+                        <small *ngIf="page>=10">Current page: {{page}}</small>
+                    </li>
+                </ul>
+                <ul class="pagination justify-content-left">
+                    <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                    </li>
+                    <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                    </li>
+                    <ng-container *ngIf="pagination.last_page <= 6">
+                        <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                            <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                            </li>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="pagination.last_page >= 7">
+                        <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                            <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                            </li>
+                            <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link">...</a>
+                            </li>
+                            <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                                <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                            </li>
+                        </ng-container>
+                    </ng-container>
+                    <li class="page-item" *ngIf="pagination.next_page_url != null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                    </li>
+                    <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                        <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                    </li>
+                </ul>
+            </nav> -->
+        </div>
+        <div class="bottom-btn">
+            <div class="button-group">
+                <button type="button" class="post primary lg" [routerLink]="['/user/discount-compaign/list']" [queryParams]="{store_id:storeId}" routerLinkActive="router-link-active">
+                    <div class="loading-dots">
+                        Goto list <span></span><span></span><span></span>
+                    </div>
+                </button>
+                <div class="icon post primary">
+                    <i class="fa fa-angle-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #addForm>
+    <div class="row mt-4 mb-4 m-4 no-gutters justify-content-center">
+        <div class="col-md-12">
+            <!-- <form [formGroup]="dataForm" (ngSubmit)="save(dataForm, f)" #f="ngForm"> -->
+            <div class="add-variant-head pt-0 pb-4 d-flex" >
+                <h3>Add Product </h3>
+                <i (click)="cancelButton(f)" class="fa fa-times cancel-btn"></i>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="product-wrapper">
+                        <ng-container *ngIf="baseDataStatus == 'fetching'">
+                            <div class="img-wrapper">
+                                <img src="assets/images/rolling-main.svg" alt="" />
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="
+                                storeProducts.length == 0 &&
+                                baseDataStatus == 'done'
+                            ">
+                            <div class="product-box">
+                                <app-no-data-found></app-no-data-found>
+                            </div>
+                        </ng-container>
+                        <div class="product-box" *ngFor="
+                                let d of storeProducts;
+                                let i = index
+                            ">
+                            <div class="product-upper-content">
+                                <div class="product-info align-items-center">
+                                    <div class="item">
+                                        <label>SKU </label>
+                                        <p>{{ d.product.sku }}</p>
+                                    </div>
+                                    <div class="item">
+                                        <label>name </label>
+                                        <p>{{ d.product.name }}</p>
+                                    </div>
+                                    <div class="item">
+                                        <label>Product Category </label>
+                                        <p>{{ d.product.category.name }}</p>
+                                    </div>
+
+                                    <div class="item d-flex">
+                                        <button type="button" class="primary" (click)="addProduct(d, 'null')">
+                                            Add
+                                        </button>
+                                    </div>
+                                    <!-- <div class="item product-name">
+                                            <label>{{d.name.charAt(0).toUpperCase() + d.name.slice(1)}}</label>
+                                            <p [routerLink]="['/user/category']" [queryParams]="{id: d.category.id, name: d.category.name}">{{d.category.name.charAt(0).toUpperCase() + d.category.name.slice(1)}}</p>
+                                        </div> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="bottom-btn" *ngIf="api.checkPermissions(['add-product-variant', 'update-product-variant'])">
+                    <button type="submit" class="primary lg" [disabled]="Loading" [ngClass]="Loading?'in-progress':''">
+                        <span></span><span></span><span></span>
+                    </button>
+                </div> -->
+            <!-- </form> -->
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #designationConfirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="primary ml-1" (click)="delete()" [disabled]="deleteLoading" [ngClass]="deleteLoading ? 'in-progress' : ''">
+            Yes <span></span><span></span><span></span>
+        </button>
+    </div>
+</ng-template>

@@ -1,0 +1,277 @@
+<app-steps-template [step]="'permissions'"></app-steps-template>
+<div class="row no-gutters">
+    <div class="col-md-12  mb-1 mt-n3">
+        <ng-container *ngIf="dataStatus">
+            <div class="modal-body">
+                <div class="col-md-12 mb-1 results-section">
+                    <div class="table-responsive product-box">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Sr. # </th>
+                                    <th>Permission Name </th>
+                                    <th style="width:400px;">Selected User</th>
+                                    <th style="width: 200px;">Select User</th>
+                                </tr>
+                            </thead>
+                            <ng-container *ngIf="permissionsList.length> 0">
+                                <tbody>
+                                    <tr *ngFor="let d of permissionsList;let i= index">
+                                        <td>{{ i+1 }} </td>
+                                        <td>{{ d.label }}</td>
+                                        <td>
+                                            <div class="d-flex flex-wrap" *ngIf="d.user_store_permissions != null">
+                                                <div class="button-group mr-2 mt-2" *ngFor="let u of d.user_store_permissions;let j=index">
+                                                    <button type="button" class="post secondary">{{u.user.first_name}}
+                                                    </button>
+                                                    <div class="icon post secondary" (click)="confirmingModal(RemoveEmployee,u,i,j)">
+                                                        X
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex justify-content-center align-items-center">
+                                                <button type="button" class="sm primary m-0" (click)="addEmployee(employeeModal,d.id,i)">Select User</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </ng-container>
+                            <ng-container *ngIf="dataStatus == 'fetching'">
+                                <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                            </ng-container>
+                            <tbody *ngIf="permissionsList.length == 0 && dataStatus == 'done'">
+                                <tr>
+                                    <td colspan="7">
+                                        <app-no-data-found></app-no-data-found>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-end mt-4">
+                        <div class="button-group mr-2">
+                            <div class="icon primary pre">
+                                <i class="fa fa-angle-left"></i>
+                            </div>
+                            <button type="submit" class="primary" [routerLink]="['/user/sepod-stores/store-detail']" [queryParams]="{id:storeId}">Back
+                                <span></span><span></span><span></span>
+                            </button>
+                        </div>
+                        <div class="button-group">
+                            <button type="submit" class="primary post" [routerLink]="['/user/sepod-stores/list']" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Go To Stores
+                                <span></span><span></span><span></span>
+                            </button>
+                            <div class="icon primary post">
+                                <i class="fa fa-angle-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <div class="details-container" *ngIf="!dataStatus">
+            <img src="assets/images/rolling-main.svg" style="width: 70px; margin-top: 5%;">
+        </div>
+    </div>
+</div>
+<ng-template #employeeModal>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Select User For Permissions</h4>
+        <button type="button" class="close pull-right" (click)="modalRef.hide()">
+            <span><i class="fas fa-times"></i></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12 mt-3 mb-2 results-section">
+                <div class="artwork-content-sec-modal">
+                    <ng-container>
+                        <div class="
+                                row
+                                no-gutters
+                                d-flex
+                                justify-content-between
+                                align-items-start
+                            ">
+                            <div class="search m-0 mb-2">
+                                <div class="input-group mb-0">
+                                    <div class="group">
+                                        <div class="pre">
+                                            <button class="secondary">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </div>
+                                        <input type="text" class="post" [(ngModel)]="modalSearchKeyword" (ngModelChange)="
+                                                modalSearchKeywordChange($event)
+                                            " placeholder="Search Product Here" />
+                                        <div class="post">
+                                            <button class="secondary">
+                                                Search
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <select [(ngModel)]="modalFilters.perPage" (change)="modalSelectPerPage($event)" class="m-0 mb-2 w-25">
+                                <option value="" [disabled]="true">
+                                    Select per page
+                                </option>
+                                <option value="5" [selected]="true">5</option>
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="75">75</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+
+                        <div class="product-boxx" *ngIf="employeeList.length > 0 && modalDataStatus == 'done'">
+                            <div class="row">
+                                <div class="user-box col-md-6" *ngFor="let p of employeeList; let i = index">
+                                    <div class="product-info d-flex justify-content-between mt-2 content-item">
+                                        <div class="item">
+                                            <label> Name </label>
+                                            <p>{{ p.user.first_name }}</p>
+                                        </div>
+                                        <!-- <div class="item product-name">
+                                            <label>Last Name</label>
+                                            <p>
+                                                {{p.user.last_name}}
+                                            </p>
+                                        </div> -->
+                                        <div class="item ml-3">
+                                            <label>Email</label>
+                                            <p>
+                                                {{p.user.email}}
+                                            </p>
+                                        </div>
+                                        <div class="positons">
+                                            <div class="item">
+
+                                                <label class="checkbox primary">
+                                                    <input type="checkbox" [checked]="checkPermission(p.id)" (change)="selectEmployee(p.id,i,p.user)" />
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="employeeList.length == 0 && dataStatus=='done'">
+                        <div class="artwork-content-item mt-5" style="text-align: center;">
+                            <h1>No Data Available</h1>
+                        </div>
+                    </ng-container>
+                    <ng-container>
+                        <div class="details-container" *ngIf="modalDataStatus == 'fetching'">
+                            <img src="assets/images/rolling-main.svg" style="width: 70px; margin-top: 5%;">
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+        <div class="modal-bottom">
+            <div class="pagination">
+                <nav class="paginationCover" aria-label="Page navigation example" *ngIf="modalDataStatus == 'done'">
+                    <ul class="pagination justify-content-left m-0">
+                        <li class="page-item">
+                            <small *ngIf="modalPage < 5">Current page: 0{{ modalPage }}</small>
+                            <small *ngIf="page >= 5">Current page: {{ modalPage }}</small>
+                        </li>
+                    </ul>
+                    <ul class="pagination justify-content-left m-0">
+                        <li class="page-item" *ngIf="modalPagination.prev_page_url != null">
+                            <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setModalPagination(modalPage - 1)">Previous</a>
+                        </li>
+                        <li class="page-item disabled" *ngIf="modalPagination.prev_page_url == null">
+                            <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                        </li>
+                        <ng-container *ngIf="modalPagination.last_page <= 6">
+                            <ng-container *ngFor="
+                                    let p of [].constructor(
+                                        modalPagination.last_page
+                                    );
+                                    let i = index
+                                ">
+                                <li [class]="
+                                        modalPage == i + 1
+                                            ? 'page-item active'
+                                            : 'page-item'
+                                    ">
+                                    <a class="page-link" href="javascript: void(0)" (click)="setModalPagination(i + 1)">{{ i + 1 }}</a>
+                                </li>
+                            </ng-container>
+                        </ng-container>
+                        <ng-container *ngIf="modalPagination.last_page >= 7">
+                            <ng-container *ngFor="
+                                    let p of [].constructor(
+                                        modalPagination.last_page
+                                    );
+                                    let i = index
+                                ">
+                                <li *ngIf="i < 4" [class]="
+                                        modalPage == i + 1
+                                            ? 'page-item active'
+                                            : 'page-item'
+                                    ">
+                                    <a class="page-link" href="javascript: void(0)" (click)="setModalPagination(i + 1)">{{ i + 1 }}</a>
+                                </li>
+                                <li *ngIf="modalPagination.last_page - i == 3" [class]="
+                                        modalPage == i + 1
+                                            ? 'page-item active'
+                                            : 'page-item'
+                                    ">
+                                    <a class="page-link">...</a>
+                                </li>
+                                <li *ngIf="
+                                        modalPagination.last_page - i == 1 ||
+                                        modalPagination.last_page - i == 2
+                                    " [class]="
+                                        modalPage == i + 1
+                                            ? 'page-item active'
+                                            : 'page-item'
+                                    ">
+                                    <a class="page-link" href="javascript: void(0)" (click)="setModalPagination(i + 1)">{{ i + 1 }}</a>
+                                </li>
+                            </ng-container>
+                        </ng-container>
+                        <li class="page-item" *ngIf="modalPagination.next_page_url != null">
+                            <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setModalPagination(+page + 1)">Next</a>
+                        </li>
+                        <li class="page-item disabled" *ngIf="modalPagination.next_page_url == null">
+                            <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="modal-button">
+                <button class="primary mt-2" [disabled]="Loading" [ngClass]="Loading ? 'in-progress' : ''" (click)="save()">
+                    Save <span></span><span></span><span></span>
+                </button>
+                <button type="button" class="dark ml-1" (click)="modalRef.hide()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #RemoveEmployee>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Remove the selected employee from this permission?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="deleteUserPermission()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">
+            <div class="loading-dots">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>

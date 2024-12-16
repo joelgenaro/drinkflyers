@@ -1,0 +1,40 @@
+:host {
+    --star-size: 34px;
+}
+
+.i-rating > input {
+    display: none;
+}
+.i-rating > label:before {
+    margin: 2px;
+    font-size: var(--star-size);
+    font-family: FontAwesome;
+    display: inline-block;
+    content: "\f005";
+}
+
+.i-rating > .half:before {
+    content: "\f089";
+    position: absolute;
+}
+
+.i-rating > label {
+    color: #ddd;
+    float: right;
+    margin-bottom: -5px !important;
+}
+
+/***** CSS Magic to Highlight Stars on Hover *****/
+.i-rating > input:checked ~ label, /* show gold star when clicked */
+.i-rating.rw:not(:checked) > label:hover, /* hover current star */
+.i-rating.rw:not(:checked) > label:hover ~ label /* hover previous stars in list */
+{
+    color: #F2C990;
+}
+
+.i-rating.rw > input:checked + label:hover, /* hover current star when changing rating */
+.i-rating.rw > input:checked ~ label:hover,
+.i-rating.rw > label:hover ~ input:checked ~ label, /* lighten current selection */
+.i-rating.rw > input:checked ~ label:hover ~ label {
+    color: #ffed85;
+}

@@ -1,0 +1,22 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Neuton:wght@300;400;700;800&display=swap" rel="stylesheet">
+
+<link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"
+    rel="stylesheet"
+/>
+<div class="website">
+    <ialerts></ialerts>
+    <div *ngIf="isLoading" class="loader-wrapper">
+        <div class="loader-body">
+            <div class="loader">
+                <div></div><div></div><div></div>
+            </div>
+        </div>
+    </div>
+    <!-- <app-header></app-header> -->
+    <div class="main-container">
+        <router-outlet></router-outlet>
+    </div>
+    <!-- <app-footer></app-footer> -->
+</div>

@@ -1,0 +1,25 @@
+.header-section {
+    position: sticky;
+    top: 76px;
+}
+.results-section {
+    height: calc(100vh - 257px);
+}
+.main-row {
+    margin: 10px;
+}
+.product-box {
+    padding: 10px;
+    border-radius: 4px;
+    margin: 0 0 10px 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+.img-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.img-wrapper img {
+    width: 90px;
+}

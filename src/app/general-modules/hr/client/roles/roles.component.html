@@ -1,0 +1,125 @@
+<app-steps-template [step]="'roles'"></app-steps-template>
+<div class="row m-3 no-gutters">
+    <div class="col-md-12 mb-1">
+        <ng-container *ngIf="dataStatus">
+            <div class="modal-body">
+                <!-- <form (ngSubmit)="save(dataForm, f)" #f="ngForm"> -->
+                <div class="row">
+                    <div class="form-group has-search col-md-5 m-0 mb-3">
+                        <div class="input-group">
+                            <div class="group">
+                                <div class="pre">
+                                    <button class="secondary">
+                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="post" [(ngModel)]="searchString" [ngModelOptions]="{standalone: true}" placeholder="Enter Role Name">
+                                <div class="post">
+                                    <button class="secondary">Search</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="form-group has-search col-md-5 m-0 mb-3 mr-6 ml-3">
+                        <div class="input-group">
+                            <div class="group">
+                                <div class="pre">
+                                    <button class="secondary">
+                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="post" [(ngModel)]="searchSelectedString" [ngModelOptions]="{standalone: true}" placeholder="Enter Selected Role Name">
+                                <div class="post">
+                                    <button class="secondary">Search</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="permissions-container">
+                    <div class="permissions-list-box">
+                        <label class="mb-0 heading-permissions">Click on roles to add for client</label>
+                        <div class="row">
+                            <div class="col-md-6" *ngFor="let d of rolesList | filter:searchString; let i = index">
+                                <div class="permissions-items" (click)="selectRoles(d)">
+                                    {{d.name}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="arrow"><i class="fas fa-arrows-alt-h"></i></div>
+                    <div class="permissions-list-box">
+                        <label class="mb-0 heading-permissions">Selected Roles</label>
+                        <div class="row">
+                            <div class="col-md-6" *ngFor="let d of selectedRoles | filter:searchSelectedString; let i = index">
+                                <div class="permissions-items" (click)="unselectRoles(d)">
+                                    {{d.name}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mb-4">
+                    <div class="button-group mr-2">
+                        <div class="icon primary pre">
+                            <i class="fa fa-angle-left"></i>
+                        </div>
+                        <button type="submit" class="primary" [routerLink]="['/user/client/permissions']" [queryParams]="{id:employeeId}">Back</button>
+
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="post primary" (click)="assignRoles()" [ngClass]="loginLoading?'in-progress':''">Save
+                            <span></span><span></span><span></span>
+                        </button>
+                        <div class="icon post primary">
+                            <i class="fa fa-angle-right"></i>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- </form> -->
+            </div>
+            <!-- Check Boxes -->
+            <!-- <div class="row">
+                <div class="checkbox-container text-right" *ngFor="let d of rolesList; let i = index">
+                    <label class="checkbox primary ml-3 ">
+                        <input type="checkbox" [checked]="checkIfRoleExist(d)" (change)="addRemoveIds(d.id)">
+                        <span class="checkmark">
+                        </span>
+                    </label>
+                    <span class="text">{{d.name}}</span>
+                </div>
+            </div> -->
+            <!-- Buttons  -->
+            <!-- <div class="d-flex justify-content-end mb-4">
+                <div class="button-group mr-2">
+                    <div class="icon primary pre">
+                        <i class="fa fa-angle-left"></i>
+                    </div>
+                    <button type="submit" class="primary" [routerLink]="['/user/client/permissions']" [queryParams]="{id:employeeId}">Back
+                        <span></span><span></span><span></span>
+                    </button>
+
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="post primary" (click)="assignRoles()" [ngClass]="loginLoading?'in-progress':''">Save
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="icon post primary">
+                        <i class="fa fa-angle-right"></i>
+                    </div>
+                </div>
+
+            </div> -->
+        </ng-container>
+        <div class="details-container" *ngIf="!dataStatus">
+            <img src="assets/images/rolling-main.svg" style="width: 70px; margin-top: 5%;">
+        </div>
+    </div>
+</div>

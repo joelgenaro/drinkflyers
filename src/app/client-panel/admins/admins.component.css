@@ -1,0 +1,104 @@
+.page-wrapper {
+    min-height: 100vh;
+    background-color: #ededed;
+}
+.page-wrapper .page-content {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    padding-top: 0px;
+    transition: padding-left 0.3s ease;
+}
+@media screen and (min-width: 768px) {
+    .page-wrapper .page-content {
+        padding-left: 260px;
+    }
+}
+.page-wrapper .page-content .overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 998;
+    background: #000;
+    opacity: 0.5;
+    display: none;
+}
+@media screen and (max-width: 768px) {
+    .page-wrapper .page-content .overlay.show {
+        display: block;
+    }
+}
+.page-wrapper .sidebar {
+    left: 0px;
+}
+.page-wrapper.toggled .page-content {
+    padding-left: 0;
+}
+.page-wrapper .attribution {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 5px;
+    margin: 5px;
+    letter-spacing: 1px;
+}
+.sidebar-toggler {
+    font-weight: 100;
+    background-color: var(--app-main-color);
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    padding: 0 22px 0 0;
+    cursor: default;
+}
+i.fas.fa-user {
+    padding: 0 5px;
+}
+.drop-text {
+    /* color: #fafafa; */
+    margin: 0;
+    font-size: 15px;
+    line-height: 28px;
+    min-width: 165px;
+}
+p.dropdown-text {
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+    font-size: 13px;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 100%;
+    /* min-width: 180px; */
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    border-radius: 5px;
+}
+.dropdown-content > a > i {
+    width: 30px;
+    text-align: center;
+}
+.dropdown-content a {
+    color: black;
+    padding: 0 8px 0 8px;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+    line-height: 40px;
+    border-radius: 5px;
+}
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+.dropdown:hover .dropdown-content {
+    display: block;
+}

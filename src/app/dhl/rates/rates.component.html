@@ -1,0 +1,178 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Dhl Rates & Duties</h2>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+    </div>
+    <div class="col-md-12 mb-1">
+        <div class="modal-body">
+            <form [formGroup]="dataForm" (ngSubmit)="getRate(f)" #f="ngForm">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <label class="mb-0 mt-0">Origin Country Code<span class="mendatory">*</span></label>
+                        <input formControlName="origin_country_code" class="form-control mt-0" placeholder="Enter Country Code" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.origin_country_code, f)" class="errors">
+                            <p *ngIf="g.origin_country_code.errors.required">Origin Country Code is required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="mb-0 mt-0">Origin City Name<span class="mendatory">*</span></label>
+                        <input formControlName="origin_city_name" class="form-control mt-0" placeholder="Enter City Name" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.origin_city_name, f)" class="errors">
+                            <p *ngIf="g.origin_city_name.errors.required">Origin City name is required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="mb-0 mt-0">Destination Country Code<span class="mendatory">*</span></label>
+                        <input formControlName="destination_country_code" class="form-control mt-0" placeholder="Enter Shipping Country Code" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.destination_country_code, f)" class="errors">
+                            <p *ngIf="g.destination_country_code.errors.required">Destination Country code is required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="mb-0 mt-0">Destination City Name<span class="mendatory">*</span></label>
+                        <input formControlName="destination_city_name" class="form-control mt-0" placeholder="Enter Shipping City name" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.destination_city_name, f)" class="errors">
+                            <p *ngIf="g.destination_city_name.errors.required">Destination City Name is required</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 mb-2">
+                        <label class="mb-0 mt-0">Weight<span class="mendatory">*</span></label>
+                        <input formControlName="weight" class="form-control mt-0" placeholder="Enter Weight" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.weight, f)" class="errors">
+                            <p *ngIf="g.weight.errors.required">weight is required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="mb-0 mt-0">Length<span class="mendatory">*</span></label>
+                        <input formControlName="length" class="form-control mt-0" placeholder="Enter Length" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.length, f)" class="errors">
+                            <p *ngIf="g.length.errors.required">length is required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="mb-0 mt-0">Width<span class="mendatory">*</span></label>
+                        <input formControlName="width" class="form-control mt-0" placeholder="Enter Width" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.width, f)" class="errors">
+                            <p *ngIf="g.width.errors.required">width is required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="mb-0 mt-0">Height<span class="mendatory">*</span></label>
+                        <input formControlName="height" class="form-control mt-0" placeholder="Enter Height" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.height, f)" class="errors">
+                            <p *ngIf="g.height.errors.required">height is required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label class="mb-0 mt-0">Unit of Measure <span class="mendatory">*</span></label>
+                        <select class="form-control mt-0" formControlName="unit_measure" [ngClass]="{'form-submitted': f.submitted}">
+                            <option value=null>Select Unit</option>
+                            <option value='matric'>Matirc</option>
+                            <option value='imperial'>Imperial</option>
+                            <!-- <option *ngFor="let bank of bankList" value="{{bank.id}}">{{bank.full_name}}</option> -->
+                        </select>
+                        <!-- <input formControlName="full_name" class="form-control mt-0" placeholder="Enter Full Name"> -->
+                        <div *ngIf="ui.checkErrors(g.unit_measure, f)" class="errors">
+                            <p *ngIf="g.unit_measure.errors.required">Measure Unit is required</p>
+                        </div>
+                    </div>
+
+
+                </div>
+                <button type="submit" class="primary" [ngClass]="loginLoading?'in-progress':''">
+                    <div class="loading-dots">Get Rate
+                        <span></span><span></span><span></span>
+                    </div>
+                </button>
+
+                <button type="button" class="dark ml-1" (click)="clearForm(f)">Clear</button>
+
+            </form>
+        </div>
+    </div>
+    <div *ngIf="totalPrice>0">
+        <strong>Total Dhl Price:  {{totalPrice}} </strong>
+    </div>
+
+</div>
+
+
+<!-- <ng-template #addForm>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modalTitle}}</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="dataForm" #f="ngForm">
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Bank Name <span class="mendatory">*</span></label>
+                    <select class="form-control mt-0" formControlName="bank_id" [ngClass]="{'form-submitted': f.submitted}">
+                        <option value=null>Select Bank</option>
+                        <option *ngFor="let bank of bankList" value="{{bank.id}}">{{bank.full_name}}</option>
+                    </select>
+
+                    <div *ngIf="ui.checkErrors(g.bank_id, f)" class="errors">
+                        <p *ngIf="g.bank_id.errors.required">Bank Name is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Account Title<span class="mendatory">*</span></label>
+                    <input formControlName="account_title" class="form-control mt-0" placeholder="Enter Account Title" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.account_title, f)" class="errors">
+                        <p *ngIf="g.account_title.errors.required">Account Title is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Account No<span class="mendatory">*</span></label>
+                    <input formControlName="account_no" class="form-control mt-0" placeholder="Enter Account No" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.account_no, f)" class="errors">
+                        <p *ngIf="g.account_no.errors.required">Account No is required</p>
+                    </div>
+                </div>
+
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Branch Code<span class="mendatory">*</span></label>
+                    <input formControlName="branch_code" class="form-control mt-0" placeholder="Enter Branch Code" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.branch_code, f)" class="errors">
+                        <p *ngIf="g.branch_code.errors.required">Branch Code is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="mb-0 mt-0">Branch Address<span class="mendatory">*</span></label>
+                    <input formControlName="branch_address" class="form-control mt-0" placeholder="Enter Branch Address" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.branch_address, f)" class="errors">
+                        <p *ngIf="g.branch_address.errors.required">Branch Address is required</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <button type="submit" class="primary" [ngClass]="loginLoading?'in-progress':''">
+                <div class="loading-dots">Save
+                    <span></span><span></span><span></span>
+                </div>
+            </button>
+
+            <button type="button" class="dark ml-1" (click)="cancelButton(f)">Cancel</button>
+
+        </form>
+    </div>
+</ng-template> -->
+
+<ng-template #confirming>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="danger ml-1">
+            <div class="loading-dots" [ngClass]="loginLoading?'in-progress':''">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+

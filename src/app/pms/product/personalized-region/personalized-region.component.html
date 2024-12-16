@@ -1,0 +1,657 @@
+<section class="personalize-section">
+    <div class="personalize-sec-container">
+        <div class="personalize-top-centent-container">
+            <div class="ptc-left content-left">
+                <div class="ptcl-heading d-flex align-items-center" *ngIf="fetchProduct">
+                    <div class="pointer" [routerLink]="[api.checkUser()+'/product/mock-ups']" [queryParams]="{id: ds.productId, base_id: this.ds.baseProductId}"> <i class="fa fa-arrow-left"></i> Back to My store </div>
+                    <div class="pl-3">
+                        <h1>{{productDetail.name}}</h1>
+                    </div>
+                </div>
+                <div class="ptcl-btn">
+                    <!-- <div class="edit-btn">Edit</div> -->
+                    <div class="preview-btn" (click)="printAreaModal(printAreaPreview)">Preview</div>
+                </div>
+            </div>
+            <div class="ptc-right content-right">
+                <div class="ptc-right-content" *ngIf="activeTab=='property'">
+                    <h1 class="ptcr-heading">Product details</h1>
+                    <p class="ptcr-text" [routerLink]="[api.checkUser()+'/product/prices']" [queryParams]="{id: ds.productId, base_id: this.ds.baseProductId}">Prices & variants</p>
+                </div>
+                <div class="ptc-right-content" *ngIf="activeTab!=='property'">
+                    <h1 class="ptcr-heading">Add design!</h1>
+                    <span (click)="activeTab='property'" class="pointer">
+                        <i class="fa fa-close"></i>
+                    </span>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="personalize-mid-centent-container">
+            <div class="pmc-left content-left">
+                <div class="pmc-labels">
+                    <div [class]="activeElevation === i? 'front': 'back'" *ngFor="let img of productImages; let i = index" (click)="changeElevation(i); selectImage(img)">{{img.elevation.title}}</div>
+                    <!-- <div class="front">Front Side</div>
+                    <div class="back">Back Side</div> -->
+                </div>
+                <div class="pmc-content" style="overflow: auto; top: 0;" [ngStyle]="{'padding-top': scalePadding+'px', 'margin-bottom': scalePadding+'px'}" #contentArea>
+                    <div class="pmc-img-wrapper">
+                        <img *ngIf="canvasData.loadingCanvas" style="position: absolute;z-index: 999;" src="assets/images/rolling-gray.svg">
+
+                        <!-- <img class="productBgImage" #productBgImage [src]="productBgImageUrl" style="width: auto; height: 400px; max-width: 400px; max-height: 400px;"> -->
+
+                        <div class="pmc-img-wrapper-inner" #canvaswrapper>
+                            <span (click)="transformScale=1;resetZoom()" style="cursor: pointer;position: absolute;z-index: 1;right: 0; display: none;">Reset <i class="fa fa-undo" aria-hidden="true"></i> </span>
+                            <canvas id="main-canvas"></canvas>
+                            <!-- <img src="/assets/img/TSHIRT_white_blank.png" alt="">
+                            <div class="dotted-line"></div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pmc-right content-right">
+
+
+                <ng-container *ngIf="imgDesign === false">
+                    <ng-container *ngIf="noArtwork === true">
+                        <div class="pmc-no-artwork-content">
+                            <div class="no-artwork-img-wrapper"><img src="/assets/img/no-artwork.png" alt=""></div>
+                            <h1>No artwork is added</h1>
+                            <p>Only JPG / PNG files supported</p>
+                            <div class="add-design-btn" (click)="addDesign = true; noArtwork = false">Add your design</div>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="addDesign === true">
+                        <div class="pmc-design-library-content">
+                            <div class="pmc-design-library-content-top">
+                                <ul class="nav nav-tabs" *ngIf="activeTab!=='property'">
+                                    <li class="nav-item">
+                                        <div class="nav-link" (click)="activeTab = 'design'" [ngClass]="activeTab === 'design' ? 'active' : ''">
+                                            <h5 class="modal-title">New design</h5>
+                                        </div>
+                                    </li>
+                                    <li class="nav-item">
+                                        <div class="nav-link" (click)="activeTab = 'library'" [ngClass]="activeTab === 'library' ? 'active' : ''">
+                                            <h5 class="modal-title">My library</h5>
+                                        </div>
+                                    </li>
+                                    <!-- <li class="nav-item">
+                                        <div class="nav-link" (click)="activeTab = 'property'" [ngClass]="activeTab === 'property' ? 'active' : ''">
+                                            <h5 class="modal-title">Properties</h5>
+                                        </div>
+                                    </li> -->
+                                </ul>
+                                <ng-container *ngIf="activeTab === 'design'">
+                                    <h1>Add design from...</h1>
+                                    <!-- Progress Bar -->
+                                    <div class="progress" *ngIf="progress > 0">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" [style.width.%]="progress">{{progress}}%</div>
+                                    </div>
+                                    <div class="design-content" (click)="browseImage()">
+                                        <input type="file" id="image" class="d-none" (change)="openCroppingModal($event, imageCropTemplate)" />
+                                        <div class="dc-img-wrapper"><img src="/assets/img/device.png" alt=""></div>
+                                        <p class="dc-text">My device</p>
+                                    </div>
+                                    <div class="design-content" (click)="addSampleText()">
+                                        <input type="file" id="image" class="d-none" (change)="openCroppingModal($event, imageCropTemplate)" />
+                                        <div class="dc-img-wrapper"><img src="/assets/img/text-area.png" alt=""></div>
+                                        <p class="dc-text">Custom text</p>
+                                    </div>
+                                    <div class="design-content" (click)="addTextCurved()">
+                                        <input type="file" id="image" class="d-none" (change)="openCroppingModal($event, imageCropTemplate)" />
+                                        <div class="dc-img-wrapper"><img src="/assets/img/text-area.png" alt=""></div>
+                                        <p class="dc-text">Curved text</p>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngIf="activeTab === 'loader'">
+                                    <div class="d-flex justify-content-center"><img style="width: 50px;margin-top: 100px;" [src]="spinnerSVG"></div>
+                                </ng-container>
+                                <ng-container *ngIf="activeTab === 'library'">
+                                    <div class="library-content">
+                                        <div class="search">
+                                            <button type="submit" class="searchButton">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                            <input type="text" class="searchTerm" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search library">
+                                        </div>
+                                        <div class="library-list">
+                                            <ng-container *ngIf="userLibList.length > 0">
+                                                <div class="list-container" *ngFor="let userLib of userLibList | filter:searchKeyword; let i = index" appDragDropSwap [elemPosition]="i" [list]="userLibList" (returnUpdatedList)="returnUpdatedUserLibList($event)">
+                                                    <div class="list-img-wrapper">
+                                                        <button class="" [disabled]="clicked" (click)="placeFile(userLib.id); clicked = true;activeTab='loader'">
+                                                            <img [defaultImage]="spinnerSVG" [lazyLoad]="api.getFolderFileImg(userLib.id)" alt="" />
+                                                            <!-- <img src="/assets/img/photo-1433.jfif" alt=""> -->
+                                                        </button>
+                                                        <div class="list-text">
+                                                            <h1>{{userLib.name}}</h1>
+                                                            <p *ngIf="userLib.width && userLib.height"> {{userLib.width}} x {{userLib.height}}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="list-action-btn" (click)="libraryItemDeleteModal(libraryItemDeleteTemplete, userLib.id,i)">
+                                                        <img src="/assets/img/Delete.png" alt="Delete">
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                            <ng-container *ngIf="userLibList.length == 0">
+                                                <div class="list-container-no-data">
+                                                    <app-no-data-found></app-no-data-found>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngIf="activeTab === 'property'">
+
+
+                                    <div class="img-design-container">
+                                        <div class="img-design-color" style="position: relative;">
+                                            <div class="color-head">
+                                                <p>Color {{getvarientLength(productVariants,1)}}</p>
+                                                <div class="all-color" (click)="showAllcolorsBox()">
+                                                    <p>All colors {{getvarientLength(productVariants,-1)}}</p>
+                                                    <i class="fas fa-caret-down"></i>
+                                                </div>
+                                            </div>
+                                            <div style="position: absolute; width: 265px; height: auto; background: red; right: 0;margin-right: 4%;box-shadow: 0 2px 10px rgba(0,0,0,.25),0 1px 4px rgba(0,0,0,.1);background: white;padding: 20px;" *ngIf="showBox">
+                                                <div class="d-flex">
+                                                    <span class="all-options-help-text"> {{getvarientLength(productVariants,1)}} of {{getvarientLength(productVariants,-1)}} colors selected </span>
+                                                    <div (click)="showAllcolorsBox()" class="close-btn class" style="position: absolute; right: 11px; top: 3px;font-size: 20px;">
+                                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="checkTick" *ngIf="productVariants">
+                                                    <ng-container *ngFor="let varient of productVariants">
+                                                        <ng-container *ngIf="varient.image_exists===1">
+                                                            <i class="fa fa-circle selected" [style.backgroundImage]="'url('+ this.baseUrl +'/public/product-variant-image/'+varient.id+')'" *ngIf="varient.publish===0" (click)="changeVState(varient, 1)"></i>
+                                                            <i class="fa fa-circle-check selected" [style.backgroundImage]="'url('+ this.baseUrl +'/public/product-variant-image/'+varient.id+')'" *ngIf="varient.publish===1" (click)="changeVState(varient, 0)"></i>
+                                                        </ng-container>
+                                                        <ng-container *ngIf="varient.color_code && varient.image_exists===0">
+                                                            <i class="fa fa-circle selected" [style.backgroundColor]="varient.color_code" *ngIf="varient.publish===0" (click)="changeVState(varient, 1)"></i>
+                                                            <i class="fa fa-circle-check selected" [style.backgroundColor]="varient.color_code" *ngIf="varient.publish===1" (click)="changeVState(varient, 0)"></i>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                </div>
+
+                                            </div>
+                                            <div class="check-img-wrapper">
+                                                <div class="checkTick" *ngIf="productVariants">
+                                                    <ng-container *ngFor="let varient of productVariants">
+                                                        <ng-container *ngIf="varient.publish===1">
+                                                            <ng-container *ngIf="varient.color_code && varient.image_exists===0">
+                                                                <i class="fa fa-circle-check selected" [style.backgroundColor]="varient.color_code" (click)="activeColour=varient.id" *ngIf="varient.id===this.activeColour"></i>
+                                                                <i class="fa fa-circle selected" [style.backgroundColor]="varient.color_code" (click)="updateBackgroundColor(varient);activeColour=varient.id" *ngIf="varient.id!==this.activeColour"></i>
+                                                            </ng-container>
+                                                            <ng-container *ngIf="varient.image_exists===1">
+                                                                <i class="fa fa-circle-check selected" [style.backgroundImage]="'url('+ this.baseUrl +'/public/product-variant-image/'+varient.id+')'" (click)="activeColour=varient.id" *ngIf="varient.id===this.activeColour"></i>
+                                                                <i class="fa fa-circle selected" [style.backgroundImage]="'url('+ this.baseUrl +'/public/product-variant-image/'+varient.id+')'" (click)="updateBackgroundColor(varient);activeColour=varient.id" *ngIf="varient.id!==this.activeColour"></i>
+                                                            </ng-container>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <h1>Your design</h1>
+                                    <ng-container *ngTemplateOutlet="elementProperties"></ng-container>
+                                </ng-container>
+
+                                <ng-template #elementProperties>
+                                    <div class="img-persoalize-container">
+                                        <div class="img-persoalize-properties">
+
+                                            <ng-container *ngFor="let personalize of _canvas._objects; let i = index">
+                                                <ng-container *ngIf="personalize.ktype==='placeholder-image' || personalize.ktype==='placeholder-text' || personalize.ktype==='placeholder-curvedtext'">
+                                                    <div class="img-persoalize-header-contianer" appDragDropSwap [elemPosition]="i" [list]="_canvas._objects" (returnUpdatedList)="returnUpdatedCanvasList($event)">
+                                                        <div (click)="toggleProperties(i, personalize)" class="img-persoalize-header">
+                                                            <div class="left-col d-flex align-items-center" style="flex-grow: 1;">
+                                                                <div class="img-persoalize-wrapper">
+                                                                    <img *ngIf="personalize.ktype==='placeholder-text'" src="/assets/img/text-area.png" style="padding: 12px;">
+                                                                    <img *ngIf="personalize.ktype==='placeholder-image'" [src]="personalize.src" alt="">
+                                                                </div>
+                                                                <div class="img-persoalize-text" *ngIf="personalize.ktype==='placeholder-text' || personalize.ktype==='placeholder-curvedtext'">
+                                                                    <p style="font-weight: 400;">{{personalize.text}}</p>
+                                                                    <p>Text layer</p>
+                                                                </div>
+                                                                <div class="img-persoalize-text" *ngIf="personalize.ktype==='placeholder-image'">
+                                                                    <p>{{personalize?.fileName}}</p>
+                                                                    <p style="color: #37dc3f;" *ngIf="personalize.resolution>=150">High resolution</p>
+                                                                    <p style="color: #dca437;" *ngIf="personalize.resolution>=100 && personalize.resolution<149">Medium resolution</p>
+                                                                    <p style="color: #ce364f;" *ngIf="personalize.resolution<100">Low resolution</p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="right-col d-flex align-items-center">
+                                                                <div class="img-persoalize-action-btn d-flex">
+                                                                    <!-- <img src="/assets/img/file.png" alt="File" > -->
+                                                                    <i (click)="duplicateObject()" class="fas fa-copy"></i>
+                                                                    <!-- <img src="/assets/img/Delete.png" alt="Delete" (click)="deleteDesign()"> -->
+                                                                    <i (click)="deleteDesign()" class="fas fa-trash-alt"></i>
+                                                                    <i class="draggable-handler fas fa-grip-vertical"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="img-persoalize-content" [class.active]="selectedItem?.sepod_id!==personalize.sepod_id">
+
+                                                            <ng-container [ngSwitch]="personalize?.ktype">
+                                                                <ng-container *ngSwitchCase="'placeholder-image'">
+                                                                    <ng-container *ngTemplateOutlet="imageAreaProps"></ng-container>
+                                                                </ng-container>
+                                                                <ng-container *ngSwitchCase="'placeholder-text'">
+                                                                    <ng-container *ngTemplateOutlet="textAreaProps"></ng-container>
+                                                                </ng-container>
+                                                                <ng-container *ngSwitchCase="'placeholder-curvedtext'">
+                                                                    <ng-container *ngTemplateOutlet="textCurvedProps"></ng-container>
+                                                                </ng-container>
+                                                                <ng-container *ngSwitchDefault>
+                                                                    <ng-container *ngTemplateOutlet="default"></ng-container>
+                                                                </ng-container>
+                                                            </ng-container>
+
+                                                            <form [formGroup]="dataForm" (ngSubmit)="save(dataForm, f)" #f="ngForm">
+                                                                <ng-container [ngTemplateOutlet]="commonProps" [ngTemplateOutletContext]="{f:f, form: dataForm}"></ng-container>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                            </ng-container>
+                                        </div>
+                                        <div class="img-design-persoalize" (click)="activeTab='design'">
+                                            <i class='fas fa-plus'></i>
+                                            <div>
+                                                <h1>Add Design</h1>
+                                                <span>Recommended Size 3000 x 4006</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </ng-template>
+
+                                <ng-template #imageAreaProps>
+                                </ng-template>
+
+                                <ng-template #textCurvedProps>
+                                    <div class="content-text-font-color" *ngIf="selectedItem?.ktype == 'placeholder-curvedtext'">
+                                        <div class="content-text">
+                                            <p>Text</p>
+                                            <input type="text" #fnt [(ngModel)]="textProps.text" (ngModelChange)="setCurvedText()" placeholder="Text Area">
+                                        </div>
+                                        <div class="content-font">
+                                            <p>Font</p>
+                                            <select (change)="getFontFiles(fontFileId)" [(ngModel)]="fontFileId">
+                                                <option [attr.selected]="true" [value]="null" [disabled]="true">Select Font</option>
+                                                <option *ngFor="let pFont of productFontList" [value]="pFont.id">
+                                                    {{ pFont.file_name }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="slidecontainer">
+                                            <div class="content-color" *ngIf="selectedItem?.ktype === 'placeholder-curvedtext'">
+                                                <p>Diameter</p>
+                                                <input type="range" [(ngModel)]="textProps.diameter" (input)="updateArc()" min="50" max="500" step="1">
+                                            </div>
+                                            <div class="content-color" *ngIf="selectedItem?.ktype === 'placeholder-curvedtext'">
+                                                <p>Font size</p>
+                                                <input type="range" [(ngModel)]="textProps.fontSize" (input)="updateArc()" min="8" max="200" step="1">
+                                            </div>
+                                            <!-- <div class="content-color" *ngIf="selectedItem?.ktype === 'placeholder-curvedtext'">
+                                                <p>Kerning</p>
+                                                <input type="range" [(ngModel)]="textProps.kerning" (input)="updateArc()" min="1" max="10" step="1">
+                                            </div> -->
+                                        </div>
+                                        <div class="content-color" *ngIf="selectedItem?.ktype === 'placeholder-curvedtext'">
+                                            <p>flipped</p>
+                                            <select [(ngModel)]="textProps.flipped" (change)="setCurvedFlipped()">
+                                                <option [value]=false>Up</option>
+                                                <option [value]=true>Down</option>
+                                            </select>
+                                            <!-- {{textProps.flipped}} -->
+                                        </div>
+                                        <div class="content-color-underline-container icons-container">
+                                            <div class="content-color" *ngIf="selectedItem?.ktype == 'placeholder-curvedtext'">
+                                                <label class="input-color-label" for="input-color">
+                                                    <p>Color</p>
+                                                </label>
+                                                <ngx-colors ngx-colors-trigger class="product-design" [(ngModel)]="textProps.fill" (input)="setCOlorOntext()" [ngModelOptions]="{standalone: true}"></ngx-colors>
+                                                <!-- <input type="color" name="" id="input-color" [(ngModel)]="textProps.fill" (input)="setCOlorOntext()"> -->
+                                            </div>
+                                            <div class="content-color" *ngIf="selectedItem?.ktype == 'placeholder-curvedtext'">
+                                                <label class="input-color-label" for="input-color">
+                                                    <p>Stroke Color</p>
+                                                </label>
+                                                <ngx-colors ngx-colors-trigger class="product-design" [(ngModel)]="textProps.strokeStyle" (input)="setStrokeStyleOntext()" [ngModelOptions]="{standalone: true}"></ngx-colors>
+                                                <!-- <input type="color" name="" id="input-color" [(ngModel)]="textProps.strokeStyle" (input)="setStrokeStyleOntext()"> -->
+                                            </div>
+
+                                            <!-- <div class="content-underline" *ngIf="selectedItem?.ktype == 'placeholder-curvedtext'">
+                                                <p>Underline</p>
+                                                <div class="icon" [class.active]="textProps.underline===true" (click)="setFontUnderline()">
+                                                    <i class="fa fa-underline"></i>
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                        <div class="content-color-underline-container icons-container">
+
+                                            <div class="content-underline" *ngIf="selectedItem?.ktype == 'placeholder-curvedtext'">
+                                                <p>Text Transform</p>
+                                                <div class="icon-content">
+                                                    <!-- <div class="icon" [class.active]="textProps.underline===true" (click)="setFontUnderline()">
+                                                        <i class="fa fa-underline"></i>
+                                                    </div> -->
+                                                    <div class="icon" (click)="uppercase()" title="Upper Case">
+                                                        <div class="text-icon-wrapper"><img src="/assets/img/upper-case.svg" alt=""></div>
+                                                    </div>
+                                                    <div class="icon" (click)="lowercase()" title="Lower Case">
+                                                        <div class="text-icon-wrapper"><img src="/assets/img/lower-case.svg" alt=""></div>
+                                                    </div>
+                                                    <div class="icon" (click)="capitalizeCase()" title="Title Case">
+                                                        <div class="text-icon-wrapper"><img src="/assets/img/title-case.svg" alt=""></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="content-stroke">
+                                                <p>Stroke Width</p>
+                                                <input type="number" min="0" max="50" [(ngModel)]="textProps.strokeWidth" (ngModelChange)="setStrokeWidthOntext()" placeholder="Stroke Width">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-template>
+
+                                <ng-template #textAreaProps>
+                                    <div class="content-text-font-color" *ngIf="selectedItem?.ktype == 'placeholder-text'">
+                                        <div class="content-personalize">
+                                            <!-- <p>Personalize {{selectedItem?.sepod_id}}---{{personalize.sepod_id}} </p> -->
+                                            <div>
+                                                <label class="switch m-0">
+                                                    <input type="checkbox" [(ngModel)]="textProps.personalize" (ngModelChange)="setPersonalize()" />
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="content-text">
+                                            <p>Text</p>
+                                            <input type="text" [maxlength]="textProps.textLimit" #fnt [(ngModel)]="textProps.text" (ngModelChange)="textPropsChanged()" (input)="getTextLimit($event)">
+                                        </div>
+                                        <div class="content-font">
+                                            <p>Font</p>
+                                            <select (change)="getFontFiles(fontFileId)" [(ngModel)]="fontFileId">
+                                                <option [attr.selected]="true" [value]="null" [disabled]="true">Select Font</option>
+                                                <option *ngFor="let pFont of productFontList" [value]="pFont.id">
+                                                    {{ pFont.file_name }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="content-color" *ngIf="selectedItem?.ktype === 'placeholder-text'">
+                                            <p>Font size</p>
+                                            <input type="range" [(ngModel)]="textProps.fontSize" (input)="updateArc()" min="8" max="200" step="1">
+                                        </div>
+
+                                        <div class="content-color-underline-container">
+                                            <div class="content-color" *ngIf="selectedItem?.ktype == 'placeholder-text'">
+                                                <label class="input-color-label" for="input-color">
+                                                    <p>Color</p>
+                                                </label>
+                                                <ngx-colors ngx-colors-trigger class="product-design" [(ngModel)]="textProps.fill" (input)="setCOlorOntext()" [ngModelOptions]="{standalone: true}"></ngx-colors>
+                                                <!-- <input type="color" name="" id="input-color" [(ngModel)]="textProps.fill" (input)="setCOlorOntext()"> -->
+                                            </div>
+                                            <div class="content-color">
+                                                <label class="input-color-label" for="input-color">
+                                                    <p>Stroke Color</p>
+                                                </label>
+                                                <ngx-colors ngx-colors-trigger class="product-design" [(ngModel)]="textProps.stroke" (input)="setStrokeOntext()" [ngModelOptions]="{standalone: true}"></ngx-colors>
+                                                <!-- <input type="color" name="" id="input-color" [(ngModel)]="textProps.stroke" (input)="setStrokeOntext()"> -->
+                                            </div>
+                                        </div>
+                                        <div class="content-color-underline-container icons-container" *ngIf="selectedItem?.ktype == 'placeholder-text'">
+                                            <div class="content-stroke">
+                                                <p>Text Limit</p>
+                                                <input type="number" minlength="0" [(ngModel)]="textProps.textLimit" (input)="setTextLimit()" placeholder="Text Limit">
+                                            </div>
+                                            <div class="content-stroke">
+                                                <p>Stroke Width</p>
+                                                <input type="number" min="0" max="20" [(ngModel)]="textProps.strokeWidth" (ngModelChange)="setStrokeWidthOntext()" placeholder="Stroke Width">
+                                            </div>
+                                        </div>
+                                        <div class="content-color-underline-container icons-container">
+                                            <!-- <div class="content-underline" *ngIf="selectedItem?.ktype == 'placeholder-text'">
+                                                <p>Text Alignment</p>
+                                                <div class="icons-container">
+                                                    <div class="icon-content">
+                                                        <div class="icon" id="font-alignLeft" (click)="setTextAlignLeft()"><i class="fas fa-align-left"></i></div>
+                                                        <div class="icon" id="font-alignCenter" (click)="setTextAlignCenter()"><i class="fas fa-align-center"></i></div>
+                                                        <div class="icon" id="font-alignRight" (click)="setTextAlignRight()"><i class="fas fa-align-right"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div> -->
+                                            <div class="content-underline" *ngIf="selectedItem?.ktype == 'placeholder-text'">
+                                                <p>Text Transform</p>
+                                                <div class="icon-content">
+                                                    <!-- <div class="icon" [class.active]="textProps.underline===true" (click)="setFontUnderline()">
+                                                        <i class="fa fa-underline"></i>
+                                                    </div> -->
+                                                    <div class="icon" (click)="uppercase()" title="Upper Case">
+                                                        <div class="text-icon-wrapper"><img src="/assets/img/upper-case.svg" alt=""></div>
+                                                    </div>
+                                                    <div class="icon" (click)="lowercase()" title="Lower Case">
+                                                        <div class="text-icon-wrapper"><img src="/assets/img/lower-case.svg" alt=""></div>
+                                                    </div>
+                                                    <div class="icon" (click)="capitalizeCase()" title="Title Case">
+                                                        <div class="text-icon-wrapper"><img src="/assets/img/title-case.svg" alt=""></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-template>
+
+                                <ng-template #default>
+                                    <!-- <div class="img-design-persoalize" (click)="this.activeTab = 'library'">
+                                        <i class='fas fa-plus'></i>
+                                        <h1>Add Image</h1>
+                                    </div> -->
+                                </ng-template>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="activeTab === 'design'">
+                        <div class="pmc-info-content">
+                            <h1>Print file requirements</h1>
+                            <ul>
+                                <li>JPG and PNG files tpyes supported</li>
+                                <li>Maximum file size <span class="size">100 MB</span></li>
+                                <li>Recommended size <span class="dimension">4500 x 5090 px</span></li>
+                                <li>Maximum resolution 23000 x 23000 px</li>
+                            </ul>
+                        </div>
+                    </ng-container>
+                </ng-container>
+                <div class="pmc-design-library-content-bottom" *ngIf="imagesResolutionPass === false">
+                    <ng-container>
+                        <div class="error-message">
+                            <span class="message">
+                                <strong>Please check your image quality.</strong>
+                                <br> The image file in your design doesn't meet the quality (resolution) requirements for printing. Please update your design with a higher quality file or make the current image smaller. <a _ngcontent-yas-c345="" target="_blank" href="https://printify.com/guide/design-guide/">Learn more.</a>
+                            </span>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+        <div class="personalize-bottom-centent-container">
+            <div class="pbc-left content-left">
+                <!-- <div class="pbcl-btn">
+                    <div class="undo-arrow-btn"><img src="/assets/img/undo.png" alt=""></div>
+                    <div class="redo-arrow-btn"><img src="/assets/img/redo.png" alt=""></div>
+                </div> -->
+                <div *ngIf="!canvasData.loadingCanvas" class="zoom">
+                    <!-- <i class="fa fa-minus-circle mr-2" style="color: #F3585F;" (click)="zOut()"></i>Adjust Preview Size
+                    <i class="fa fa-plus-circle ml-2" style="color:#28a745" aria-hidden="true" (click)="zIn()"></i>
+                    <div class="ml-2 zoom-val" style="display: none;">{{zoomSize | number : '1.0-2'}}</div>
+                    <i class="fa fa-refresh ml-2" style="color:#CCC" *ngIf="resetZoomVal" (click)="zReset()"></i> -->
+                    <div>
+                        Adjust Preview Size |
+                        <span (click)="transformScale=1;resetZoom()" style="cursor: pointer;">Reset <i class="fa fa-undo" aria-hidden="true"></i> </span>
+                    </div>
+
+                    <div class="zoomInner">
+                        <i class="fa fa-minus mr-2" style="color: #CCC; font-size: 16px; cursor: pointer;" (click)="zMinus()"></i>
+
+                        <div class="rangeSlider">
+                            <input type="range" min="0.2" max="1.8" step=".01" [(ngModel)]="transformScale" (ngModelChange)="checkZoom($event)" [value]="1" class="" style="width: 400px;">
+                        </div>
+
+                        <i class="fa fa-plus ml-2" style="color:#CCC; font-size: 16px; cursor: pointer;" aria-hidden="true" (click)="zPlus()"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="pbc-right content-right">
+                <button class="btn btn-lg btn-block" [class.btn-secondary]="imagesResolutionPass === false" [class.btn-success]="imagesResolutionPass === true" type="submit" (click)="saveDesign()" [disabled]="saveLoading || imagesResolutionPass===false || !getIfActiveVarient()" [ngClass]="saveLoading?'in-progress':''">
+                    <div class="loading-dots">Save Product
+                        <span></span><span></span><span></span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<ng-template #commonProps let-f="f" let-form="form">
+    <div class="img-design-content img-persoalize-content" [formGroup]="form">
+        <div class="img-design-content">
+            <div class="content-size">
+                <p>Size</p>
+                <div class="size-width">
+                    <p>Width</p>
+                    <div class="img-design-search">
+                        <input class="img-design-searchTerm" type="number" min="0" step="1" formControlName="width" (input)="widthChange($event)" placeholder="Width" [ngClass]="{'form-submitted': f.submitted}">
+                        <button type="button" class="img-design-searchButton">mm</button>
+                    </div>
+                    <div *ngIf="ui.checkErrors(g.width, f)" class="errors">
+                        <p *ngIf="g.width.errors.required">Width is required</p>
+                    </div>
+                </div>
+                <div class="size-height">
+                    <p>Height</p>
+                    <div class="img-design-search">
+                        <input class="img-design-searchTerm" type="number" min="0" step="1" formControlName="height" (input)="heightChange($event)" placeholder="Height" [ngClass]="{'form-submitted': f.submitted}">
+                        <button type="button" class="img-design-searchButton">mm</button>
+                    </div>
+                    <div *ngIf="ui.checkErrors(g.height, f)" class="errors">
+                        <p *ngIf="g.height.errors.required">Height is required</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-transform">
+            <p>Transform</p>
+            <div class="transform-rotate">
+                <p>Rotate</p>
+                <div class="img-design-search">
+                    <!-- <input type="text" class="img-design-searchTerm" placeholder="Rotate"> -->
+                    <input class="img-design-searchTerm" formControlName="rotate" type="number" (input)="angleChange($event)" step="1" placeholder="Rotate" [ngClass]="{'form-submitted': f.submitted}">
+                    <button type="button" class="img-design-searchButton">deg</button>
+                </div>
+            </div>
+            <div class="transform-scale">
+                <p>Scale</p>
+                <div class="img-design-search">
+                    <!-- <input type="text" class="img-design-searchTerm" placeholder="Scale"> -->
+                    <input type="number" class="img-design-searchTerm" placeholder="Scale" formControlName="scale_slider" step="1" (input)="sliderChange($event)" min="-1000" max="1000">
+                    <button type="button" class="img-design-searchButton">%</button>
+                </div>
+            </div>
+        </div>
+        <div class="content-positioning">
+            <p>Positioning</p>
+            <div class="positioning-left">
+                <p>Left</p>
+                <div class="img-design-search">
+                    <input class="img-design-searchTerm" formControlName="x" type="number" step="1" placeholder="Left" [ngClass]="{'form-submitted': f.submitted}">
+                    <button type="button" class="img-design-searchButton">%</button>
+                </div>
+                <div *ngIf="ui.checkErrors(g.x, f)" class="errors">
+                    <p *ngIf="g.x.errors.required">Top is required</p>
+                </div>
+            </div>
+            <div class="positioning-top">
+                <p>Top</p>
+                <div class="img-design-search">
+                    <input class="img-design-searchTerm" formControlName="y" type="number" step="1" placeholder="Right" [ngClass]="{'form-submitted': f.submitted}">
+                    <button type="button" class="img-design-searchButton">%</button>
+                </div>
+                <div *ngIf="ui.checkErrors(g.y, f)" class="errors">
+                    <p *ngIf="g.y.errors.required">left is required</p>
+                </div>
+            </div>
+        </div>
+        <div class="content-align">
+            <p>Align</p>
+            <div class="alignment">
+                <div class="alignment-content">
+                    <button type="button" (click)="alignItem('left')" class="alignment-button">
+                        <img src="/assets/img/arrow-left.png" alt="">
+                    </button>
+                    <button type="button" (click)="alignItem('center')" class="alignment-button">
+                        <img src="/assets/img/arrow-left-right.png" alt="">
+                    </button>
+                    <button type="button" (click)="alignItem('right')" class="alignment-button">
+                        <img src="/assets/img/arrow-right.png" alt="">
+                    </button>
+                </div>
+            </div>
+            <div class="alignment">
+                <div class="alignment-content">
+                    <button type="button" (click)="alignItem('top')" class="alignment-button">
+                        <img src="/assets/img/arrow-up.png" alt="">
+                    </button>
+                    <button type="button" (click)="alignItem('middle')" class="alignment-button">
+                        <img src="/assets/img/arrow-up-down.png" alt="">
+                    </button>
+                    <button type="button" (click)="alignItem('bottom')" class="alignment-button">
+                        <img src="/assets/img/arrow-down.png" alt="">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #imageCropTemplate>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Select Image Area</h4>
+    </div>
+    <div class="modal-body">
+        <image-cropper [imageFile]="imageFile" [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="false" format="png" (imageCropped)="croppedImage = $event.base64"></image-cropper>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="primary" (click)="cropComplete()">Save</button>
+        <button type="button" class="secondary" (click)="imageModalRef.hide(); clicked = false">Cancel</button>
+    </div>
+</ng-template>
+<ng-template #printAreaPreview>
+    <div class="print-test-modal-container">
+        <div class="modal-header print-test-modal-header">
+            <h4 class="modal-title pull-left">Print Test Preview</h4>
+            <button type="button" class="close" (click)="bpmModal.hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <app-preview></app-preview>
+        <!-- <app-base-mockup></app-base-mockup> -->
+    </div>
+</ng-template>
+<ng-template #libraryItemDeleteTemplete>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Do you want to Delete?</p>
+        <button type="button" class="dark" (click)="libDeleteModalRef.hide()">No</button>
+        <button type="button" class="danger ml-1" (click)="libDelete()" [disabled]="libDeleteLoading" [ngClass]="libDeleteLoading?'in-progress':''">
+            <!-- <button type="button" class="danger ml-1" [disabled]="libDeleteLoading" [ngClass]="libDeleteLoading?'in-progress':''"> -->
+            <div class="loading-dots">Yes
+                <span></span><span></span><span></span>
+            </div>
+        </button>
+    </div>
+</ng-template>

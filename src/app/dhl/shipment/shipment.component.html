@@ -1,0 +1,104 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Dhl Create Shipment</h2>
+            </div>
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+    </div>
+    <div *ngIf="shipment == 'inProgress'" class="col-md-12 mb-1">
+        <div class="product-wrapper">
+            <ng-container *ngIf="dataStatus == 'fetching'">
+                <div class="img-wrapper">
+                    <img src="assets/images/rolling-main.svg" alt="">
+                </div>
+            </ng-container>
+            <div class="product-box" *ngIf="objectSize > 0">
+                <ng-container>
+                    <div class="product-upper-content">
+                        <div class="product-info row">
+                            <div class="item col-md-2 col-6">
+                                <label>Order#</label>
+                                <p>{{ order.order_no }} </p>
+                            </div>
+                            <div class="item col-md-2 col-6">
+                                <label>Date</label>
+                                <p>{{order.created_at | date:'dd-MM-yyyy'}}</p>
+                            </div>
+                            <div class="item col-md-2 col-6">
+                                <label>Total Item</label>
+                                <p>{{order.total_items}}</p>
+                            </div>
+                            <div class="item col-md-2 col-6">
+                                <label>T.Price</label>
+                                <p>{{order.total_amount}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+
+        <div class="modal-body product-box">
+            <form [formGroup]="dataForm" (ngSubmit)="createShipment(f)" #f="ngForm">
+                <div class="row">
+                    <div class="col-md-4  mb-2">
+                        <label class="mb-0">Pickup Time<span class="mendatory">*</span></label>
+                        <timepicker id="timepicker" formControlName="pickup_time" [ngClass]="{'form-submitted': f.submitted}"></timepicker>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label class="mb-0 mt-0">Weight<span class="mendatory">*</span></label>
+                        <input formControlName="weight" class="form-control mt-0" placeholder="Enter Weight" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.weight, f)" class="errors">
+                            <p *ngIf="g.weight.errors.required">weight is required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label class="mb-0 mt-0">Length<span class="mendatory">*</span></label>
+                        <input formControlName="length" class="form-control mt-0" placeholder="Enter Length" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.length, f)" class="errors">
+                            <p *ngIf="g.length.errors.required">length is required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label class="mb-0 mt-0">Width<span class="mendatory">*</span></label>
+                        <input formControlName="width" class="form-control mt-0" placeholder="Enter Width" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.width, f)" class="errors">
+                            <p *ngIf="g.width.errors.required">width is required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label class="mb-0 mt-0">Height<span class="mendatory">*</span></label>
+                        <input formControlName="height" class="form-control mt-0" placeholder="Enter Height" [ngClass]="{'form-submitted': f.submitted}">
+                        <div *ngIf="ui.checkErrors(g.height, f)" class="errors">
+                            <p *ngIf="g.height.errors.required">height is required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label class="mb-0 mt-0">Unit of Measure <span class="mendatory">*</span></label>
+                        <select class="form-control mt-0" formControlName="unit_measure" [ngClass]="{'form-submitted': f.submitted}">
+                            <option value=null>Select Unit</option>
+                            <option value='metric'>Metirc</option>
+                            <option value='imperial'>Imperial</option>
+                        </select>
+                        <div *ngIf="ui.checkErrors(g.unit_measure, f)" class="errors">
+                            <p *ngIf="g.unit_measure.errors.required">Measure Unit is required</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="primary mt-2" [ngClass]="loginLoading?'in-progress':''">
+                        <div class="loading-dots">Create Shipment
+                            <span></span><span></span><span></span>
+                        </div>
+                    </button>
+                    <button type="button" class="dark ml-1 mt-2" (click)="clearForm(f)">Clear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div *ngIf="shipment == 'created'">
+        <p class="primary"><strong>Shipment is Create Your Shipment tracking no : {{trackingNo}} </strong></p>
+    </div>
+</div>

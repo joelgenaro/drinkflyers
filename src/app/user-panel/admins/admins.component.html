@@ -1,0 +1,93 @@
+<div class="row m-3 no-gutters">
+    <div class="col-md-12 mb-1">
+        <div class="d-flex justify-content-between">
+            <h4>Admins</h4>
+            <button class="green sm mb-2" (click)="openModal(addForm, -1)">Add Admins</button>
+        </div>
+        <div class="table-responsive" *ngIf="dataStatus == 'done'">
+            <table class="table table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>E-mail</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="dataList.length > 0">
+                    <tr *ngFor="let d of dataList; let i = index">
+                        <td>{{ d.first_name }}</td>
+                        <td>{{ d.email }}</td>
+                        <td class=" d-flex justify-content-center">
+                            <div class="px-3 danger">
+                                <i class="fa fa-trash" (click)="confirmingModal(AmenityConfirming, d.id,i)"></i>
+                            </div>
+                            <div class="image-upload">
+                                <label for="file-input" (click)="openModal(addForm,i)">
+                                    <span class="themeCol2"><i class="fa fa-edit"></i></span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tbody *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                    <tr>
+                        <td colspan="3">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<ng-template #addForm>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Admin</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="dataForm" (ngSubmit)="save(dataForm, f)" #f="ngForm">
+            <div class="row">
+                <div class="col-md-6 mb-1">
+                    <label class="mb-0">First Name <span class="mendatory">*</span></label>
+                    <input formControlName="first_name" class="form-control mt-0" placeholder="Enter First Name" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.first_name, f)" class="errors">
+                        <p *ngIf="g.first_name.errors.required">First name is required</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-1">
+                    <label class="mb-0">Last Name <span class="mendatory">*</span></label>
+                    <input formControlName="last_name" class="form-control mt-0" placeholder="Enter Last Name" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.last_name, f)" class="errors">
+                        <p *ngIf="g.last_name.errors.required">Last name is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-1">
+                    <label class="mb-0">Email <span class="mendatory">*</span></label>
+                    <input formControlName="email" autocomplete="off" class="form-control mt-0" placeholder="Enter Email Name" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.email, f)" class="errors">
+                        <p *ngIf="g.email.errors.required">Email is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-1" *ngIf="selectedIndex == -1">
+                    <label class="mb-0">Password <span class="mendatory">*</span></label>
+                    <input formControlName="password" type="password" class="form-control mt-0" placeholder="Enter Password" [ngClass]="{'form-submitted': f.submitted}">
+                    <div *ngIf="ui.checkErrors(g.password, f)" class="errors">
+                        <p *ngIf="g.password.errors.required">Password is required</p>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="red sm m-1">save</button>
+            <button type="button" class="black sm ml-1" (click)="cancelButton(f)">Cancel</button>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #AmenityConfirming>
+    <div class="modal-body text-center">
+        <p>Do you want to Delete?</p>
+        <button type="button" class="sm green" (click)="delete()">Yes</button>
+        <button type="button" class="sm black" (click)="modalRef.hide()" (click)="resetIndex()">No</button>
+    </div>
+</ng-template>

@@ -1,0 +1,232 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto mb-1">
+                <h2 class="primary">Outstanding Orders</h2>
+            </div>
+
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="row no-gutters d-flex justify-content-between align-items-start">
+            <div class="search m-0 mb-2">
+                <div class="input-group">
+                    <div class="group">
+                        <div class="pre">
+                            <button class="secondary">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="post" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Orders Here" />
+                        <div class="post">
+                            <button class="secondary">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)" class="w-25 m-0 mb-2">
+                <option value="" [disabled]="true">Select per page</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15" [selected]="true">15</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="75">75</option>
+                <option value="100">100</option>
+            </select>
+            <ng-container *ngIf="api.checkPermission('create-invoice')">
+                <button type="button" class="m-0 mb-2 primary" (click)="openModal(responseModal)" *ngIf="orderIds.length != 0">Create Invoice</button>
+            </ng-container>
+        </div>
+    </div>
+
+    <div class="col-md-12 mb-1 results-section">
+        <div class="product-wrapper">
+            <ng-container *ngIf="dataStatus == 'fetching'">
+                <div class="img-wrapper">
+                    <img src="assets/images/rolling-main.svg" alt="">
+                </div>
+            </ng-container>
+            <ng-container *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                <div class="product-box">
+                    <app-no-data-found></app-no-data-found>
+                </div>
+            </ng-container>
+            <div class="product-box" *ngFor="let d of dataList; let i= index">
+                <div class="product-upper-content">
+                    <div class="product-info row">
+                        <div class="item col-md-1 col-6">
+                            <label>Order#</label>
+                            <p>{{ d.order_no }} </p>
+                        </div>
+                        <div class="item col-md-2 col-6">
+                            <label>Date</label>
+                            <!-- <p>{{d.purchase_date | date:'MM-dd-yyyy'}}</p> -->
+                            <p>{{moment(d.created_at).format(cs.DATE_TIME_FORMAT.SHORT_DATE)}}</p>
+                        </div>
+                        <div class="item col-md-2 col-6">
+                            <label>Total Items</label>
+                            <p>{{d.total_items}}</p>
+                        </div>
+                        <div class="item col-md-2 col-6">
+                            <label>Total Amount</label>
+                            <p>{{cs.defaultCurrency}} {{ d?.total_amount | number }}</p>
+                        </div>
+                        <div class="item col-md-2 col-6">
+                            <label>Tax</label>
+                            <p *ngIf="d.tax_amount==null">--</p>
+                            <p *ngIf="d.tax_amount != null">{{cs.defaultCurrency}} {{ d?.tax_amount | number }}</p>
+                        </div>
+                        <div class="item col-md-1 col-6">
+                            <label>Status</label>
+                            <p>{{ getStatusFormat(d.order_status) }}</p>
+                        </div>
+                        <div class="col-md-2 col-12">
+                            <div class="d-flex justify-content-end ">
+                                <label class="checkbox primary mt-1">
+                                    <input type="checkbox" (click)="addOrders(d.id, d.user.email, d.user.id, d.store_id)" [checked]="checkExistance(d.id)" />
+                                    <span class="checkmark"></span>
+                                </label>
+                                <button class="secondary sm ml-1 mt-1" *ngIf="api.checkPermission('order-items')" (click)="showItem(i, d.id)" type="button">
+                                    <ng-container *ngIf="d.collapse">Hide Items</ng-container>
+                                    <ng-container *ngIf="!d.collapse">Show Items</ng-container>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-variants" [class.active]="d.collapse">
+                    <h5>Order Items</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Order Id</th>
+                                <th>Product Name</th>
+                                <th>Total Amount </th>
+                                <th>Quantity </th>
+                                <th>Retail Price </th>
+                                <th>Total Price</th>
+                            </tr>
+                        </thead>
+                        <ng-container *ngIf="d.orderItems && d.orderItems.length> 0">
+                            <tbody>
+                                <tr style="border-radius: 10px;" *ngFor="let v of d.orderItems; let j= index">
+                                    <td class="serial">{{ v.order_id }} </td>
+                                    <td class="size">
+                                        <ng-container *ngIf="api.checkPermission('product-detail')">
+                                            <a class="text-link " [routerLink]="['/user/products/product-info']" [queryParams]="{ id: v.products.id }">
+                                                {{v.products.name}}
+                                            </a>
+                                        </ng-container>
+                                        <ng-container *ngIf="!api.checkPermission('product-detail')">
+                                            {{v.products.name}}
+                                        </ng-container>
+                                    </td>
+                                    <td class="size">{{cs.defaultCurrency}} {{ v?.tax_amount | number }}</td>
+                                    <td class="size">{{v.quantity}}</td>
+                                    <td class="size">{{cs.defaultCurrency}} {{ v?.rp | number }}</td>
+                                    <td class="size">{{cs.defaultCurrency}} {{ v?.tp | number }}</td>
+                                </tr>
+                            </tbody>
+                        </ng-container>
+                        <ng-container *ngIf="d.dataStatusInner == 'fetching'">
+                            <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                        </ng-container>
+                        <tbody *ngIf="d.orderItems && d.orderItems.length == 0 && d.dataStatusInner == 'done'">
+                            <tr>
+                                <td colspan="6">
+                                    <app-no-data-found></app-no-data-found>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 footer-section">
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul>
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<ng-template #responseModal>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Create Invoice</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="responseForm" (ngSubmit)="SaveResponse(responseForm, d)" #d="ngForm">
+            <div class="row">
+                <div class="col-md-12 mb-1">
+                    <label class="mb-0 mt-0">Invoice Date <span class="mendatory">*</span></label>
+                    <input class="form-control mt-0" type="text" formControlName="invoice_date" bsDatepicker [bsConfig]="{dateInputFormat: 'MMMM Do YYYY', adaptivePosition: true }" placeholder="Select Date" [ngClass]="{ 'form-submitted': d.submitted }" />
+                    <div *ngIf="ui.checkErrors(g.invoice_date, d)" class="errors">
+                        <p *ngIf="g.invoice_date.errors.required">Invoice Date is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-1">
+                    <label class="mb-0">Customer Email <span class="mendatory">*</span></label>
+                    <input type="email" formControlName="client_email" class="form-control" [ngClass]="{'form-submitted': d.submitted}" [disabled]="true">
+                    <div *ngIf="ui.checkErrors(g.client_email, d)" class="errors">
+                        <p *ngIf="g.client_email.errors.required">Customer Email is required</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-1">
+                    <label class="mb-0">CC</label>
+                    <input type="email" formControlName="cc_email" class="form-control" [ngClass]="{'form-submitted': d.submitted}">
+                </div>
+                <div class="col-md-12 mb-1">
+                    <label class="mb-0">BCC</label>
+                    <input type="email" formControlName="bcc_email" class="form-control" [ngClass]="{'form-submitted': d.submitted}">
+                </div>
+                <div class="col-md-12 mb-1">
+                    <label class="mb-0">Note</label>
+                    <textarea rows="5" formControlName="note" class="form-control" [ngClass]="{'form-submitted': d.submitted}"></textarea>
+                </div>
+            </div>
+            <button type="submit" class="primary" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Proceed
+                <span></span><span></span><span></span>
+            </button>
+            <button type="button" class="dark ml-1" (click)="closeModal(d)">Cancel</button>
+
+        </form>
+    </div>
+</ng-template>

@@ -1,0 +1,193 @@
+<div class="row no-gutters main-row">
+    <div class="col-md-12 mb-1 header-section">
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <h2 class="primary">Dhl Shipments</h2>
+            </div>
+            <!-- <div class="col-md-3 d-flex justify-content-between">
+                <h6 class="col-md-4 pt-0 m-0 sort">Sort</h6>
+                <select class="col-md-8 m-0 pl-2 sort-select" (change)="doSort($event, 'asc')">
+                    <option value="">Select Sort</option>
+                    <option value="identifier">Identifier</option>
+                    <option value="status">Status</option>
+                </select>
+            </div> -->
+        </div>
+        <app-breadcrums [data]="breadCrum"></app-breadcrums>
+        <div class="row no-gutters d-flex justify-content-between align-items-center">
+            <div class="search m-0 mb-2">
+                <div class="input-group">
+                    <div class="group">
+                        <div class="pre">
+                            <button class="secondary">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="post" [(ngModel)]="searchKeyword" (ngModelChange)="searchKeywordChange($event)" placeholder="Search Store Credential Here" />
+                        <div class="post">
+                            <button class="secondary">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <select [(ngModel)]="filters.perPage" (change)="selectPerPage($event)" class="m-0 mb-2 w-25">
+                <option value="" [disabled]="true">Select per page</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15" [selected]="true">15</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="75">75</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-12 mb-1 results-section">
+        <div class="product-wrapper">
+            <ng-container *ngIf="dataStatus == 'fetching'">
+                <div class="img-wrapper">
+                    <img src="assets/images/rolling-main.svg" alt="">
+                </div>
+            </ng-container>
+            <ng-container *ngIf="dataList.length == 0 && dataStatus == 'done'">
+                <div class="product-box">
+                    <app-no-data-found></app-no-data-found>
+                </div>
+            </ng-container>
+            <div class="product-box" *ngFor="let d of dataList; let i= index">
+                <div class="product-upper-content">
+                    <div class="product-info row">
+                        <div class="item col-md-2 col-6">
+                            <label>Shipment Tracking</label>
+                            <p>{{ d.shipment_track_no }} </p>
+                        </div>
+                        <div class="item col-md-2 col-6">
+                            <label>Pickup Date</label>
+                            <!-- <p>{{d.purchase_date | date:'MM-dd-yyyy'}}</p> -->
+                            <p>{{moment(d.pickup_date).format(cs.DATE_TIME_FORMAT.SHORT_DATE)}}</p>
+                        </div>
+                        <div class="item col-md-2 col-6">
+                            <label>Tracking No</label>
+                            <p>{{d.tracking_no}}</p>
+                        </div>
+
+                        <div class="item col-md-2 col-6">
+                            <label>Pickup Status</label>
+                            <p>{{d.dhl_pickup_status}}</p>
+                        </div>
+                        <div class="col-md-3 col-12">
+                            <div class="d-flex justify-content-end ">
+                                <div class="po-delete" *ngIf=" d.dhl_pickup_status != 'picked'">
+                                    <button type="button" class="ml-1 mt-1 danger sm" (click)="confirmingModal(changeStatus, d.id,i)">
+                                        Picked
+                                    </button>
+                                </div>
+                                <div class="po-edit">
+                                    <button type="button sm" (click)="printLabel(d.id,d.tracking_no)" class="ml-1 mt-1 secondary sm">
+                                        Download Label
+                                    </button>
+                                </div>
+                                <!-- <button class="secondary sm ml-1 mt-1" (click)="showItem(i, d.id)" type="button">
+                                    <ng-container *ngIf="d.collapse">Hide Items</ng-container>
+                                    <ng-container *ngIf="!d.collapse">Show Items</ng-container>
+                                </button> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="product-variants" [class.active]="d.collapse">
+                    <h5>Order Items</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Order Id</th>
+                                <th>Product Id</th>
+                                <th>Total Amount </th>
+                                <th>Quantity </th>
+                                <th>Retail Price </th>
+                                <th>Total Price</th>
+                            </tr>
+                        </thead>
+                        <ng-container *ngIf="d.orderItems && d.orderItems.length> 0">
+                            <tbody>
+                                <tr style="border-radius: 10px;" *ngFor="let v of d.orderItems; let j= index">
+                                    <td class="serial">{{ v.order_id }} </td>
+                                    <td class="size">{{v.product_id}}</td>
+                                    <td class="size">{{v.total_amount}}</td>
+                                    <td class="size">{{v.quantity}}</td>
+                                    <td class="size">{{v.rp}}</td>
+                                    <td class="size">{{v.tp}}</td>
+                                </tr>
+                            </tbody>
+                        </ng-container>
+                        <ng-container *ngIf="d.dataStatusInner == 'fetching'">
+                            <tbody [appSkeletonTabelLoader]="loaderOptions"></tbody>
+                        </ng-container>
+                        <tbody *ngIf="d.orderItems && d.orderItems.length == 0 && d.dataStatusInner == 'done'">
+                            <tr>
+                                <td colspan="6">
+                                    <app-no-data-found></app-no-data-found>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div> -->
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 footer-section">
+        <nav class="paginationCover" aria-label="Page navigation example" *ngIf="dataStatus == 'done'">
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item">
+                    <small *ngIf="page<10">Current page: 0{{page}}</small>
+                    <small *ngIf="page>=10">Current page: {{page}}</small>
+                </li>
+            </ul>
+            <ul class="pagination justify-content-left m-0">
+                <li class="page-item" *ngIf="pagination.prev_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(page-1)">Previous</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.prev_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Previous</a>
+                </li>
+                <ng-container *ngIf="pagination.last_page <= 6">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="pagination.last_page >= 7">
+                    <ng-container *ngFor="let p of [].constructor(pagination.last_page); let i=index">
+                        <li *ngIf="i<4" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i) == 3" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link">...</a>
+                        </li>
+                        <li *ngIf="(pagination.last_page-i)==1 || (pagination.last_page-i)==2" [class]="page==(i+1) ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="javascript: void(0)" (click)="setPagination(i+1)">{{i+1}}</a>
+                        </li>
+                    </ng-container>
+                </ng-container>
+                <li class="page-item" *ngIf="pagination.next_page_url != null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1" (click)="setPagination(+page+1)">Next</a>
+                </li>
+                <li class="page-item disabled" *ngIf="pagination.next_page_url == null">
+                    <a class="page-link" href="javascript: void(0)" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<ng-template #changeStatus>
+    <div class="modal-body text-center">
+        <h2 class="primary">Confirmation</h2>
+        <p>Are you sure that Order is Picked By DHL?</p>
+        <button type="button" class="dark" (click)="modalRef.hide()">No</button>
+        <button type="button" class="primary ml-1" (click)="changePickupStatus()" [disabled]="loginLoading" [ngClass]="loginLoading?'in-progress':''">Yes
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</ng-template>

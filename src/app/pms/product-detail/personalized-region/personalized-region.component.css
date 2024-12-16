@@ -1,0 +1,198 @@
+.personalize-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+.personalize-item-img {
+    flex: 0 0 20%;
+    max-width: 20%;
+}
+.personalize-item-edit-preview {
+    flex: 0 0 40%;
+    max-width: 40%;
+}
+.personalize-item-attributes {
+    flex: 0 0 40%;
+    max-width: 40%;
+}
+.form-control {
+    height: 50px;
+}
+.img-container {
+    background-color: #eaeaea;
+    border-radius: 10px;
+}
+.img-container .shirt-front img:first-child,
+.img-container .shirt-back img:first-child {
+    width: 110px;
+    margin: 5px 0 35px 0;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid rgb(72 72 72 / 40%);
+}
+.img-container .shirt-front img {
+    transform: scale(1.25, 1.25);
+    box-shadow: 0px 6px 18px -7px #484848;
+}
+.shirt-front,
+.shirt-back {
+    text-align: center;
+}
+.img-container > .shirt-back > img:nth-child(2) {
+    width: 20px;
+    margin: 51px 0 0 -32px;
+}
+.editor-container {
+    display: flex;
+    align-items: center;
+    border: 1px dashed #484848;
+    border-radius: 10px;
+    width: auto;
+    margin: 0 20px;
+    padding: 10px 0;
+}
+.editor-item {
+    display: flex;
+    overflow: auto;
+}
+.editor-rectangle,
+.editor-circle,
+.editor-type {
+    min-width: 55px;
+    min-height: 35px;
+    border-radius: 5px;
+    background-color: #ef6970;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 10px 0 0;
+}
+.editor-rectangle img,
+.editor-circle img {
+    width: 22px;
+}
+.editor-type img {
+    width: 15px;
+}
+.plus-btn {
+    border: 1px solid #484848;
+    padding: 5px;
+    width: 32px;
+    border-radius: 57px;
+    text-align: center;
+    margin: 0 10px 0 -15px;
+    background-color: #fff;
+}
+.main-img-container {
+    padding: 20px;
+}
+.main-img-container .preview-canvas {
+    border: 1px dashed #484848;
+    width: 100%;
+    overflow: auto;
+    border-radius: 10px;
+} /* .main-img-container .preview-canvas img {
+    width: 100%;
+} */
+.attribute {
+    color: #484848;
+}
+.add-images {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px dashed #484848;
+    border-radius: 5px;
+    height: 50px;
+    color: #484848;
+}
+.add-images p {
+    margin: 0 0 0 5px;
+}
+.attribute-btn {
+    display: flex;
+}
+button.attribute-cancel-btn {
+    border: 1px solid #484848;
+    margin: 0;
+    height: 50px;
+    width: 100%;
+    background-color: transparent;
+    color: #484848;
+}
+button.attribute-next-btn {
+    margin: 0;
+    height: 50px;
+    width: 100%;
+    background-color: #307477;
+    color: #fff;
+}
+.attribute-btn .col-md-6:nth-child(1) {
+    padding: 0 10px 0 0;
+}
+.attribute-btn .col-md-6:nth-child(2) {
+    padding: 0 0 0 10px;
+}
+.bottom-btn {
+    border-top: 1.5px solid #d7d7d7 !important;
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px 0 20px 0;
+    /* margin: 30px 0 0 0; */
+}
+button.main-color.mt-2.mb-2 {
+    display: flex;
+}
+.next-arrow-icon {
+    padding: 10px 15px 10px 15px;
+    border-left: 1.5px solid #fff !important;
+}
+p.next-btn {
+    margin: 0 10px 0 0;
+    padding: 10px 30px 10px 20px;
+}
+button.skip-btn {
+    background-color: transparent;
+    color: #307477;
+    border: 1px solid #307477;
+    padding: 0 20px;
+}
+
+@media only screen and (max-width: 768px) {
+    .personalize-item-img {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    .personalize-item-edit-preview {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    .personalize-item-attributes {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+@media only screen and (max-width: 425px) {
+    .personalize-item-img {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .personalize-item-edit-preview {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .personalize-item-attributes {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .attribute-btn .col-md-6:nth-child(1),
+    .attribute-btn .col-md-6:nth-child(2) {
+        padding: 0;
+    }
+    button.skip-btn {
+        padding: 0 30px;
+    }
+    p.next-btn {
+        padding: 10px 25px 10px 10px;
+    }
+}

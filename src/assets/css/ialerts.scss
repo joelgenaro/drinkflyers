@@ -1,0 +1,226 @@
+.admin-panel {
+    --ialert-red: #d51c28;
+    --ialert-blue: #098dcc;
+    --ialert-yellow: #FFCE00;
+}
+
+.website{
+    --ialert-red: #ef767a;
+    --ialert-blue: #609ebd;
+    --ialert-yellow: #FFCE00;
+}
+
+.i-alerts-container {
+    --ialert-success: rgb(0, 155, 64);
+    --ialert-error: rgb(252, 85, 85);
+    --ialert-warning: rgb(255, 244, 142);
+    --ialert-info: rgb(147, 203, 255);
+}
+
+.i-alerts-container{
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1150;
+}
+
+.i-alert {
+    display: block;
+    display: block;
+    min-width: 200px;
+    max-width: 410px;
+    min-height: 50px;
+    margin-bottom: 10px;
+    border-radius: 0px;
+    z-index: 10000000 !important;
+    color: #fff;
+    cursor: default;
+    margin-top: 20px;
+    box-shadow:0 6px 8px #ccc;
+}
+
+.i-alert .title {
+    padding: 5px 20px;
+    color:#fff;
+    font-weight: bold;
+    font-size: 15px;
+    margin: 0px;
+    text-transform: capitalize;
+}
+
+.i-alert .message {
+    border-top: 1px solid #fff;
+    padding: 2px 20px;
+    font-size: 13px;
+}
+.i-alert .cross {
+    width: 30px;
+    height: 30px;
+    border-radius: 2px 2px 0px 0px;
+    background-color: #fff;
+    border: 3px solid;
+    margin-top: -15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.i-alert .cross a, .i-alert .cross a:hover {
+    color:#eee;
+}
+
+.i-alert p {
+    font-weight: normal;
+    margin: 0px;
+}
+
+.i-alert.success {
+    background: var(--ialert-success);
+}
+.i-alert.success .title {
+    color: #fff;
+}
+.i-alert.success .cross{
+    border-color: var(--ialert-success);
+}
+.i-alert.success .cross a, .i-alert.error .success a:hover {
+    color: var(--ialert-success);
+}
+
+.i-alert.error {
+    background: var(--ialert-error);
+}
+.i-alert.error .title {
+    color: #fff;
+}
+.i-alert.error .cross{
+    border-color: var(--ialert-error);
+}
+.i-alert.error .cross a, .i-alert.error .cross a:hover {
+    color: var(--ialert-error);
+}
+
+.i-alert.warning {
+    background: var(--ialert-warning);
+}
+.i-alert.warning .title {
+    color: #fff;
+}
+.i-alert.warning .cross{
+    border-color: var(--ialert-warning);
+}
+.i-alert.warning .cross a, .i-alert.warning .cross a:hover {
+    color: var(--ialert-warning);
+}
+
+.i-alert.info {
+    background: var(--ialert-info);
+}
+.i-alert.info .title {
+    color: #fff;
+}
+.i-alert.info .cross{
+    border-color: var(--ialert-info);
+}
+.i-alert.info .cross a, .i-alert.info .cross a:hover {
+    color: var(--ialert-info);
+}
+
+.i-alert {
+    display: block;
+    min-width: 230px;
+    max-width: 410px;
+    min-height: 65px;
+    margin-bottom: 10px;
+    border-radius:11px;
+    z-index: 10000000 !important;
+
+    color: #fff;
+    cursor: default;
+    margin: 20px;  
+    box-shadow:0 6px 8px #ccc;
+}
+
+.i-alert .title {
+    padding:10px 20px;
+    color:#fff;
+    font-weight: bold;
+    margin: 0px;
+    text-transform: capitalize;
+}
+
+.i-alert .message {
+    border-top:1px solid #fff;
+    padding:10px 20px;
+}
+.i-alert .cross {
+    width: 57px;
+    height: 57px;
+    border-radius:21px 0px 0px 0px;
+    background-color: #fff;
+    border:10px solid;
+    margin-top: -32px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 21px;
+}
+
+.i-alert p {
+    font-weight: normal;
+    margin: 0px;
+}
+
+.i-alert.success {
+    background: var(--ialert-blue)
+}
+.i-alert.success .title {
+    color: #fff;
+}
+.i-alert.success .cross{
+    border-color: var(--ialert-blue)
+}
+.i-alert.success .cross a, .i-alert.success .cross a:hover {
+    color: var(--ialert-blue)
+}
+
+.i-alert.error {
+    background: var(--ialert-red);
+}
+.i-alert.error .title {
+    color: #fff;
+}
+.i-alert.error .cross{
+    border-color: var(--ialert-red);
+}
+.i-alert.error .cross a, .i-alert.error .cross a:hover {
+    color: var(--ialert-red);
+}
+
+.i-alert.warning {
+    background: var(--ialert-yellow);
+}
+.i-alert.warning .title {
+    color: #fff;
+}
+.i-alert.warning .cross{
+    border-color: var(--ialert-yellow);
+}
+.i-alert.warning .cross a, .i-alert.warning .cross a:hover {
+    color: var(--ialert-yellow);
+}
+
+.i-alert.info {
+    background: var(--ialert-blue);
+}
+.i-alert.info .title {
+    color: #fff;
+}
+.i-alert.info .cross{
+    border-color: var(--ialert-blue);
+}
+.i-alert.info .cross a, .i-alert.info .cross a:hover {
+    color: var(--ialert-blue);
+}

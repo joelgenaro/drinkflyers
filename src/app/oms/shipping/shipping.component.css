@@ -1,0 +1,85 @@
+.main-background {
+    background: #fff;
+}
+.header-section {
+    position: sticky;
+    top: 65px;
+    padding-left: 60px !important;
+    padding-right: 60px !important;
+    padding-top: 40px !important;
+}
+
+.main-row {
+    margin: 10px;
+}
+h6.sort {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #484848;
+}
+.span-color {
+    color: #1a73e8;
+    margin-left: 5px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.form-control {
+    height: 40px !important;
+}
+form {
+    width: 100%;
+}
+form label {
+    font-weight: 400;
+}
+.checkbox-width {
+    width: 18px;
+}
+.info-wrapper img {
+    width: 13px;
+}
+.font-14 {
+    font-size: 14px !important;
+}
+.shipping {
+    display: flex; 
+    justify-content: space-between; 
+    flex-wrap: wrap; 
+    width: 100%;
+}
+.shipping-item {
+    width: 100%; 
+    display: flex; 
+    align-items: center;
+}
+.shipping-item span {
+    margin-right: 4px; 
+    font-weight: 400;
+}
+.info {
+    display: flex; 
+    padding: 10px; 
+    background-color: #F8F8F8; 
+    border-radius: 3px; 
+    border: 1px solid #e0e0db; 
+    flex-wrap: wrap;
+}
+.save {
+    display: flex; 
+    width: 100%;
+}
+img.store-img {
+    width: 20px;
+    height: 20px;
+    padding: 1px;
+}
+.img-wrapper {
+    display: flex;
+    justify-content: center;
+}
+.img-wrapper img {
+    width: 55px;
+    margin-top: 10px;
+}

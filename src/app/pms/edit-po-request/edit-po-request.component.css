@@ -1,0 +1,236 @@
+.header-section {
+    position: sticky;
+    top: 65px;
+}
+.results-section {
+    height: calc(100vh - 257px);
+    overflow: auto;
+}
+.main-row {
+    margin: 10px;
+}
+h6.sort {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #484848;
+}
+select.sort-select {
+    color: #484848;
+}
+
+.img-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.img-wrapper img {
+    width: 90px;
+}
+.product-box {
+    padding: 10px;
+    box-shadow: 3px 3px 8px rgb(128 128 128 / 20%);
+    border-radius: 10px;
+    margin: 0 0 20px 0;
+    border: 0.5px solid #ccc;
+}
+.product-upper-content {
+    display: flex;
+    align-items: center;
+}
+i.fas.fa-user-circle {
+    font-size: 60px;
+}
+.product-name h3 {
+    margin: 0;
+    padding: 0 0 0 10px;
+    color: #484848;
+    font-size: 22px;
+}
+.product-name p {
+    padding: 0 0 0 12px;
+    color: #484848;
+    margin: 0;
+    cursor: pointer;
+    outline: none;
+}
+.product-lower-content .pro-lower-inner p {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #484848;
+}
+.product-lower-content {
+    padding: 0 15px 20px;
+}
+label {
+    font-size: 12px;
+    color: #bfc1c2;
+    font-weight: 400;
+    margin: 0;
+    outline: none;
+    padding: 0.75rem 0 0.5rem;
+}
+.product-lower-content-btn {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.bottom-btn {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0;
+    margin: 0;
+}
+button.main-color {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+p.add-variant-btn {
+    margin: 0;
+    padding: 8px 20px 8px 15px;
+}
+.btn-icon {
+    padding: 0px 0px 0px 15px;
+}
+i.fa.fa-plus,
+.bottom-btn p {
+    color: #fff !important;
+}
+.bottom-btn p {
+    font-size: 12px !important;
+}
+.po-items-heading {
+    color: #484848;
+    font-size: 23px;
+    padding: 18px 0 0 0 !important;
+}
+.table-responsive {
+    padding: 0 15px;
+}
+.table {
+    margin: 0 !important;
+}
+table th {
+    color: var(--ap-secondary);
+    margin: 0;
+    padding: 5px !important;
+}
+table th.actions {
+    width: 90px;
+    text-align: center;
+}
+.table tbody td {
+    font-size: 14px;
+    padding: 5px !important;
+}
+.color-block {
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+}
+button.close {
+    padding: 5px 5px 0px 0px;
+    margin: 0;
+    color: #484848;
+}
+
+.info-wrapper img {
+    width: 18px;
+    margin: -5px 0 0 0;
+}
+th.price {
+    width: 120px;
+}
+.price-type {
+    text-align: right !important;
+}
+/* i.fa.fa-trash {
+    color: red !important;
+} */
+
+/* ProductListModalCss */
+.results-section {
+    height: calc(100vh - 257px);
+    overflow: auto;
+}
+.product-box {
+    padding: 10px;
+    border-radius: 4px;
+    margin: 0 0 10px 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+.product-upper-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+.product-upper-content .product-info {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 70%;
+    flex-wrap: wrap;
+}
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.product-upper-content .product-info .item {
+    width: 20%;
+}
+.product-upper-content .product-info p {
+    margin: 0;
+    padding: 0;
+    outline: none;
+}
+.product-name label {
+    font-weight: 600;
+    color: var(--ap-primary);
+}
+.product-name p {
+    color: var(--ap-info);
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.product-variants {
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.5s linear;
+}
+.product-variants.active {
+    max-height: 250px;
+    overflow: auto;
+}
+
+.variant-quantity {
+    text-align: center;
+}
+.product-base-price p {
+    max-width: 80px;
+}
+.variant-quantity div,
+.product-base-price p {
+    background: var(--ap-primary);
+    text-align: center;
+    padding: 1px 0;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 1px;
+    font-size: 14px;
+}
+.info-wrapper img {
+    width: 18px;
+    margin: -5px 0 0 0;
+}
+th.price {
+    width: 120px;
+}
+/* productListModalCssEnd */
